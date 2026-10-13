@@ -1,0 +1,24 @@
+{
+  "id": "english-grade1",
+  "quizId": "english-grade1",
+  "title": "English",
+  "description": "تدريب للاختبار القصير ١ في الإنجليزي للصف الأول: الحرف الكبير والصغير، والحرف والصورة، والأرقام ١–٦، والحرف الناقص (box, ant, mug, lamb, bat).",
+  "recommendedAge": "5–7",
+  "basePath": "/english-grade1-quiz/",
+  "questionsPerRound": 8,
+  "testQuestions": 12,
+  "topics": [
+    "case",
+    "letters",
+    "numbers",
+    "missing"
+  ],
+  "capabilities": {
+    "audio": true,
+    "adaptive": true,
+    "progress": true,
+    "answerReview": true,
+    "challenge": false
+  },
+  "version": "1.0.0"
+}

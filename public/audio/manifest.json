@@ -1,0 +1,842 @@
+{
+  "voices": {
+    "ar": {
+      "id": "w0uhBAmNIG5kUDeaFEsA",
+      "name": "Maryam Essa - Kuwaiti Calm & Warm"
+    },
+    "en": {
+      "id": "Xb7hH8MSUJpSbSDYk0k2",
+      "name": "Alice - Clear, Engaging Educator"
+    }
+  },
+  "model": "eleven_v4",
+  "settings": {
+    "stability": 0.5,
+    "similarity_boost": 0.8,
+    "style": 0.2
+  },
+  "clips": {
+    "ar/q/count-apples": {
+      "text": "كم تفاحة في الصورة؟",
+      "hash": "bcfd2e0ab3c3ee8f",
+      "durationMs": 1766,
+      "bytes": 14671
+    },
+    "ar/q/count-bears": {
+      "text": "كم دبدوب في الصورة؟",
+      "hash": "5de51b54935480d9",
+      "durationMs": 1561,
+      "bytes": 12999
+    },
+    "ar/q/count-cars": {
+      "text": "كم سيارة في الصورة؟",
+      "hash": "d5d6f26a9c03152a",
+      "durationMs": 1534,
+      "bytes": 12790
+    },
+    "ar/q/count-cookies": {
+      "text": "كم بسكوتة في الصورة؟",
+      "hash": "480f1dc88fa68f9a",
+      "durationMs": 1840,
+      "bytes": 15298
+    },
+    "ar/q/count-cows": {
+      "text": "كم بقرة في الصورة؟",
+      "hash": "0b4468e501d2774d",
+      "durationMs": 1760,
+      "bytes": 14671
+    },
+    "ar/q/count-fish": {
+      "text": "كم سمكة في الصورة؟",
+      "hash": "433b6eadf5736df5",
+      "durationMs": 1581,
+      "bytes": 13208
+    },
+    "ar/q/count-flowers": {
+      "text": "كم وردة في الصورة؟",
+      "hash": "6c1ef9c63870ac1b",
+      "durationMs": 1481,
+      "bytes": 12372
+    },
+    "ar/q/count-frogs": {
+      "text": "كم ضفدع في الصورة؟",
+      "hash": "925e646e9d683722",
+      "durationMs": 1518,
+      "bytes": 12790
+    },
+    "ar/q/find-big": {
+      "text": "وين الحرف الكبير؟",
+      "hash": "a2f62e03107ec4a4",
+      "durationMs": 1498,
+      "bytes": 12581
+    },
+    "ar/q/find-number": {
+      "text": "وين الصورة اللي فيها…",
+      "hash": "474287fd751b43fc",
+      "durationMs": 2160,
+      "bytes": 17806
+    },
+    "ar/q/find-small": {
+      "text": "وين الحرف الصغير؟",
+      "hash": "1bc88ff99e398d96",
+      "durationMs": 1458,
+      "bytes": 12163
+    },
+    "ar/q/letter-for-pic": {
+      "text": "بأي حرف تبدأ كلمة…",
+      "hash": "e1b95a0843018734",
+      "durationMs": 2197,
+      "bytes": 18224
+    },
+    "ar/q/match-case": {
+      "text": "نوصل كل حرف كبير… بالحرف الصغير مثله.",
+      "hash": "d572c129a3df9b4f",
+      "durationMs": 3903,
+      "bytes": 31807
+    },
+    "ar/q/match-num": {
+      "text": "نوصل كل رقم… بالصورة اللي فيها نفس العدد.",
+      "hash": "8592f7ce760cde2e",
+      "durationMs": 4061,
+      "bytes": 33061
+    },
+    "ar/q/match-pic": {
+      "text": "نوصل كل حرف… بالصورة اللي تبدأ فيه.",
+      "hash": "d3a3c1f97b59f2ea",
+      "durationMs": 3528,
+      "bytes": 28882
+    },
+    "ar/q/missing": {
+      "text": "شنو الحرف الناقص في أول كلمة…",
+      "hash": "0b7de68670d90c43",
+      "durationMs": 2616,
+      "bytes": 21567
+    },
+    "ar/q/pic-for-letter": {
+      "text": "أي صورة تبدأ بحرف…",
+      "hash": "9aa3abd43df19520",
+      "durationMs": 2178,
+      "bytes": 18015
+    },
+    "ar/t/case": {
+      "text": "كل حرف له شكلين… حرف كبير، وحرف صغير. خلنا نعرف كل حرف وشكله الصغير.",
+      "hash": "01a3e30fa49e23c2",
+      "durationMs": 6943,
+      "bytes": 56049
+    },
+    "ar/t/letters": {
+      "text": "كل صورة تبدأ بحرف… خلنا نسمع الكلمة، ونعرف أول حرف فيها.",
+      "hash": "d99dc9d82ac6661d",
+      "durationMs": 5462,
+      "bytes": 44346
+    },
+    "ar/t/missing": {
+      "text": "كلمات الاختبار… كل كلمة ناقصها أول حرف. نشوف الصورة، ونعرف الحرف الناقص.",
+      "hash": "be0e0ad5a845c69b",
+      "durationMs": 7727,
+      "bytes": 62318
+    },
+    "ar/t/numbers": {
+      "text": "نعد الأشياء مع بعض… ونعرف الرقم. واحد، اثنين، ثلاثة… لين ستة.",
+      "hash": "249737126a230184",
+      "durationMs": 6594,
+      "bytes": 53332
+    },
+    "ar/ui/correct-is": {
+      "text": "الجواب الصح…",
+      "hash": "85d94186f1ace259",
+      "durationMs": 1360,
+      "bytes": 11536
+    },
+    "ar/ui/learn-done": {
+      "text": "خلصنا الدرس! يلا نتدرب.",
+      "hash": "26e1f74431a87563",
+      "durationMs": 2479,
+      "bytes": 20314
+    },
+    "ar/ui/match-wrong": {
+      "text": "لا… نجرب مرة ثانية.",
+      "hash": "3f7a6fadd8f0f515",
+      "durationMs": 2400,
+      "bytes": 19687
+    },
+    "ar/ui/test-intro": {
+      "text": "هذا اختبار تجريبي… فيه أسئلة من كل الدروس. يلا نبدأ!",
+      "hash": "dc1d19349831fa74",
+      "durationMs": 4889,
+      "bytes": 39749
+    },
+    "ar/ui/welcome": {
+      "text": "هلا والله! يلا نتدرب على الإنجليزي… نختار درس، ونبدأ.",
+      "hash": "263f22e908af3b91",
+      "durationMs": 5206,
+      "bytes": 42256
+    },
+    "en/fact/case-a": {
+      "text": "Big A… small a.",
+      "hash": "5679033b6a0ebb61",
+      "durationMs": 2349,
+      "bytes": 19269
+    },
+    "en/fact/case-b": {
+      "text": "Big B… small b.",
+      "hash": "cf157e369f8d10ab",
+      "durationMs": 2134,
+      "bytes": 17597
+    },
+    "en/fact/case-c": {
+      "text": "Big C… small c.",
+      "hash": "c15870ee595122a2",
+      "durationMs": 2167,
+      "bytes": 17806
+    },
+    "en/fact/case-e": {
+      "text": "Big E… small e.",
+      "hash": "a3071f9aea21159e",
+      "durationMs": 2358,
+      "bytes": 19478
+    },
+    "en/fact/case-f": {
+      "text": "Big F… small f.",
+      "hash": "39a84afc2a97d2f4",
+      "durationMs": 2369,
+      "bytes": 19478
+    },
+    "en/fact/case-h": {
+      "text": "Big H… small h.",
+      "hash": "2e7ea0515c5159ee",
+      "durationMs": 2520,
+      "bytes": 20732
+    },
+    "en/fact/case-l": {
+      "text": "Big L… small l.",
+      "hash": "6faa1c885056fad7",
+      "durationMs": 2480,
+      "bytes": 20314
+    },
+    "en/fact/case-m": {
+      "text": "Big M… small m.",
+      "hash": "680ab8f2441841b7",
+      "durationMs": 2281,
+      "bytes": 18851
+    },
+    "en/fact/case-t": {
+      "text": "Big T… small t.",
+      "hash": "36122b438bee37e7",
+      "durationMs": 2181,
+      "bytes": 18015
+    },
+    "en/fact/count-1-cars": {
+      "text": "One. One car!",
+      "hash": "7ca4d41b87802968",
+      "durationMs": 2119,
+      "bytes": 17597
+    },
+    "en/fact/count-1-cows": {
+      "text": "One. One cow!",
+      "hash": "611c4a46206e0426",
+      "durationMs": 2206,
+      "bytes": 18224
+    },
+    "en/fact/count-2-apples": {
+      "text": "One, Two. Two apples!",
+      "hash": "e7da8a591bef1627",
+      "durationMs": 2897,
+      "bytes": 23657
+    },
+    "en/fact/count-2-cows": {
+      "text": "One, Two. Two cows!",
+      "hash": "be771e1995ad6b87",
+      "durationMs": 2737,
+      "bytes": 22403
+    },
+    "en/fact/count-3-apples": {
+      "text": "One, Two, Three. Three apples!",
+      "hash": "3fba05e7dd3561b7",
+      "durationMs": 3248,
+      "bytes": 26583
+    },
+    "en/fact/count-3-cars": {
+      "text": "One, Two, Three. Three cars!",
+      "hash": "5599344a20de9124",
+      "durationMs": 3345,
+      "bytes": 27419
+    },
+    "en/fact/count-4-apples": {
+      "text": "One, Two, Three, Four. Four apples!",
+      "hash": "0c167ec735157515",
+      "durationMs": 3893,
+      "bytes": 31807
+    },
+    "en/fact/count-4-bears": {
+      "text": "One, Two, Three, Four. Four bears!",
+      "hash": "37f6f9a91767b2ef",
+      "durationMs": 4095,
+      "bytes": 33270
+    },
+    "en/fact/count-4-frogs": {
+      "text": "One, Two, Three, Four. Four frogs!",
+      "hash": "e007e4c39a0a1984",
+      "durationMs": 4007,
+      "bytes": 32643
+    },
+    "en/fact/count-5-apples": {
+      "text": "One, Two, Three, Four, Five. Five apples!",
+      "hash": "e0ecb312c9267b0f",
+      "durationMs": 4724,
+      "bytes": 38286
+    },
+    "en/fact/count-5-cookies": {
+      "text": "One, Two, Three, Four, Five. Five cookies!",
+      "hash": "95aa4bd136ef0366",
+      "durationMs": 4662,
+      "bytes": 37868
+    },
+    "en/fact/count-6-apples": {
+      "text": "One, Two, Three, Four, Five, Six. Six apples!",
+      "hash": "026c01031a071d0c",
+      "durationMs": 5570,
+      "bytes": 45182
+    },
+    "en/fact/count-6-fish": {
+      "text": "One, Two, Three, Four, Five, Six. Six fish!",
+      "hash": "64f81a8c9b4e52af",
+      "durationMs": 5285,
+      "bytes": 42883
+    },
+    "en/fact/count-6-flowers": {
+      "text": "One, Two, Three, Four, Five, Six. Six flowers!",
+      "hash": "51e4a66751472f14",
+      "durationMs": 5612,
+      "bytes": 45391
+    },
+    "en/fact/letter-a": {
+      "text": "A is for ant, apple and arm.",
+      "hash": "b7e573e80b0892a7",
+      "durationMs": 3224,
+      "bytes": 26374
+    },
+    "en/fact/letter-b": {
+      "text": "B is for box, bat and bag.",
+      "hash": "4c4f94625ab7fc58",
+      "durationMs": 3366,
+      "bytes": 27419
+    },
+    "en/fact/letter-c": {
+      "text": "C is for cat, car and cow.",
+      "hash": "dc8dada99c118826",
+      "durationMs": 3316,
+      "bytes": 27001
+    },
+    "en/fact/letter-e": {
+      "text": "E is for egg, elephant and ear.",
+      "hash": "4f411f7622fce33a",
+      "durationMs": 3441,
+      "bytes": 28046
+    },
+    "en/fact/letter-f": {
+      "text": "F is for fan, fox and frog.",
+      "hash": "adf90970aca2e01e",
+      "durationMs": 3174,
+      "bytes": 25956
+    },
+    "en/fact/letter-h": {
+      "text": "H is for hat, horse and hand.",
+      "hash": "c2700e11e6589e79",
+      "durationMs": 3254,
+      "bytes": 26583
+    },
+    "en/fact/letter-l": {
+      "text": "L is for lamb, lion and lemon.",
+      "hash": "60e9092bb740b21f",
+      "durationMs": 3171,
+      "bytes": 25956
+    },
+    "en/fact/letter-m": {
+      "text": "M is for mug, man and mat.",
+      "hash": "582cb577feea24cb",
+      "durationMs": 3530,
+      "bytes": 28882
+    },
+    "en/fact/letter-t": {
+      "text": "T is for tiger, toy and teacher.",
+      "hash": "3da3a6180937141a",
+      "durationMs": 3465,
+      "bytes": 28255
+    },
+    "en/fact/word-ant": {
+      "text": "Ant. Ant starts with A.",
+      "hash": "888b6c6fe1e058eb",
+      "durationMs": 2671,
+      "bytes": 21985
+    },
+    "en/fact/word-apple": {
+      "text": "Apple. Apple starts with A.",
+      "hash": "0d2a3dae8cc33ef2",
+      "durationMs": 2734,
+      "bytes": 22403
+    },
+    "en/fact/word-arm": {
+      "text": "Arm. Arm starts with A.",
+      "hash": "50e74b3f502d6b69",
+      "durationMs": 2922,
+      "bytes": 23866
+    },
+    "en/fact/word-bag": {
+      "text": "Bag. Bag starts with B.",
+      "hash": "4c062634f28d8c21",
+      "durationMs": 2877,
+      "bytes": 23657
+    },
+    "en/fact/word-bat": {
+      "text": "Bat. Bat starts with B.",
+      "hash": "b9eb2fbb6b77f271",
+      "durationMs": 2993,
+      "bytes": 24493
+    },
+    "en/fact/word-bed": {
+      "text": "Bed. Bed starts with B.",
+      "hash": "f4bc7d936dd86187",
+      "durationMs": 3081,
+      "bytes": 25120
+    },
+    "en/fact/word-box": {
+      "text": "Box. Box starts with B.",
+      "hash": "141c343e256a9ce3",
+      "durationMs": 2997,
+      "bytes": 24493
+    },
+    "en/fact/word-car": {
+      "text": "Car. Car starts with C.",
+      "hash": "18a8db0acd62664b",
+      "durationMs": 2843,
+      "bytes": 23239
+    },
+    "en/fact/word-cat": {
+      "text": "Cat. Cat starts with C.",
+      "hash": "0cd9d14229bea778",
+      "durationMs": 2700,
+      "bytes": 22194
+    },
+    "en/fact/word-cow": {
+      "text": "Cow. Cow starts with C.",
+      "hash": "b6bd0ac4d704bc03",
+      "durationMs": 2824,
+      "bytes": 23239
+    },
+    "en/fact/word-ear": {
+      "text": "Ear. Ear starts with E.",
+      "hash": "227077f624e29f0e",
+      "durationMs": 2815,
+      "bytes": 23030
+    },
+    "en/fact/word-egg": {
+      "text": "Egg. Egg starts with E.",
+      "hash": "41c45cce0fb05c61",
+      "durationMs": 2812,
+      "bytes": 23030
+    },
+    "en/fact/word-elephant": {
+      "text": "Elephant. Elephant starts with E.",
+      "hash": "4dc0719edd7bd81a",
+      "durationMs": 3227,
+      "bytes": 26374
+    },
+    "en/fact/word-fan": {
+      "text": "Fan. Fan starts with F.",
+      "hash": "9bf0cf6b22e8e5fb",
+      "durationMs": 3062,
+      "bytes": 25120
+    },
+    "en/fact/word-feet": {
+      "text": "Feet. Feet starts with F.",
+      "hash": "efe9423409a10d36",
+      "durationMs": 3245,
+      "bytes": 26583
+    },
+    "en/fact/word-fox": {
+      "text": "Fox. Fox starts with F.",
+      "hash": "6c2778311b559682",
+      "durationMs": 2986,
+      "bytes": 24493
+    },
+    "en/fact/word-frog": {
+      "text": "Frog. Frog starts with F.",
+      "hash": "e261215f675f1d2a",
+      "durationMs": 3064,
+      "bytes": 25120
+    },
+    "en/fact/word-hand": {
+      "text": "Hand. Hand starts with H.",
+      "hash": "1faead534be7ecf8",
+      "durationMs": 3157,
+      "bytes": 25747
+    },
+    "en/fact/word-hat": {
+      "text": "Hat. Hat starts with H.",
+      "hash": "e92bd3b1716ce79b",
+      "durationMs": 3092,
+      "bytes": 25329
+    },
+    "en/fact/word-horse": {
+      "text": "Horse. Horse starts with H.",
+      "hash": "b699bfc2e8d8c1f1",
+      "durationMs": 3172,
+      "bytes": 25956
+    },
+    "en/fact/word-lamb": {
+      "text": "Lamb. Lamb starts with L.",
+      "hash": "f3f9b82fe0b7e067",
+      "durationMs": 2971,
+      "bytes": 24284
+    },
+    "en/fact/word-lemon": {
+      "text": "Lemon. Lemon starts with L.",
+      "hash": "fa4e2a8c6a9467b0",
+      "durationMs": 3010,
+      "bytes": 24702
+    },
+    "en/fact/word-lion": {
+      "text": "Lion. Lion starts with L.",
+      "hash": "035411bb0fceeb22",
+      "durationMs": 3091,
+      "bytes": 25329
+    },
+    "en/fact/word-man": {
+      "text": "Man. Man starts with M.",
+      "hash": "b95adccf630e73fc",
+      "durationMs": 3121,
+      "bytes": 25538
+    },
+    "en/fact/word-mat": {
+      "text": "Mat. Mat starts with M.",
+      "hash": "3a8b6386b18c4fe8",
+      "durationMs": 2960,
+      "bytes": 24284
+    },
+    "en/fact/word-mug": {
+      "text": "Mug. Mug starts with M.",
+      "hash": "31842d339f99bad7",
+      "durationMs": 3064,
+      "bytes": 25120
+    },
+    "en/fact/word-teacher": {
+      "text": "Teacher. Teacher starts with T.",
+      "hash": "aaefe26ae17d6d86",
+      "durationMs": 3206,
+      "bytes": 26165
+    },
+    "en/fact/word-tiger": {
+      "text": "Tiger. Tiger starts with T.",
+      "hash": "abd7226701c3c0a9",
+      "durationMs": 3030,
+      "bytes": 24702
+    },
+    "en/fact/word-toy": {
+      "text": "Toy. Toy starts with T.",
+      "hash": "adb6e405b23fba0c",
+      "durationMs": 2922,
+      "bytes": 23866
+    },
+    "en/letter/a": {
+      "text": "A.",
+      "hash": "fa3bddeb2f592d23",
+      "durationMs": 624,
+      "bytes": 5476
+    },
+    "en/letter/b": {
+      "text": "B.",
+      "hash": "4c83355b85f209e8",
+      "durationMs": 655,
+      "bytes": 5894
+    },
+    "en/letter/c": {
+      "text": "C.",
+      "hash": "f747c570eafd772a",
+      "durationMs": 800,
+      "bytes": 6939
+    },
+    "en/letter/e": {
+      "text": "E.",
+      "hash": "a67c461b8827707d",
+      "durationMs": 617,
+      "bytes": 5476
+    },
+    "en/letter/f": {
+      "text": "F.",
+      "hash": "2421127c101872ec",
+      "durationMs": 646,
+      "bytes": 5685
+    },
+    "en/letter/h": {
+      "text": "Aitch.",
+      "hash": "732dd8012d6db3b9",
+      "durationMs": 772,
+      "bytes": 6730
+    },
+    "en/letter/l": {
+      "text": "L.",
+      "hash": "002d62cd1bc1eac7",
+      "durationMs": 619,
+      "bytes": 5476
+    },
+    "en/letter/m": {
+      "text": "M.",
+      "hash": "a3b8f66685c87492",
+      "durationMs": 647,
+      "bytes": 5685
+    },
+    "en/letter/t": {
+      "text": "T.",
+      "hash": "d6a4600caa9e1935",
+      "durationMs": 800,
+      "bytes": 6939
+    },
+    "en/num/1": {
+      "text": "One.",
+      "hash": "241d741979d49bdf",
+      "durationMs": 656,
+      "bytes": 5894
+    },
+    "en/num/2": {
+      "text": "Two.",
+      "hash": "1ef62f5cd5792409",
+      "durationMs": 652,
+      "bytes": 5685
+    },
+    "en/num/3": {
+      "text": "Three.",
+      "hash": "df70ab74e514ffed",
+      "durationMs": 749,
+      "bytes": 6521
+    },
+    "en/num/4": {
+      "text": "Four.",
+      "hash": "74af7164539e124a",
+      "durationMs": 712,
+      "bytes": 6312
+    },
+    "en/num/5": {
+      "text": "Five.",
+      "hash": "7a44437a929269a1",
+      "durationMs": 786,
+      "bytes": 6939
+    },
+    "en/num/6": {
+      "text": "Six.",
+      "hash": "3a50387c6628ebe9",
+      "durationMs": 880,
+      "bytes": 7566
+    },
+    "en/ui/done-good": {
+      "text": "Good job! Let’s practise again.",
+      "hash": "57f2b3a1ed1d5b46",
+      "durationMs": 2493,
+      "bytes": 20523
+    },
+    "en/ui/done-great": {
+      "text": "Amazing! You are a superstar!",
+      "hash": "7ec1767e480424f7",
+      "durationMs": 2885,
+      "bytes": 23657
+    },
+    "en/ui/praise-1": {
+      "text": "Great job!",
+      "hash": "dea45d3eeb00c36b",
+      "durationMs": 1184,
+      "bytes": 10074
+    },
+    "en/ui/praise-2": {
+      "text": "Well done!",
+      "hash": "85ef8ab948657a41",
+      "durationMs": 1186,
+      "bytes": 10074
+    },
+    "en/ui/praise-3": {
+      "text": "Super!",
+      "hash": "ea5705ec2446b768",
+      "durationMs": 932,
+      "bytes": 7984
+    },
+    "en/ui/praise-4": {
+      "text": "Excellent!",
+      "hash": "990ef8a4a6b44b60",
+      "durationMs": 978,
+      "bytes": 8402
+    },
+    "en/word/ant": {
+      "text": "Ant.",
+      "hash": "483b5fa25e3f725f",
+      "durationMs": 735,
+      "bytes": 6521
+    },
+    "en/word/apple": {
+      "text": "Apple.",
+      "hash": "de2807a9f65da3cf",
+      "durationMs": 702,
+      "bytes": 6103
+    },
+    "en/word/arm": {
+      "text": "Arm.",
+      "hash": "39c85d224ed0bb62",
+      "durationMs": 753,
+      "bytes": 6521
+    },
+    "en/word/bag": {
+      "text": "Bag.",
+      "hash": "4be11e99355995ba",
+      "durationMs": 783,
+      "bytes": 6730
+    },
+    "en/word/bat": {
+      "text": "Bat.",
+      "hash": "dd58583f8a8d7904",
+      "durationMs": 737,
+      "bytes": 6521
+    },
+    "en/word/bed": {
+      "text": "Bed.",
+      "hash": "fee1740efc49ef68",
+      "durationMs": 695,
+      "bytes": 6103
+    },
+    "en/word/box": {
+      "text": "Box.",
+      "hash": "7d93aa72e4fa3802",
+      "durationMs": 767,
+      "bytes": 6730
+    },
+    "en/word/car": {
+      "text": "Car.",
+      "hash": "970a642f77980f7e",
+      "durationMs": 756,
+      "bytes": 6521
+    },
+    "en/word/cat": {
+      "text": "Cat.",
+      "hash": "51554d62806446a0",
+      "durationMs": 703,
+      "bytes": 6103
+    },
+    "en/word/cow": {
+      "text": "Cow.",
+      "hash": "8037dd48d54432bb",
+      "durationMs": 728,
+      "bytes": 6312
+    },
+    "en/word/ear": {
+      "text": "Ear.",
+      "hash": "0e87577a6a26af4d",
+      "durationMs": 720,
+      "bytes": 6312
+    },
+    "en/word/egg": {
+      "text": "Egg.",
+      "hash": "1b710416ffa6d891",
+      "durationMs": 664,
+      "bytes": 5894
+    },
+    "en/word/elephant": {
+      "text": "Elephant.",
+      "hash": "409d56b8edd50924",
+      "durationMs": 939,
+      "bytes": 7984
+    },
+    "en/word/fan": {
+      "text": "Fan.",
+      "hash": "3502bd3767820530",
+      "durationMs": 757,
+      "bytes": 6521
+    },
+    "en/word/feet": {
+      "text": "Feet.",
+      "hash": "d2a0cbdca70bb51a",
+      "durationMs": 807,
+      "bytes": 6939
+    },
+    "en/word/fox": {
+      "text": "Fox.",
+      "hash": "4dfadb510ccc539e",
+      "durationMs": 834,
+      "bytes": 7148
+    },
+    "en/word/frog": {
+      "text": "Frog.",
+      "hash": "6cde9cde214bb69a",
+      "durationMs": 851,
+      "bytes": 7357
+    },
+    "en/word/hand": {
+      "text": "Hand.",
+      "hash": "9a7b79d5e467dac5",
+      "durationMs": 763,
+      "bytes": 6730
+    },
+    "en/word/hat": {
+      "text": "Hat.",
+      "hash": "08c28e086e4c8efe",
+      "durationMs": 717,
+      "bytes": 6312
+    },
+    "en/word/horse": {
+      "text": "Horse.",
+      "hash": "f1577762f0939ce1",
+      "durationMs": 859,
+      "bytes": 7357
+    },
+    "en/word/lamb": {
+      "text": "Lamb.",
+      "hash": "1441e7caa9514fdf",
+      "durationMs": 815,
+      "bytes": 7148
+    },
+    "en/word/lemon": {
+      "text": "Lemon.",
+      "hash": "1fde2982d1931147",
+      "durationMs": 769,
+      "bytes": 6730
+    },
+    "en/word/lion": {
+      "text": "Lion.",
+      "hash": "7e0b135152a28878",
+      "durationMs": 799,
+      "bytes": 6939
+    },
+    "en/word/man": {
+      "text": "Man.",
+      "hash": "f5c9f1eef9607e09",
+      "durationMs": 772,
+      "bytes": 6730
+    },
+    "en/word/mat": {
+      "text": "Mat.",
+      "hash": "4eaf7b04d02dbba6",
+      "durationMs": 782,
+      "bytes": 6730
+    },
+    "en/word/mug": {
+      "text": "Mug.",
+      "hash": "dc673d7c01a83853",
+      "durationMs": 732,
+      "bytes": 6521
+    },
+    "en/word/teacher": {
+      "text": "Teacher.",
+      "hash": "387864afce2daaa3",
+      "durationMs": 753,
+      "bytes": 6521
+    },
+    "en/word/tiger": {
+      "text": "Tiger.",
+      "hash": "6157d619d7907623",
+      "durationMs": 880,
+      "bytes": 7566
+    },
+    "en/word/toy": {
+      "text": "Toy.",
+      "hash": "72fd7a8ffbc44f09",
+      "durationMs": 700,
+      "bytes": 6103
+    }
+  }
+}
