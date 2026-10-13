@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { DRAWINGS } from '../../src/art/drawings'
-import { FACTS, LETTERS, QUESTIONS, QUIZ_ID, TEST_WORDS, TOPICS, WORD_ART, audioCues, clip, roundClips } from '../../src/data/catalog'
+import { CHEERS, FACTS, LETTERS, QUESTIONS, QUIZ_ID, RETRIES, TEST_WORDS, TOPICS, WORD_ART, WORD_MEANING, audioCues, clip, phrasings, roundClips } from '../../src/data/catalog'
 import { PRACTICE_SIZE } from '../../src/domain/round'
 
 const allArt = [
@@ -145,7 +145,9 @@ describe('narration', () => {
   })
 
   it('speaks to every child the same way (no girl- or boy-only words)', () => {
-    const gendered = /أحسنتي|شطورة|بطلة|عليج|إنتي|أنتي|تبين|تعلمي|تدربي|اسمعي|حاولي|اختاري|شطور|بطل|عليك|اختار|اسمع|حاول|تبي /
+    // Whole words only: «محاولة» (an attempt) is fine, «حاول» (try, to a boy) is not.
+    const words = ['أحسنتي', 'شطورة', 'بطلة', 'عليج', 'إنتي', 'أنتي', 'تبين', 'تعلمي', 'تدربي', 'اسمعي', 'حاولي', 'اختاري', 'شطور', 'بطل', 'عليك', 'اختار', 'اسمع', 'حاول', 'تبي']
+    const gendered = new RegExp(`(?<![\\u0600-\\u06FF])(${words.join('|')})(?![\\u0600-\\u06FF])`)
     for (const cue of audioCues().filter((c) => c.lang === 'ar')) expect(cue.text, cue.id).not.toMatch(gendered)
     for (const q of QUESTIONS) expect(q.prompt, q.key).not.toMatch(gendered)
   })
@@ -164,3 +166,50 @@ describe('narration', () => {
     for (const topic of TOPICS) expect(recorded.has(clip.topic(topic.id)), topic.id).toBe(true)
   })
 })
+
+describe('variety and complete questions', () => {
+  const cues = new Map(audioCues().map((cue) => [cue.id, cue.text]))
+
+  it('ends every question with a complete Arabic sentence, never a trailing phrase', () => {
+    for (const q of QUESTIONS) {
+      const last = q.ask.at(-1)!
+      expect(last.startsWith('ar/'), q.key).toBe(true)
+      expect(cues.get(last), q.key).toMatch(/[؟.!]$/)
+      expect(cues.get(last), q.key).not.toMatch(/…$/)
+    }
+  })
+
+  it('has many cheers in English and Arabic, and several kind words after a miss', () => {
+    expect(CHEERS.length).toBeGreaterThanOrEqual(16)
+    expect(CHEERS.some((cheer) => cheer.lang === 'ar')).toBe(true)
+    expect(new Set(CHEERS.map((cheer) => cheer.text)).size).toBe(CHEERS.length)
+    expect(RETRIES.length).toBeGreaterThanOrEqual(5)
+  })
+
+  it('can explain every answer in more than one way', () => {
+    for (const q of QUESTIONS) {
+      for (const id of q.facts) {
+        const fact = FACTS.find((f) => f.id === id)!
+        const ways = phrasings(fact)
+        expect(ways.length, id).toBeGreaterThanOrEqual(3)
+        expect(new Set(ways.map((way) => way.say)).size, id).toBe(ways.length)
+      }
+    }
+  })
+
+  it('gives the Arabic meaning of every word a question uses', () => {
+    for (const q of QUESTIONS) {
+      for (const id of q.facts.filter((f) => f.startsWith('word-'))) {
+        const word = id.slice(5)
+        expect(WORD_MEANING[word], word).toBeTruthy()
+        expect(cues.has(clip.meaning(word)), word).toBe(true)
+      }
+    }
+  })
+
+  it('preloads every phrasing a round can play', () => {
+    const recorded = new Set(cues.keys())
+    for (const id of roundClips(QUESTIONS)) expect(recorded.has(id), id).toBe(true)
+  })
+})
+

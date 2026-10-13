@@ -1,6 +1,8 @@
 import { audioContext } from './context'
 
-const AUDIO_REVISION = 'maryam-v4-2026-10-13'
+const AUDIO_REVISION = 'maryam-alice-v4-2026-10-14'
+// A clip that fails to download (a weak connection) is tried again before it is skipped.
+const LOAD_ATTEMPTS = 3
 const OPTION_GAP_MS = 320
 const LOAD_CONCURRENCY = 6
 
@@ -111,15 +113,18 @@ export class Narrator {
   private async fetchAndDecode(clip: string): Promise<AudioBuffer | null> {
     const ctx = audioContext()
     if (!ctx) return null
-    try {
-      const response = await fetch(this.url(clip))
-      if (!response.ok) throw new Error(`Missing clip ${clip}`)
-      const data = await response.arrayBuffer()
-      return await ctx.decodeAudioData(data)
-    } catch {
-      this.buffers.delete(clip)
-      return null
+    for (let attempt = 1; attempt <= LOAD_ATTEMPTS; attempt += 1) {
+      try {
+        const response = await fetch(this.url(clip))
+        if (!response.ok) throw new Error(`Missing clip ${clip}`)
+        const data = await response.arrayBuffer()
+        return await ctx.decodeAudioData(data)
+      } catch {
+        if (attempt < LOAD_ATTEMPTS) await wait(300 * attempt)
+      }
     }
+    this.buffers.delete(clip)
+    return null
   }
 
   private playBuffer(buffer: AudioBuffer): Promise<void> {

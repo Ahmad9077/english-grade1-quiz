@@ -2,7 +2,15 @@ import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'rea
 import { Art } from '../art/Art'
 import { useNarrator } from '../audio/NarratorContext'
 import { sfx } from '../audio/sfx'
-import { FACTS, TOPICS, clip, type TopicId } from '../data/catalog'
+import { FACTS, TOPICS, clip, type Fact, type TopicId } from '../data/catalog'
+
+/** A card's explanation, then the word's meaning in Arabic when it has one. */
+function cardCues(fact: Fact) {
+  return [
+    { clip: clip.fact(fact.id), gap: 250 },
+    ...(fact.meaning && fact.words?.[0] ? [{ clip: clip.meaning(fact.words[0]), gap: 250 }] : []),
+  ]
+}
 import { toneStyle } from '../data/tones'
 import { arabicNumber } from '../domain/format'
 import { ArrowIcon, BackButton, BigButton, SpeakerButton, WordCard, order } from './ui'
@@ -28,7 +36,7 @@ export function LearnScreen({ topic, onBack, onDone, onPractice }: LearnScreenPr
 
   useEffect(() => {
     if (fact) {
-      void narrator.play([{ clip: clip.fact(fact.id), gap: 250 }])
+      void narrator.play(cardCues(fact))
     } else {
       onDone()
       sfx.fanfare()
@@ -83,7 +91,7 @@ export function LearnScreen({ topic, onBack, onDone, onPractice }: LearnScreenPr
             <span key={entry.id} className={`dot ${n === index ? 'is-current' : n < index ? 'is-done' : ''}`} />
           ))}
         </div>
-        {fact ? <SpeakerButton onClick={() => void narrator.play([{ clip: clip.fact(fact.id) }])} label="إعادة الشرح" /> : <span className="spacer" />}
+        {fact ? <SpeakerButton onClick={() => void narrator.play(cardCues(fact))} label="إعادة الشرح" /> : <span className="spacer" />}
       </header>
 
       <div className="learn-stage">
@@ -115,6 +123,11 @@ export function LearnScreen({ topic, onBack, onDone, onPractice }: LearnScreenPr
             <p className="learn-text" dir="ltr">
               {fact.text}
             </p>
+            {fact.meaning && fact.words?.[0] ? (
+              <p className="learn-meaning">
+                <bdi dir="ltr">{fact.words[0]}</bdi> يعني {fact.meaning}
+              </p>
+            ) : null}
           </article>
         ) : (
           <article key="done" className="learn-card learn-done card-in-next">

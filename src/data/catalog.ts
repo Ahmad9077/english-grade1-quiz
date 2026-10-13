@@ -60,13 +60,20 @@ export interface Question {
   skills: string[]
 }
 
-export interface Fact {
-  id: string
-  topic: TopicId
+export interface Phrasing {
   /** Shown on screen: English, in the reading font. */
   text: string
   /** Spoken in English by Alice. */
   say: string
+}
+
+export interface Fact extends Phrasing {
+  id: string
+  topic: TopicId
+  /** Other ways to say the same thing, so explanations do not repeat word for word. */
+  more: Phrasing[]
+  /** The word's meaning in Arabic, spoken after the explanation. */
+  meaning?: string
   art: ArtRef[]
   /** Book words shown as labelled pictures, first letter in colour. */
   words?: string[]
@@ -97,6 +104,19 @@ export const WORD_ART: Record<string, ArtRef> = {
 
 export const TEST_WORDS = ['box', 'ant', 'mug', 'lamb', 'bat'] as const
 
+/** What each word means, said in Arabic after its explanation. */
+export const WORD_MEANING: Record<string, string> = {
+  ant: 'نملة', apple: 'تفاحة', arm: 'ذراع',
+  box: 'صندوق', bat: 'خفاش', bed: 'سرير', bag: 'شنطة',
+  car: 'سيارة', cat: 'قطوة', cow: 'بقرة',
+  egg: 'بيضة', elephant: 'فيل', ear: 'إذن',
+  fan: 'مروحة', fox: 'ثعلب', frog: 'ضفدع', feet: 'أقدام',
+  hat: 'قبعة', horse: 'حصان', hand: 'إيد',
+  lamb: 'خروف صغير', lion: 'أسد', lemon: 'ليمون',
+  mug: 'كوب', man: 'رجل', mat: 'سجادة صغيرة',
+  tiger: 'نمر', toy: 'لعبة',
+}
+
 /** Letters in the order the test favours: this unit first, then unit 1. */
 export const LETTERS = ['f', 'm', 'b', 'a', 'l', 'c', 'e', 'h', 't'] as const
 
@@ -124,8 +144,9 @@ export const clip = {
   letter: (letter: string) => `en/letter/${letter.toLowerCase()}`,
   word: (word: string) => `en/word/${word}`,
   number: (n: number) => `en/num/${n}`,
-  fact: (id: string) => `en/fact/${id}`,
-  praise: (n: 1 | 2 | 3 | 4) => `en/ui/praise-${n}`,
+  /** Phrasing 0 is the main explanation; 1 and 2 are the alternatives. */
+  fact: (id: string, phrasing = 0) => (phrasing === 0 ? `en/fact/${id}` : `en/fact/${id}-${phrasing + 1}`),
+  meaning: (word: string) => `ar/mean/${word}`,
   en: (id: EnUiClip) => `en/ui/${id}`,
   ask: (id: AskClip) => `ar/q/${id}`,
   count: (thing: Countable) => `ar/q/count-${thing}`,
@@ -136,7 +157,18 @@ export const clip = {
 // ── Facts: learn cards and explanations ──────────────────────────────────
 function caseFact(letter: string): Fact {
   const big = letter.toUpperCase()
-  return { id: `case-${letter}`, topic: 'case', text: `Big ${big}, small ${letter}`, say: `Big ${big}… small ${letter}.`, art: [`txt:${big}`, `txt:${letter}`], learn: true }
+  return {
+    id: `case-${letter}`,
+    topic: 'case',
+    text: `Big ${big}, small ${letter}`,
+    say: `Big ${big}… small ${letter}.`,
+    more: [
+      { text: `${big} and ${letter} are the same letter.`, say: `${big} and ${letter}… the same letter, big and small.` },
+      { text: `Capital ${big}, lowercase ${letter}`, say: `This is capital ${big}… and this is lowercase ${letter}.` },
+    ],
+    art: [`txt:${big}`, `txt:${letter}`],
+    learn: true,
+  }
 }
 
 const LETTER_WORDS: Record<string, string[]> = {
@@ -155,16 +187,23 @@ function letterFact(letter: string): Fact {
   const words = LETTER_WORDS[letter]!
   const big = letter.toUpperCase()
   const say = `${big} is for ${words.slice(0, -1).join(', ')} and ${words.at(-1)}.`
-  return { id: `letter-${letter}`, topic: 'letters', text: say, say, art: [`txt:${big}${letter}`], words, learn: true }
+  return { id: `letter-${letter}`, topic: 'letters', text: say, say, more: [], art: [`txt:${big}${letter}`], words, learn: true }
 }
 
 function wordFact(word: string): Fact {
   const learn = (TEST_WORDS as readonly string[]).includes(word)
+  const big = word.charAt(0).toUpperCase()
+  const [first, second] = Object.keys(WORD_ART).filter((other) => other !== word && other.charAt(0) === word.charAt(0))
   return {
     id: `word-${word}`,
     topic: 'missing',
-    text: `${cap(word)} starts with ${word.charAt(0).toUpperCase()}.`,
-    say: `${cap(word)}. ${cap(word)} starts with ${word.charAt(0).toUpperCase()}.`,
+    text: `${cap(word)} starts with ${big}.`,
+    say: `${cap(word)}. ${cap(word)} starts with ${big}.`,
+    more: [
+      { text: `${big} is for ${word}!`, say: `${big}… ${big} is for ${word}!` },
+      { text: `${cap(word)} starts with ${big}, like ${first} and ${second}.`, say: `${cap(word)} starts with ${big}… just like ${first}, and ${second}.` },
+    ],
+    meaning: WORD_MEANING[word],
     art: [],
     words: [word],
     learn,
@@ -175,11 +214,19 @@ function countFact(n: number, thing: Countable, learn = false): Fact {
   const { art, one, many } = COUNTABLES[thing]
   const counting = NUMBER_WORDS.slice(1, n + 1).map(cap).join(', ')
   const name = n === 1 ? one : many
+  const word = NUMBER_WORDS[n]!
   return {
     id: `count-${n}-${thing}`,
     topic: 'numbers',
     text: `${n} ${name}`,
-    say: n === 1 ? `One. One ${name}!` : `${counting}. ${cap(NUMBER_WORDS[n]!)} ${name}!`,
+    say: n === 1 ? `One. One ${name}!` : `${counting}. ${cap(word)} ${name}!`,
+    more: [
+      // "I can see …" is the book's own sentence (Unit 1, page 20).
+      { text: `I can see ${word} ${name}.`, say: `${cap(word)}! I can see ${word} ${name}.` },
+      n === 1
+        ? { text: `There is one ${name}.`, say: `Let's count… one! There is one ${name}.` }
+        : { text: `There are ${word} ${name}.`, say: `Let's count… ${counting.toLowerCase()}. There are ${word} ${name}!` },
+    ],
     art: [`txt:${n}`, `count:${art}:${n}`],
     learn,
   }
@@ -250,7 +297,7 @@ function wordOption(word: string): Option {
 /** Letter shown, pick the picture that starts with it. */
 function picFor(letter: string, word: string, others: string[], extra: Extra): Question {
   return {
-    ...base(`${letter}-${word}`, 'letters', 'pick', 'أي صورة تبدأ بهذا الحرف؟', [clip.ask('pic-for-letter'), clip.letter(letter)], extra),
+    ...base(`${letter}-${word}`, 'letters', 'pick', 'أي صورة تبدأ بهذا الحرف؟', [clip.letter(letter), clip.ask('pic-for-letter')], extra),
     subject: `txt:${letter.toUpperCase()}${letter}`,
     options: [word, ...others].map(wordOption),
     answer: word,
@@ -262,7 +309,7 @@ function picFor(letter: string, word: string, others: string[], extra: Extra): Q
 function letterFor(word: string, others: string[], extra: Extra): Question {
   const letter = word.charAt(0)
   return {
-    ...base(word, 'letters', 'pick', 'بأي حرف تبدأ الكلمة؟', [clip.ask('letter-for-pic'), clip.word(word)], extra),
+    ...base(word, 'letters', 'pick', 'بأي حرف تبدأ الكلمة؟', [clip.word(word), clip.ask('letter-for-pic')], extra),
     subject: WORD_ART[word]!,
     options: [letter, ...others].map((l) => letterOption(l)),
     answer: letter,
@@ -274,7 +321,7 @@ function letterFor(word: string, others: string[], extra: Extra): Question {
 function missing(word: string, others: string[], extra: Extra): Question {
   const letter = word.charAt(0)
   return {
-    ...base(word, 'missing', 'pick', 'شنو الحرف الناقص؟', [clip.ask('missing'), clip.word(word)], extra),
+    ...base(word, 'missing', 'pick', 'شنو الحرف الناقص؟', [clip.word(word), clip.ask('missing')], extra),
     subject: WORD_ART[word]!,
     blank: word.slice(1),
     options: [letter, ...others].map((l) => letterOption(l)),
@@ -301,7 +348,7 @@ function countQ(thing: Countable, n: number, others: number[], extra: Extra): Qu
 /** Number shown, pick the picture with that many (pictures not read: that would count for the child). */
 function findNumber(n: number, thing: Countable, others: number[], extra: Extra): Question {
   return {
-    ...base(`find-${n}`, 'numbers', 'pick', 'وين الصورة اللي فيها هذا العدد؟', [clip.ask('find-number'), clip.number(n)], extra),
+    ...base(`find-${n}`, 'numbers', 'pick', 'وين الصورة اللي فيها هذا العدد؟', [clip.number(n), clip.ask('find-number')], extra),
     subject: `txt:${n}`,
     options: [n, ...others].map((m) => ({ id: String(m), art: `count:${COUNTABLES[thing].art}:${m}`, label: `${m}` })),
     answer: String(n),
@@ -437,10 +484,10 @@ export const QUESTIONS: Question[] = [
 export const ASK_CLIPS = {
   'find-small': 'وين الحرف الصغير؟',
   'find-big': 'وين الحرف الكبير؟',
-  'pic-for-letter': 'أي صورة تبدأ بحرف…',
-  'letter-for-pic': 'بأي حرف تبدأ كلمة…',
-  missing: 'شنو الحرف الناقص في أول كلمة…',
-  'find-number': 'وين الصورة اللي فيها…',
+  'pic-for-letter': 'أي صورة تبدأ بهذا الحرف؟',
+  'letter-for-pic': 'بأي حرف تبدأ هذي الكلمة؟',
+  missing: 'شنو الحرف الناقص في أول هذي الكلمة؟',
+  'find-number': 'وين الصورة اللي فيها هذا الرقم؟',
   'match-case': 'نوصل كل حرف كبير… بالحرف الصغير مثله.',
   'match-pic': 'نوصل كل حرف… بالصورة اللي تبدأ فيه.',
   'match-num': 'نوصل كل رقم… بالصورة اللي فيها نفس العدد.',
@@ -450,10 +497,24 @@ export type AskClip = keyof typeof ASK_CLIPS
 
 export const AR_UI_CLIPS = {
   welcome: 'هلا والله! يلا نتدرب على الإنجليزي… نختار درس، ونبدأ.',
-  'correct-is': 'الجواب الصح…',
   'test-intro': 'هذا اختبار تجريبي… فيه أسئلة من كل الدروس. يلا نبدأ!',
   'learn-done': 'خلصنا الدرس! يلا نتدرب.',
   'match-wrong': 'لا… نجرب مرة ثانية.',
+  'match-left-first': 'نختار من جهة اليسار أول… وبعدين الجواب.',
+  'review': 'خلنا نتذكر مع بعض…',
+  // Arabic cheers, mixed in with the English ones.
+  'cheer-1': 'كفو!',
+  'cheer-2': 'ما شاء الله! صح.',
+  'cheer-3': 'واو! جواب صح!',
+  'cheer-4': 'برافو! جواب ممتاز.',
+  'cheer-5': 'الله! جواب حلو.',
+  'cheer-6': 'تمام التمام!',
+  // After a wrong answer: encourage, then give the right answer.
+  'retry-1': 'مو مشكلة… الجواب الصح…',
+  'retry-2': 'قربنا! الجواب الصح…',
+  'retry-3': 'خلنا نتعلمها مع بعض… الجواب الصح…',
+  'retry-4': 'محاولة حلوة! الجواب الصح…',
+  'retry-5': 'نشوف مع بعض… الجواب الصح…',
 } as const
 
 export type ArUiClip = keyof typeof AR_UI_CLIPS
@@ -463,11 +524,45 @@ export const EN_UI_CLIPS = {
   'praise-2': 'Well done!',
   'praise-3': 'Super!',
   'praise-4': 'Excellent!',
+  'praise-5': 'Awesome!',
+  'praise-6': 'Fantastic!',
+  'praise-7': 'You got it!',
+  'praise-8': 'Brilliant!',
+  'praise-9': 'Wonderful!',
+  'praise-10': 'Perfect!',
+  'praise-11': 'Good thinking!',
+  'praise-12': 'Yes! That’s right!',
   'done-great': 'Amazing! You are a superstar!',
   'done-good': 'Good job! Let’s practise again.',
 } as const
 
 export type EnUiClip = keyof typeof EN_UI_CLIPS
+
+export interface Cheer {
+  text: string
+  clip: string
+  lang: 'ar' | 'en'
+}
+
+/** Every cheer, English and Arabic; the quiz picks one at random, never a recent one. */
+export const CHEERS: Cheer[] = [
+  ...(Object.keys(EN_UI_CLIPS) as EnUiClip[])
+    .filter((id) => id.startsWith('praise-'))
+    .map((id) => ({ text: EN_UI_CLIPS[id], clip: clip.en(id), lang: 'en' as const })),
+  ...(Object.keys(AR_UI_CLIPS) as ArUiClip[])
+    .filter((id) => id.startsWith('cheer-'))
+    .map((id) => ({ text: AR_UI_CLIPS[id], clip: clip.ui(id), lang: 'ar' as const })),
+]
+
+/** Encouragement before the right answer is shown. */
+export const RETRIES = (Object.keys(AR_UI_CLIPS) as ArUiClip[])
+  .filter((id) => id.startsWith('retry-'))
+  .map((id) => ({ text: AR_UI_CLIPS[id].replace('الجواب الصح…', '').replace('…', '').trim(), clip: clip.ui(id) }))
+
+/** All the ways a fact can be said, each with its clip. */
+export function phrasings(fact: Fact): (Phrasing & { clip: string })[] {
+  return [fact, ...fact.more].map((phrasing, n) => ({ text: phrasing.text, say: phrasing.say, clip: clip.fact(fact.id, n) }))
+}
 
 const LETTER_NAMES: Record<string, string> = { h: 'Aitch.' }
 
@@ -490,7 +585,8 @@ export function audioCues(): AudioCue[] {
     ...LETTERS.map((letter) => en(clip.letter(letter), LETTER_NAMES[letter] ?? `${letter.toUpperCase()}.`)),
     ...words.map((word) => en(clip.word(word), `${cap(word)}.`)),
     ...[1, 2, 3, 4, 5, 6].map((n) => en(clip.number(n), `${cap(NUMBER_WORDS[n]!)}.`)),
-    ...FACTS.map((fact) => en(clip.fact(fact.id), fact.say)),
+    ...FACTS.flatMap((fact) => phrasings(fact).map((phrasing) => en(phrasing.clip, phrasing.say))),
+    ...Object.entries(WORD_MEANING).map(([word, meaning]) => ar(clip.meaning(word), `يعني… ${meaning}.`)),
     ...(Object.keys(EN_UI_CLIPS) as EnUiClip[]).map((id) => en(clip.en(id), EN_UI_CLIPS[id])),
     ...(Object.keys(ASK_CLIPS) as AskClip[]).map((id) => ar(clip.ask(id), ASK_CLIPS[id])),
     ...(Object.keys(COUNTABLES) as Countable[]).map((thing) => ar(clip.count(thing), COUNTABLES[thing].ar)),
@@ -506,14 +602,16 @@ export function roundClips(questions: Question[]): string[] {
       ...question.ask,
       ...question.options.flatMap((option) => (option.clip ? [option.clip] : [])),
       ...question.pairs.map((pair) => pair.clip),
-      ...question.facts.map(clip.fact),
+      ...question.facts.flatMap((id) => {
+        const fact = factById(id)
+        return [...phrasings(fact).map((phrasing) => phrasing.clip), ...(fact.meaning ? [clip.meaning(id.replace('word-', ''))] : [])]
+      }),
     ]),
-    clip.ui('correct-is'),
     clip.ui('match-wrong'),
-    clip.praise(1),
-    clip.praise(2),
-    clip.praise(3),
-    clip.praise(4),
+    clip.ui('match-left-first'),
+    clip.ui('review'),
+    ...CHEERS.map((cheer) => cheer.clip),
+    ...RETRIES.map((retry) => retry.clip),
     clip.en('done-great'),
     clip.en('done-good'),
   ]

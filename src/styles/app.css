@@ -2418,3 +2418,67 @@ p {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Feedback extras: a kind word before the right answer, and the word's meaning. */
+.feedback-encourage {
+  margin: 0;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+}
+
+.feedback-title.cheer-en {
+  font-family: var(--font-latin);
+  font-weight: 700;
+}
+
+.feedback-meaning,
+.learn-meaning {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 800;
+  color: var(--deep);
+}
+
+.feedback-meaning {
+  font-size: 1.05rem;
+}
+
+.learn-meaning {
+  margin: 0;
+  padding: 2px 16px;
+  border-radius: 999px;
+  background: var(--tint);
+  font-size: 1.3rem;
+}
+
+.learn-meaning bdi,
+.feedback-meaning bdi {
+  font-family: var(--font-latin);
+  font-weight: 700;
+}
+
+/* Matching: the right column waits until something on the left is chosen. */
+.match-item.is-waiting {
+  opacity: 0.72;
+}
+
+.match-column-left.nudge .match-item:not(.is-matched) {
+  animation: nudge 0.6s ease-in-out;
+}
+
+@keyframes nudge {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px) scale(1.03); }
+  60% { transform: translateX(6px) scale(1.03); }
+}
+
+@media (min-width: 760px) {
+  .feedback-meaning {
+    font-size: 1.3rem;
+  }
+
+  .learn-meaning {
+    font-size: 1.7rem;
+  }
+}

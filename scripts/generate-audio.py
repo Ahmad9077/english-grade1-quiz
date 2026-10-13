@@ -31,7 +31,7 @@ SETTINGS = {'stability': 0.5, 'similarity_boost': 0.8, 'style': 0.2}
 # Explanations and single letters are read a little slower so a young learner can follow them.
 SPEED = {
     'en/fact/': 0.88, 'en/letter/': 0.9, 'en/word/': 0.9, 'en/num/': 0.92, 'en/ui/': 0.95,
-    'ar/q/': 0.94, 'ar/t/': 0.92, 'ar/ui/': 0.96,
+    'ar/q/': 0.94, 'ar/t/': 0.92, 'ar/ui/': 0.96, 'ar/mean/': 0.94,
 }
 SAFETY_MARGIN = 400
 CREDITS_PER_CHAR = 0.34

@@ -67,6 +67,13 @@ test('the matching board joins pairs with lines and counts a mistake', async ({ 
       const key = await page.locator('section.question').last().getAttribute('data-question-key')
       const isBoard = QUESTIONS.find((q) => q.key === key)?.kind === 'match'
       const correct = !(isBoard && boards === 0)
+      if (isBoard) {
+        // The right column answers the left: tapping it first only points back to the left.
+        await page.locator('section.question .match-right').first().click()
+        await expect(page.locator('section.question .match-column-left.nudge')).toHaveCount(1)
+        await expect(page.locator('section.question .match-item.is-selected')).toHaveCount(0)
+        await expect(page.locator('section.question .match-item.shake')).toHaveCount(0)
+      }
       await answer(page, correct)
       if (isBoard) {
         boards += 1
