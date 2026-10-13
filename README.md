@@ -14,7 +14,8 @@ Arabic instructions are spoken by Maryam (Kuwaiti); English letters, words and p
 chosen by the family on 2026-10-13). One copy for every child: the wording never speaks to a girl or a boy.
 
 ## Status
-Preview only (13 October 2026): not published, not connected to the Hub, not assigned to any account.
+Published and connected to the Hub (14 October 2026) at https://ahmad9077.github.io/english-grade1-quiz/.
+Not assigned to any account yet. Release details: `integration/hub-catalog-entry.md`.
 
 ## Development
 ```bash
