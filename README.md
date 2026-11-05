@@ -39,9 +39,10 @@ pairs. 130 clips were recorded on 5 November 2026 (about 3,100 characters) and c
 One copy for every child: the wording never speaks to a girl or a boy.
 
 ## Status
-Preview only (5 November 2026): not published. The live site and the Hub still show the first test
-until the update is approved. Publishing needs migration 024 (`integration/seed-english-grade1.sql`),
-which removes the first test's question profiles and registers the new ones. Not assigned to any account.
+Published and connected on 5 November 2026 (approved: «اعتمد وانشر»): live at
+https://haya-nt3lm.com/english-grade1-quiz/, Hub migration 024 applied (155 question profiles; the first
+test's profiles removed, results kept). Assignments unchanged: the accounts that already had «English»
+get the new test. Details in `integration/hub-catalog-entry.md`.
 
 ## Development
 ```bash
