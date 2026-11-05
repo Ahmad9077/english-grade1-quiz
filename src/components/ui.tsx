@@ -1,7 +1,5 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
-import { Art } from '../art/Art'
 import { useNarrator } from '../audio/NarratorContext'
-import { WORD_ART } from '../data/catalog'
 import { arabicNumber } from '../domain/format'
 
 /** Stagger index for the CSS entrance animations (`.rise`, `.pop`). */
@@ -122,22 +120,5 @@ export function ArrowIcon({ direction }: { direction: 'next' | 'previous' }) {
     <svg className="arrow-icon" viewBox="0 0 24 24" aria-hidden="true">
       <path d={direction === 'next' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7'} />
     </svg>
-  )
-}
-
-/** A book word: its picture with the word under it, first letter in colour (as in the book). */
-export function WordCard({ word, showWord = true }: { word: string; showWord?: boolean }) {
-  return (
-    <span className="word-card">
-      <span className="word-card-art">
-        <Art art={WORD_ART[word] ?? '❓'} />
-      </span>
-      {showWord ? (
-        <span className="word-label" dir="ltr">
-          <span className="first-letter">{word.charAt(0)}</span>
-          {word.slice(1)}
-        </span>
-      ) : null}
-    </span>
   )
 }

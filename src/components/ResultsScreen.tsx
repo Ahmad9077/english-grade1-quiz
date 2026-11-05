@@ -3,7 +3,7 @@ import { Art } from '../art/Art'
 import { burst } from '../art/confetti'
 import { useNarrator } from '../audio/NarratorContext'
 import { sfx } from '../audio/sfx'
-import { QUESTIONS, clip, factById } from '../data/catalog'
+import { FORMATS, QUESTIONS, clip } from '../data/catalog'
 import { TONES, toneStyle } from '../data/tones'
 import { arabicNumber } from '../domain/format'
 import { starsFor } from '../domain/round'
@@ -75,17 +75,18 @@ export function ResultsScreen({ round, attempts, onAgain, onHome }: ResultsProps
           <h2 className="review-title">خلينا نتذكر</h2>
           <ul className="review-list">
             {missed.map((question) => {
-              const facts = question.facts.map(factById)
-              const art = question.subject ?? facts[0]?.art.at(-1) ?? '💡'
+              const art = question.subject ?? question.pairs[0]?.bottom ?? (question.text ? `txt:${question.text.split(' ')[0]}` : '💡')
               return (
                 <li key={question.key} className="review-item" style={toneStyle(question.topic)}>
                   <span className="review-art" aria-hidden="true">
                     <Art art={art} />
                   </span>
                   <span className="review-text">
-                    <span className="review-q">{question.prompt}</span>
+                    <span className="review-q" dir="ltr">
+                      {FORMATS[question.format].instruction}
+                    </span>
                     <span className="review-fact" dir="ltr">
-                      {facts.map((fact) => fact.text).join(' · ')}
+                      {question.word ?? question.text ?? (question.format === 'word' ? question.answer : FORMATS[question.format].help)}
                     </span>
                   </span>
                 </li>

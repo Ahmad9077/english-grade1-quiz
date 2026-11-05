@@ -4,22 +4,16 @@ import { celebrate } from '../art/confetti'
 import { useNarrator } from '../audio/NarratorContext'
 import type { Cue } from '../audio/player'
 import { sfx } from '../audio/sfx'
-import { CHEERS, RETRIES, clip, factById, phrasings, roundClips, type Cheer, type Option, type Pair, type Question } from '../data/catalog'
+import { CHEERS, FORMATS, RETRIES, clip, roundClips, type Cheer, type Option, type Pair, type Question } from '../data/catalog'
 import { TONES, toneStyle, type ToneId } from '../data/tones'
 import { arabicNumber } from '../domain/format'
-import { arrangeOptions, shuffle } from '../domain/round'
+import { arrangeOptions, shuffle, testSlot } from '../domain/round'
 import type { Attempt } from '../hub/bridge'
+import { TraceBoard, WordStrip } from './TraceBoard'
 import { ArrowIcon, BigButton, CloseButton, SpeakerButton, StarIcon, order } from './ui'
 
 /** Cheers rest for this many answers before they can come back. */
 const CHEER_REST = 6
-
-/** A stable number from text, so each round can say an explanation a different way. */
-function spread(text: string): number {
-  let hash = 0
-  for (const char of text) hash = (hash * 31 + char.charCodeAt(0)) >>> 0
-  return hash
-}
 
 /** A random item that was not used recently; the pick joins the recent list. */
 function fresh<T>(items: readonly T[], recent: T[], rest: number): T {
@@ -55,7 +49,6 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
   const [index, setIndex] = useState(0)
   const [phase, setPhase] = useState<Phase>('asking')
   const [chosen, setChosen] = useState<string | null>(null)
-  const [speakingOption, setSpeakingOption] = useState<string | null>(null)
   const [attempts, setAttempts] = useState<Attempt[]>([])
   const [cheer, setCheer] = useState<Cheer>(CHEERS[0]!)
   const [retry, setRetry] = useState(RETRIES[0]!)
@@ -63,39 +56,16 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
   const recentRetries = useRef<(typeof RETRIES)[number][]>([])
   const [confirmExit, setConfirmExit] = useState(false)
   const tileRefs = useRef(new Map<string, HTMLButtonElement>())
-  const optionsRef = useRef<HTMLDivElement>(null)
+  const bodyRef = useRef<HTMLDivElement>(null)
 
   const question = round.questions[index]!
   const options = useMemo(() => arrangeOptions(question), [question])
-  // Each explanation is said one of its ways, picked afresh for every question.
-  const facts = useMemo(
-    () =>
-      question.facts.map((id) => {
-        const fact = factById(id)
-        const options = phrasings(fact)
-        return { ...options[spread(`${round.id}:${question.key}:${id}`) % options.length]!, id, word: fact.words?.[0], meaning: fact.meaning }
-      }),
-    [question, round.id],
-  )
-  const correctOption = question.options.find((option) => option.id === question.answer)
+  const info = FORMATS[question.format]
+  const slot = round.kind === 'test' ? testSlot(index) : null
   const tone = round.kind === 'test' ? question.topic : round.tone
-  const factCues: Cue[] = facts.flatMap((fact, n) => [
-    { clip: fact.clip, gap: n === 0 ? 450 : 350 },
-    // With one word, its Arabic meaning follows; boards keep to the English.
-    ...(fact.meaning && fact.word && facts.length === 1 ? [{ clip: clip.meaning(fact.word), gap: 250 }] : []),
-  ])
-
-  const askCues = useMemo<Cue[]>(
-    () => [
-      ...question.ask.map((id, n) => ({
-        clip: id,
-        gap: n === 0 ? 0 : 160,
-        onStart: () => setSpeakingOption(null),
-      })),
-      ...options.flatMap((option) => (option.clip ? [{ clip: option.clip, onStart: () => setSpeakingOption(option.id) }] : [])),
-    ],
-    [question, options],
-  )
+  const correctOption = question.options.find((option) => option.id === question.answer)
+  const revealCues: Cue[] = question.reveal.map((id, n) => ({ clip: id, gap: n === 0 ? 300 : 220 }))
+  const askCues = useMemo<Cue[]>(() => question.ask.map((id, n) => ({ clip: id, gap: n === 0 ? 0 : 160 })), [question])
 
   // Load every clip of the round up front, so no question waits for its audio.
   useEffect(() => {
@@ -104,9 +74,7 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
 
   useEffect(() => {
     const opening = intro && index === 0 ? [{ clip: clip.ui('test-intro') }, { ...askCues[0]!, gap: 500 }, ...askCues.slice(1)] : askCues
-    const timer = window.setTimeout(() => {
-      void narrator.play(opening).then(() => setSpeakingOption(null))
-    }, ASK_DELAY_MS)
+    const timer = window.setTimeout(() => void narrator.play(opening), ASK_DELAY_MS)
     return () => window.clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the intro plays once, before question one
   }, [askCues, narrator])
@@ -121,7 +89,7 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
   useEffect(() => {
     if (phase !== 'answered') return
     const timer = window.setTimeout(() => {
-      const box = optionsRef.current?.getBoundingClientRect()
+      const box = bodyRef.current?.getBoundingClientRect()
       const sheet = document.querySelector('.feedback')?.getBoundingClientRect()
       if (!box || !sheet) return
       const overlap = box.bottom + 12 - sheet.top
@@ -131,8 +99,7 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
   }, [phase])
 
   function replay() {
-    if (phase === 'asking') void narrator.play(askCues).then(() => setSpeakingOption(null))
-    else void narrator.play(factCues)
+    void narrator.play(phase === 'asking' ? askCues : revealCues)
   }
 
   function settle(correct: boolean, chosenId: string, anchor?: HTMLElement | null) {
@@ -143,23 +110,21 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
       const pick = fresh(CHEERS, recentCheers.current, CHEER_REST)
       setCheer(pick)
       celebrate(anchor ?? undefined, TONES[tone].tone)
-      void narrator.play([{ clip: pick.clip, gap: 300 }, ...factCues])
-    } else if (question.kind === 'match') {
+      void narrator.play([{ clip: pick.clip, gap: 300 }, ...revealCues])
+    } else if (question.kind === 'match' || question.kind === 'trace') {
       sfx.wrong()
-      void narrator.play([{ clip: clip.ui('review'), gap: 450 }, ...factCues])
+      void narrator.play([{ clip: clip.ui('review'), gap: 450 }, ...revealCues])
     } else {
       sfx.wrong()
       const pick = fresh(RETRIES, recentRetries.current, 2)
       setRetry(pick)
-      const reveal: Cue[] = correctOption?.clip ? [{ clip: correctOption.clip, gap: 120 }] : []
-      void narrator.play([{ clip: pick.clip, gap: 450 }, ...reveal, ...factCues])
+      void narrator.play([{ clip: pick.clip, gap: 450 }, ...revealCues])
     }
   }
 
   function answer(option: Option) {
     if (phase !== 'asking') return
     narrator.stop()
-    setSpeakingOption(null)
     setChosen(option.id)
     settle(option.id === question.answer, option.id, tileRefs.current.get(option.id))
   }
@@ -177,9 +142,25 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
   }
 
   const lastCorrect = attempts.at(-1)?.correct ?? false
+  const answered = phase === 'answered'
+
+  function optionState(option: Option): string {
+    const isChosen = chosen === option.id
+    const isAnswer = option.id === question.answer
+    if (!answered) return ''
+    if (isChosen) return isAnswer ? 'is-correct' : 'is-wrong'
+    return isAnswer ? 'is-reveal' : 'is-dim'
+  }
+
+  function tileRef(id: string) {
+    return (node: HTMLButtonElement | null) => {
+      if (node) tileRefs.current.set(id, node)
+      else tileRefs.current.delete(id)
+    }
+  }
 
   return (
-    <main className={`screen quiz-screen ${phase === 'answered' ? 'has-feedback' : ''}`} style={toneStyle(tone)}>
+    <main className={`screen quiz-screen ${answered ? 'has-feedback' : ''}`} style={toneStyle(tone)}>
       <header className="top-bar quiz-top">
         <CloseButton onClick={() => setConfirmExit(true)} />
         <div className="track" aria-label={`السؤال ${arabicNumber(index + 1)} من ${arabicNumber(round.questions.length)}`}>
@@ -202,90 +183,123 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
         </span>
       </header>
 
-      <section key={question.key} className={`question question-${question.kind} topic-${question.topic} question-in`} data-question-key={question.key}>
-        <div className="prompt-row">
-          <SpeakerButton onClick={replay} />
-          <h1 className="prompt">{question.prompt}</h1>
-        </div>
-
-        {question.subject ? (
-          <div className={`subject pop ${subjectKind(question.subject)}`} style={order(0, { '--base-delay': '80ms' })} aria-hidden="true">
-            <span className="subject-art">
-              <Art art={question.subject} />
-            </span>
-            {question.blank !== undefined ? (
-              <span className="blank-word" dir="ltr">
-                <span className={`blank-slot ${phase === 'answered' ? 'is-filled pop' : ''}`}>{phase === 'answered' ? question.answer : ''}</span>
-                {question.blank}
+      <section
+        key={`${round.id}-${index}`}
+        className={`question question-${question.kind} format-${question.format} topic-${question.topic} question-in`}
+        data-question-key={question.key}
+        data-format={question.format}
+      >
+        <div className="paper-head">
+          <div className="paper-line" dir="ltr">
+            {slot ? (
+              <span className="paper-part">
+                <span className="paper-section">{slot.section}</span>
+                <span className="paper-letter">{slot.part})</span>
               </span>
             ) : null}
+            <h1 className="paper-instruction">{info.instruction}</h1>
           </div>
-        ) : null}
+          <div className="paper-help">
+            <SpeakerButton onClick={replay} />
+            <p>{question.help ?? info.help}</p>
+          </div>
+        </div>
 
-        {question.kind === 'match' ? (
-          <div ref={optionsRef} className="match-wrap">
-            <MatchBoard
+        <div ref={bodyRef} className="paper-box">
+          {question.kind === 'match' ? (
+            <MatchRows
               question={question}
-              locked={phase === 'answered'}
-              onPair={(pair) => void narrator.play([{ clip: pair.clip }])}
+              locked={answered}
+              onTop={(pair) => void narrator.play([{ clip: pair.topClip }])}
+              onPair={(pair) => {
+                sfx.tap()
+                void narrator.play([{ clip: pair.clip }])
+              }}
               onMiss={() => {
                 sfx.wrong()
                 void narrator.play([{ clip: clip.ui('match-wrong') }])
               }}
-              onHit={() => sfx.tap()}
-              onLeftFirst={() => void narrator.play([{ clip: clip.ui('match-left-first') }])}
+              onTopFirst={() => void narrator.play([{ clip: clip.ui('match-top-first') }])}
               onDone={(mistakes, board) => settle(mistakes === 0, `mistakes:${mistakes}`, board)}
             />
-          </div>
-        ) : (
-          <div ref={optionsRef} className={`options holds-${optionKind(options[0]?.art ?? '')} count-${options.length}`}>
-            {options.map((option, n) => {
-              const isChosen = chosen === option.id
-              const isAnswer = option.id === question.answer
-              const state =
-                phase === 'answered'
-                  ? isChosen
-                    ? isAnswer
-                      ? 'is-correct'
-                      : 'is-wrong'
-                    : isAnswer
-                      ? 'is-reveal'
-                      : 'is-dim'
-                  : speakingOption === option.id
-                    ? 'is-speaking'
-                    : ''
-              return (
-                <div key={option.id} className="option-slot rise" style={order(n, { '--base-delay': '140ms' })}>
+          ) : null}
+
+          {question.kind === 'trace' ? (
+            <TraceBoard
+              key={question.key}
+              text={question.text ?? ''}
+              locked={answered}
+              onMiss={() => {
+                sfx.wrong()
+                void narrator.play([{ clip: clip.ui('trace-again') }])
+              }}
+              onDone={(correct, board) => settle(correct, correct ? 'traced' : 'not-traced', board)}
+            />
+          ) : null}
+
+          {question.kind === 'missing' ? (
+            <div className="missing-board">
+              <span className="missing-picture pop" aria-hidden="true">
+                <Art art={question.subject ?? ''} />
+              </span>
+              <WordStrip word={question.word ?? ''} filled={answered ? (chosen ?? question.answer) : null} tone={answered ? (lastCorrect ? 'good' : 'miss') : null} />
+              <div className="letter-keys" dir="ltr">
+                {options.map((option, n) => (
                   <button
-                    ref={(node) => {
-                      if (node) tileRefs.current.set(option.id, node)
-                      else tileRefs.current.delete(option.id)
-                    }}
+                    key={option.id}
+                    ref={tileRef(option.id)}
                     type="button"
-                    className={`option ${optionKind(option.art)} ${state}`}
+                    className={`letter-key press rise ${optionState(option)}`}
+                    style={order(n, { '--base-delay': '160ms' })}
                     onClick={() => answer(option)}
-                    disabled={phase === 'answered'}
+                    disabled={answered}
                     aria-label={option.label}
                     data-option={option.id}
                   >
-                    <span className="option-art" aria-hidden="true">
-                      <Art art={option.art} />
-                    </span>
-                    {state === 'is-correct' || state === 'is-reveal' ? (
-                      <span className="option-badge badge-good pop">✓</span>
-                    ) : state === 'is-wrong' ? (
-                      <span className="option-badge badge-miss pop">✕</span>
-                    ) : null}
+                    {option.label}
                   </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {question.kind === 'pick' ? (
+            <>
+              {question.subject ? (
+                <div className={`subject pop subject-${artKind(question.subject)}`} style={order(0, { '--base-delay': '80ms' })} aria-hidden="true">
+                  <Art art={question.subject} />
                 </div>
-              )
-            })}
-          </div>
-        )}
+              ) : null}
+              <div className={`options holds-${artKind(options[0]?.art ?? '')} count-${options.length}`} dir="ltr">
+                {options.map((option, n) => {
+                  const state = optionState(option)
+                  return (
+                    <div key={option.id} className="option-slot rise" style={order(n, { '--base-delay': '140ms' })}>
+                      <button
+                        ref={tileRef(option.id)}
+                        type="button"
+                        className={`option option-${artKind(option.art)} ${state}`}
+                        onClick={() => answer(option)}
+                        disabled={answered}
+                        aria-label={option.label}
+                        data-option={option.id}
+                      >
+                        <span className="option-art" aria-hidden="true">
+                          <Art art={option.art} />
+                        </span>
+                        {state === 'is-correct' || state === 'is-reveal' ? <InkRing tone="good" /> : state === 'is-wrong' ? <InkRing tone="miss" /> : null}
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            </>
+          ) : null}
+        </div>
       </section>
 
-      {phase === 'answered' ? (
-        <aside key={`feedback-${question.key}`} className={`feedback ${lastCorrect ? 'feedback-good' : 'feedback-miss'}`} role="status">
+      {answered ? (
+        <aside key={`feedback-${index}`} className={`feedback ${lastCorrect ? 'feedback-good' : 'feedback-miss'}`} role="status">
           <div className="feedback-head">
             {lastCorrect ? (
               <span className="feedback-star spin-in">
@@ -301,14 +315,14 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
                 <p className={`feedback-title cheer-${cheer.lang}`} dir={cheer.lang === 'en' ? 'ltr' : 'rtl'}>
                   {cheer.text}
                 </p>
-              ) : question.kind === 'match' ? (
+              ) : question.kind === 'match' || question.kind === 'trace' ? (
                 <p className="feedback-title">خلنا نتذكر:</p>
               ) : (
                 <>
                   <p className="feedback-encourage">{retry.text}</p>
                   <p className="feedback-title">الجواب الصحيح:</p>
-                  {correctOption ? (
-                    <span className={`feedback-answer ${optionKind(correctOption.art)}`} aria-label={correctOption.label}>
+                  {question.kind === 'pick' && correctOption ? (
+                    <span className={`feedback-answer option-${artKind(correctOption.art)}`} aria-label={correctOption.label}>
                       <Art art={correctOption.art} />
                     </span>
                   ) : null}
@@ -316,20 +330,18 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
               )}
             </div>
           </div>
-          <ul className="feedback-facts" dir="ltr">
-            {facts.map((fact) => (
-              <li key={fact.id} className="feedback-fact">
-                {fact.text}
-                {fact.meaning && fact.word && facts.length === 1 ? (
-                  <span className="feedback-meaning" dir="rtl">
-                    <bdi dir="ltr">{fact.word}</bdi> يعني {fact.meaning}
-                  </span>
-                ) : null}
-              </li>
-            ))}
-          </ul>
+          <p className="feedback-note" dir="ltr">
+            {question.kind === 'missing' && question.word ? (
+              <>
+                <span className="first-letter">{question.word.charAt(0)}</span>
+                {question.word.slice(1)}
+              </>
+            ) : (
+              question.note
+            )}
+          </p>
           <div className="feedback-actions">
-            <SpeakerButton onClick={() => void narrator.play(factCues)} label="إعادة الشرح" />
+            <SpeakerButton onClick={() => void narrator.play(revealCues)} label="إعادة" />
             <BigButton onClick={next} pulse className="next-button">
               {index + 1 >= round.questions.length ? 'النتيجة' : 'التالي'}
               <ArrowIcon direction="next" />
@@ -358,26 +370,28 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
   )
 }
 
-function subjectKind(art: string): string {
-  if (art.startsWith('txt:')) return 'subject-text'
-  if (art.startsWith('count:')) return 'subject-count'
-  return 'subject-picture'
+export function artKind(art: string): string {
+  const match = /^([a-z]+):/.exec(art)
+  return match ? match[1]! : 'emoji'
 }
 
-function optionKind(art: string): string {
-  if (art.startsWith('txt:')) return 'option-text'
-  if (art.startsWith('count:')) return 'option-count'
-  return 'option-picture'
+/** A hand-drawn ring, like the pen circle on a marked test paper («Circle the correct word»). */
+function InkRing({ tone }: { tone: 'good' | 'miss' }) {
+  return (
+    <svg className={`ink-ring ink-${tone}`} viewBox="0 0 120 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M62 7 C 96 6, 116 24, 114 50 C 112 79, 86 95, 56 94 C 24 93, 5 74, 6 49 C 7 24, 30 8, 66 9 C 78 10, 88 13, 95 18" pathLength="100" />
+    </svg>
+  )
 }
 
-interface MatchBoardProps {
+interface MatchRowsProps {
   question: Question
   locked: boolean
+  onTop: (pair: Pair) => void
   onPair: (pair: Pair) => void
-  onHit: () => void
   onMiss: () => void
-  /** The right column was tapped before choosing on the left. */
-  onLeftFirst: () => void
+  /** The bottom row was tapped before choosing on top. */
+  onTopFirst: () => void
   onDone: (mistakes: number, board: HTMLElement | null) => void
 }
 
@@ -389,18 +403,29 @@ interface Line {
   y2: number
 }
 
+interface BottomItem {
+  id: string
+  art: string
+  label: string
+  /** The pair it completes; decoys complete none. */
+  pair?: string
+}
+
 /**
- * The worksheet's «join» exercise: tap an item on either side, then its partner.
- * A right pair draws a line; a wrong one shakes and counts as a mistake.
+ * The test's «Match» boards (pages 21 and 39): items on top, partners below with one extra,
+ * each joined dot to dot with a line. Choose on top first, then its partner below.
  */
-function MatchBoard({ question, locked, onPair, onHit, onMiss, onLeftFirst, onDone }: MatchBoardProps) {
-  const right = useMemo(() => {
-    // Never leave every partner directly opposite its item.
-    let order = shuffle(question.pairs)
-    for (let tries = 0; tries < 6 && order.every((pair, n) => pair.id === question.pairs[n]!.id); tries += 1) order = shuffle(question.pairs)
-    return order
+function MatchRows({ question, locked, onTop, onPair, onMiss, onTopFirst, onDone }: MatchRowsProps) {
+  const bottoms = useMemo(() => {
+    const items: BottomItem[] = [
+      ...question.pairs.map((pair) => ({ id: pair.id, art: pair.bottom, label: pair.label, pair: pair.id })),
+      ...question.decoys.map((decoy) => ({ id: decoy.id, art: decoy.art, label: decoy.label })),
+    ]
+    // Never leave every partner directly under its pair.
+    let mixed = shuffle(items)
+    for (let tries = 0; tries < 8 && question.pairs.every((pair, n) => mixed[n]?.pair === pair.id); tries += 1) mixed = shuffle(items)
+    return mixed
   }, [question])
-  // Only the left column can be chosen; the right column answers it.
   const [selected, setSelected] = useState<string | null>(null)
   const [nudge, setNudge] = useState(false)
   const [matched, setMatched] = useState<string[]>([])
@@ -416,18 +441,10 @@ function MatchBoard({ question, locked, onPair, onHit, onMiss, onLeftFirst, onDo
       if (!board) return
       setLines(
         matched.flatMap((id) => {
-          const a = refs.current.get(`left-${id}`)?.getBoundingClientRect()
-          const b = refs.current.get(`right-${id}`)?.getBoundingClientRect()
+          const a = refs.current.get(`top-${id}`)?.getBoundingClientRect()
+          const b = refs.current.get(`bottom-${id}`)?.getBoundingClientRect()
           if (!a || !b) return []
-          return [
-            {
-              id,
-              x1: a.right - board.left - 4,
-              y1: a.top + a.height / 2 - board.top,
-              x2: b.left - board.left + 4,
-              y2: b.top + b.height / 2 - board.top,
-            },
-          ]
+          return [{ id, x1: a.left + a.width / 2 - board.left, y1: a.bottom + 6 - board.top, x2: b.left + b.width / 2 - board.left, y2: b.top - 6 - board.top }]
         }),
       )
     }
@@ -436,91 +453,103 @@ function MatchBoard({ question, locked, onPair, onHit, onMiss, onLeftFirst, onDo
     return () => window.removeEventListener('resize', measure)
   }, [matched])
 
-  function chooseLeft(pair: Pair) {
+  function chooseTop(pair: Pair) {
     if (locked || matched.includes(pair.id)) return
-    onPair(pair)
+    onTop(pair)
     setSelected(pair.id)
   }
 
-  function answerRight(pair: Pair) {
-    if (locked || matched.includes(pair.id)) return
+  function answerBottom(item: BottomItem) {
+    if (locked || (item.pair && matched.includes(item.pair))) return
     if (!selected) {
-      // Start from the left: point the child back to it.
-      onLeftFirst()
+      onTopFirst()
       setNudge(true)
       window.setTimeout(() => setNudge(false), 650)
       return
     }
-    onHit()
-    if (selected === pair.id) {
+    if (item.pair === selected) {
+      const pair = question.pairs.find((entry) => entry.id === selected)!
       const done = [...matched, pair.id]
       setMatched(done)
       setSelected(null)
-      if (done.length === question.pairs.length) window.setTimeout(() => onDone(mistakes, boardRef.current), 350)
+      onPair(pair)
+      if (done.length === question.pairs.length) window.setTimeout(() => onDone(mistakes, boardRef.current), 450)
       return
     }
     setMistakes((count) => count + 1)
-    setShaking([`left-${selected}`, `right-${pair.id}`])
+    setShaking([`top-${selected}`, `bottom-${item.id}`])
     setSelected(null)
     onMiss()
     window.setTimeout(() => setShaking([]), 450)
   }
 
-  function cell(side: 'left' | 'right', pair: Pair, n: number) {
-    const key = `${side}-${pair.id}`
-    const state = matched.includes(pair.id)
-      ? `is-matched match-color-${question.pairs.findIndex((entry) => entry.id === pair.id)}`
-      : side === 'left' && selected === pair.id
-        ? 'is-selected'
-        : side === 'right' && !selected
-          ? 'is-waiting'
-          : ''
-    return (
-      <div
-        key={key}
-        className="match-slot rise"
-        style={order(n + (side === 'right' ? 1 : 0), {
-          '--base-delay': '140ms',
-        })}
-      >
-        <button
-          ref={(node) => {
-            if (node) refs.current.set(key, node)
-            else refs.current.delete(key)
-          }}
-          type="button"
-          className={`match-item match-${side} ${optionKind(side === 'left' ? pair.left : pair.right)} ${state} ${shaking.includes(key) ? 'shake' : ''}`}
-          onClick={() => (side === 'left' ? chooseLeft(pair) : answerRight(pair))}
-          disabled={locked}
-          aria-label={pair.label}
-          aria-pressed={side === 'left' ? selected === pair.id : undefined}
-          data-pair={pair.id}
-          data-side={side}
-        >
-          <span className="option-art" aria-hidden="true">
-            <Art art={side === 'left' ? pair.left : pair.right} />
-          </span>
-        </button>
-      </div>
-    )
-  }
+  const colour = (id: string) => question.pairs.findIndex((pair) => pair.id === id)
 
   return (
-    <div ref={boardRef} className="match-board" dir="ltr">
+    <div ref={boardRef} className={`match-rows pairs-${question.pairs.length} bottoms-${bottoms.length}`} dir="ltr">
       <svg className="match-lines" aria-hidden="true">
         {lines.map((line) => (
-          <line
-            key={line.id}
-            className={`match-line match-color-${question.pairs.findIndex((pair) => pair.id === line.id)}`}
-            x1={line.x1}
-            y1={line.y1}
-            x2={line.x2}
-            y2={line.y2}
-          />
+          <line key={line.id} className={`match-line match-color-${colour(line.id)}`} x1={line.x1} y1={line.y1} x2={line.x2} y2={line.y2} />
         ))}
       </svg>
-      <div className={`match-column match-column-left ${nudge ? 'nudge' : ''}`}>{question.pairs.map((pair, n) => cell('left', pair, n))}</div>
-      <div className="match-column">{right.map((pair, n) => cell('right', pair, n))}</div>
+      <div className={`match-row match-row-top ${nudge ? 'nudge' : ''}`}>
+        {question.pairs.map((pair, n) => {
+          const key = `top-${pair.id}`
+          const state = matched.includes(pair.id) ? `is-matched match-color-${colour(pair.id)}` : selected === pair.id ? 'is-selected' : ''
+          return (
+            <div key={key} className="match-slot rise" style={order(n, { '--base-delay': '140ms' })}>
+              <button
+                ref={(node) => {
+                  if (node) refs.current.set(key, node)
+                  else refs.current.delete(key)
+                }}
+                type="button"
+                className={`match-item match-top match-${artKind(pair.top)} ${state} ${shaking.includes(key) ? 'shake' : ''}`}
+                onClick={() => chooseTop(pair)}
+                disabled={locked}
+                aria-label={pair.label}
+                aria-pressed={selected === pair.id}
+                data-pair={pair.id}
+                data-side="top"
+              >
+                <span className="option-art" aria-hidden="true">
+                  <Art art={pair.top} />
+                </span>
+                <span className="match-dot dot-bottom" aria-hidden="true" />
+              </button>
+            </div>
+          )
+        })}
+      </div>
+      <div className="match-row match-row-bottom">
+        {bottoms.map((item, n) => {
+          const key = `bottom-${item.id}`
+          const state = item.pair && matched.includes(item.pair) ? `is-matched match-color-${colour(item.pair)}` : !selected ? 'is-waiting' : ''
+          return (
+            <div key={key} className="match-slot rise" style={order(n + 1, { '--base-delay': '140ms' })}>
+              <button
+                ref={(node) => {
+                  if (node) refs.current.set(item.pair ? `bottom-${item.pair}` : key, node)
+                  else refs.current.delete(item.pair ? `bottom-${item.pair}` : key)
+                }}
+                type="button"
+                className={`match-item match-bottom match-${artKind(item.art)} ${state} ${shaking.includes(key) ? 'shake' : ''}`}
+                onClick={() => answerBottom(item)}
+                disabled={locked}
+                aria-label={artKind(item.art) === 'txt' ? item.label : 'صورة'}
+                data-pair={item.pair ?? ''}
+                data-decoy={item.pair ? undefined : 'true'}
+                data-side="bottom"
+              >
+                <span className="match-dot dot-top" aria-hidden="true" />
+                <span className="option-art" aria-hidden="true">
+                  <Art art={item.art} />
+                </span>
+              </button>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

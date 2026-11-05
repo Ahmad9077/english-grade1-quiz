@@ -6,7 +6,8 @@ export type ToneId = TopicId | 'test'
 export const TONES: Record<ToneId, { tone: string; tint: string; deep: string }> = {
   case: { tone: '#e8446b', tint: '#ffe1e8', deep: '#a3203f' },
   letters: { tone: '#3a7bd5', tint: '#dfeafc', deep: '#22508f' },
-  numbers: { tone: '#f08a12', tint: '#ffebd1', deep: '#a3570a' },
+  words: { tone: '#f08a12', tint: '#ffebd1', deep: '#a3570a' },
+  writing: { tone: '#159a9c', tint: '#d8f3f1', deep: '#0d6668' },
   missing: { tone: '#2fa86b', tint: '#dcf4e7', deep: '#1c7047' },
   test: { tone: '#7b5ce0', tint: '#ece6ff', deep: '#4f36a8' },
 }

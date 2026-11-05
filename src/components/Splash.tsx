@@ -1,7 +1,7 @@
 import { Art } from '../art/Art'
 import { BigButton, PreviewBadge, order } from './ui'
 
-const ORBIT = ['🐜', 'txt:Bb', '📦', 'svg:mug', 'txt:Ff', '🦇', 'txt:5', '🐑']
+const ORBIT = ['pic:ant', 'txt:Bb', 'svg:train', 'pic:lemon', 'txt:Uu', 'pic:car', 'txt:5', 'pic:umbrella']
 
 export function Splash({ onStart }: { onStart: () => void }) {
   return (

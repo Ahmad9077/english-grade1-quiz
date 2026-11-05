@@ -1,140 +1,191 @@
-// Content for «English» — Grade 1 English, short test 1 (Sunday 18 Oct 2026).
-// Source: the Grade 1 Student's Book, term 1 (2026 edition). The test covers pages 29–32:
-// Ff (fan, fox, frog, feet), Mm (mug, man, mat), numbers 4, 5, 6 and Bb (box, bat, bed, bag),
-// plus the test words box, ant, mug, lamb, bat. «ant» is from the Aa lesson (p.11) and the
-// school's «lab» is the book's «lamb» (Ll lesson, p.17). Letters taught so far: A C E H L T F M B.
+// Content for «English» — Grade 1 English test (Monday 9 November 2026).
+// Source: the Grade 1 Student's Book 1A (term 1, 2026 edition), pages 11–40: Unit 1 (Aa Cc Ee Hh
+// Ll Tt, numbers 1–3) and Unit 2 (Ff Mm Bb Oo Xx Uu, numbers 4–6). The school's card lists the
+// same five parts as the book's two Progress Tests (pages 21–22 and 39–40), so every question
+// carries the test's own English instruction line:
+//   1. Match the uppercase letters with the lowercase letters      → topic `case`
+//   2. Match letters / numbers to pictures                         → topic `letters`
+//   3. Circle the correct word (by the picture)                    → topic `words`
+//   4. Copy the following, on four lines                           → topic `writing`
+//   5. Write the missing initial letters, with pictures            → topic `missing`
+//      (the card's words: train, toe, mat, lemon, on, car)
 //
-// Screen text: short Arabic instructions (no diacritics) and English letters/words in Andika.
-// Narration: Arabic instructions in Kuwaiti dialect (Maryam), English letters/words/praise (Alice).
-// Wording never speaks to a girl or a boy, so one copy serves every child.
+// Pictures are the book's own, cut from the Student's Book (public/pics); «train» is not in the
+// book and is drawn (svg:train). Narration: Arabic help lines in Kuwaiti dialect (Maryam) and
+// English letters, numbers and words (Alice). Wording never speaks to a girl or a boy.
 // Question keys are permanent Hub identifiers: never rename or reuse one.
 // This file is self-contained so Node scripts can import it directly.
 
 export const QUIZ_ID = 'english-grade1'
 
-export type TopicId = 'case' | 'letters' | 'numbers' | 'missing'
-export type QuestionKind = 'pick' | 'match'
+export type TopicId = 'case' | 'letters' | 'words' | 'writing' | 'missing'
+export type QuestionKind = 'pick' | 'match' | 'trace' | 'missing'
+export type Format =
+  | 'match-case'
+  | 'small'
+  | 'big'
+  | 'match-letters'
+  | 'match-numbers'
+  | 'pic-for-letter'
+  | 'count'
+  | 'find-number'
+  | 'word'
+  | 'copy'
+  | 'missing'
 
 /**
- * Pictures: an emoji, `svg:<drawing>`, `txt:<letters>` (a glyph in the reading font)
- * or `count:<emoji>:<n>` (n copies to count).
+ * Pictures: `pic:<id>` (a picture from the book), `svg:<drawing>`, `txt:<letters>` (in the reading
+ * font), `word:<word>` (a word box, as printed in the test), `count:<pic id>:<n>` (n copies to count)
+ * or an emoji.
  */
 export type ArtRef = string
+
+export type Random = () => number
 
 export interface Option {
   id: string
   art: ArtRef
-  /** Accessible name; never shown, so a picture does not give away its first letter. */
+  /** Accessible name. */
   label: string
-  /** Clip read while the tile lights up; absent when hearing it would give the answer away. */
-  clip?: string
 }
 
 export interface Pair {
   id: string
-  left: ArtRef
-  right: ArtRef
+  /** The top row of the board (letters, capitals or numbers). */
+  top: ArtRef
+  /** Its partner in the bottom row. */
+  bottom: ArtRef
   label: string
-  /** Said when the child taps the left item. */
+  /** Said when the top item is chosen. */
+  topClip: string
+  /** Said when the pair is joined. */
   clip: string
-  fact: string
+}
+
+/** An extra item in the bottom row that joins nothing, as in the book's tests. */
+export interface Decoy {
+  id: string
+  art: ArtRef
+  label: string
+}
+
+/** The parts of a question that a round may draw afresh. */
+export interface Dress {
+  ask?: string[]
+  help?: string
+  subject?: ArtRef
+  options?: Option[]
+  pairs?: Pair[]
+  decoys?: Decoy[]
+  answer?: string
+  reveal?: string[]
+  note?: string
 }
 
 export interface Question {
   key: string
   topic: TopicId
   kind: QuestionKind
-  prompt: string
-  /** What the question asks aloud, in order (Arabic instruction and English target). */
+  format: Format
+  /** What the question asks aloud, in order (English target, then the Arabic help). */
   ask: string[]
+  /** The Arabic line under the instruction, when it is not the format's own. */
+  help?: string
   /** The big picture or letter the question is about. */
   subject?: ArtRef
-  /** A word shown with its first letter missing, for example "_ox". */
-  blank?: string
+  /** missing: the whole word; the first letter is the blank. */
+  word?: string
+  /** copy: the text to write over, as on the test's copy box ("A a", "1 2 3", "cat"). */
+  text?: string
   options: Option[]
   pairs: Pair[]
+  decoys: Decoy[]
   answer: string
-  /** Explanation(s) played and shown after answering. */
-  facts: string[]
+  /** Said after answering: the right answer. */
+  reveal: string[]
+  /** Shown in the feedback, in English. */
+  note: string
   difficulty: number
   skills: string[]
-}
-
-export interface Phrasing {
-  /** Shown on screen: English, in the reading font. */
-  text: string
-  /** Spoken in English by Alice. */
-  say: string
-}
-
-export interface Fact extends Phrasing {
-  id: string
-  topic: TopicId
-  /** Other ways to say the same thing, so explanations do not repeat word for word. */
-  more: Phrasing[]
-  /** The word's meaning in Arabic, spoken after the explanation. */
-  meaning?: string
-  art: ArtRef[]
-  /** Book words shown as labelled pictures, first letter in colour. */
-  words?: string[]
-  /** Shown as a learn card in its topic. */
-  learn: boolean
+  /** Draws new letters, pictures or keys for each round; the key and its skill stay the same. */
+  vary?: (random: Random) => Dress
 }
 
 export interface Topic {
   id: TopicId
   title: string
-  short: string
-  say: string
-  art: ArtRef[]
+  /** Two pictures for the lesson card. */
+  art: [ArtRef, ArtRef]
 }
 
-// ── Words from the book ───────────────────────────────────────────────────
+export interface FormatInfo {
+  /** The test's instruction line, as printed in the book's Progress Tests. */
+  instruction: string
+  /** The same in short Arabic, shown under it and spoken by Maryam. */
+  help: string
+  section: 'Reading' | 'Writing'
+}
+
+// ── Letters, words and pictures from the book ─────────────────────────────
+/** The twelve letters of pages 11–40, in the book's order. */
+export const LETTERS = ['a', 'c', 'e', 'h', 'l', 't', 'f', 'm', 'b', 'o', 'x', 'u'] as const
+export type Letter = (typeof LETTERS)[number]
+export const UNIT_1: Letter[] = ['a', 'c', 'e', 'h', 'l', 't']
+export const UNIT_2: Letter[] = ['f', 'm', 'b', 'o', 'x', 'u']
+
+/** Each word's picture. Most are the book's (public/pics/<id>.webp). */
 export const WORD_ART: Record<string, ArtRef> = {
-  ant: '🐜', apple: '🍎', arm: '💪',
-  box: '📦', bat: '🦇', bed: '🛏️', bag: '🎒',
-  car: '🚗', cat: '🐱', cow: '🐄',
-  egg: '🥚', elephant: '🐘', ear: '👂',
-  fan: '🪭', fox: '🦊', frog: '🐸', feet: '🦶',
-  hat: '🎩', horse: '🐴', hand: '✋',
-  lamb: '🐑', lion: '🦁', lemon: '🍋',
-  mug: 'svg:mug', man: '👨', mat: 'svg:mat',
-  tiger: '🐯', toy: '🪀', teacher: '👩‍🏫',
+  ant: 'pic:ant', apple: 'pic:apple', arm: 'pic:arm',
+  cat: 'pic:cat', car: 'pic:car', cap: 'pic:cap', cow: 'pic:cow',
+  egg: 'pic:egg', elbow: 'pic:elbow', ear: 'pic:ear', elephant: 'pic:elephant',
+  hat: 'pic:hat', horse: 'pic:horse', hand: 'pic:hand', head: 'pic:head',
+  lamb: 'pic:lamb', lion: 'pic:lion', lemon: 'pic:lemon', leg: 'pic:leg',
+  toe: 'pic:toe', tiger: 'pic:tiger', toy: 'pic:toy', teacher: 'pic:teacher', train: 'svg:train',
+  fan: 'pic:fan', fox: 'pic:fox', frog: 'pic:frog', foot: 'pic:foot', father: 'pic:father',
+  mug: 'pic:mug', man: 'pic:man', mat: 'pic:mat', mother: 'pic:mother', mouth: 'pic:mouth',
+  box: 'pic:box', bat: 'pic:bat', bed: 'pic:bed', bag: 'pic:bag', brother: 'pic:brother',
+  open: 'pic:open', on: 'pic:on', oven: 'pic:oven',
+  'x-ray': 'pic:xray',
+  up: 'pic:up', under: 'pic:under', umbrella: 'pic:umbrella',
+  ears: 'pic:ears', legs: 'pic:legs', nose: 'pic:nose',
+  blue: 'svg:splat-blue', brown: 'svg:splat-brown', black: 'svg:splat-black', orange: 'pic:paint',
 }
 
-export const TEST_WORDS = ['box', 'ant', 'mug', 'lamb', 'bat'] as const
-
-/** What each word means, said in Arabic after its explanation. */
-export const WORD_MEANING: Record<string, string> = {
-  ant: 'نملة', apple: 'تفاحة', arm: 'ذراع',
-  box: 'صندوق', bat: 'خفاش', bed: 'سرير', bag: 'شنطة',
-  car: 'سيارة', cat: 'قطوة', cow: 'بقرة',
-  egg: 'بيضة', elephant: 'فيل', ear: 'إذن',
-  fan: 'مروحة', fox: 'ثعلب', frog: 'ضفدع', feet: 'أقدام',
-  hat: 'قبعة', horse: 'حصان', hand: 'إيد',
-  lamb: 'خروف صغير', lion: 'أسد', lemon: 'ليمون',
-  mug: 'كوب', man: 'رجل', mat: 'سجادة صغيرة',
-  tiger: 'نمر', toy: 'لعبة',
+/** Words for each letter that have a clear picture. */
+export const LETTER_WORDS: Record<Letter, string[]> = {
+  a: ['ant', 'apple', 'arm'],
+  c: ['cat', 'car', 'cap', 'cow'],
+  e: ['egg', 'elbow', 'ear', 'elephant'],
+  h: ['hat', 'horse', 'hand', 'head'],
+  l: ['lamb', 'lion', 'lemon', 'leg'],
+  t: ['toe', 'tiger', 'toy', 'teacher', 'train'],
+  f: ['fan', 'fox', 'frog', 'foot'],
+  m: ['mug', 'man', 'mat', 'mouth'],
+  b: ['box', 'bat', 'bed', 'bag'],
+  o: ['open', 'on', 'oven'],
+  x: ['x-ray'],
+  u: ['up', 'under', 'umbrella'],
 }
 
-/** Letters in the order the test favours: this unit first, then unit 1. */
-export const LETTERS = ['f', 'm', 'b', 'a', 'l', 'c', 'e', 'h', 't'] as const
+/** The words the school's card gives for the missing-letter question. */
+export const CARD_WORDS = ['train', 'toe', 'mat', 'lemon', 'on', 'car'] as const
 
-const NUMBER_WORDS = ['', 'one', 'two', 'three', 'four', 'five', 'six'] as const
+/** Single book pictures that can be shown many times for counting. */
+const COUNT_PICS = ['ball', 'cupcake', 'teddy', 'flower', 'icecream', 'cub', 'cup', 'minifan', 'redapple', 'apple', 'frog', 'car', 'cow'] as const
 
-/** Things to count, with the Arabic question and the English plural. */
+/** Things a count question asks about, with the Arabic question Maryam reads. */
 const COUNTABLES = {
-  bears: { art: '🧸', ar: 'كم دبدوب في الصورة؟', one: 'bear', many: 'bears' },
-  apples: { art: '🍎', ar: 'كم تفاحة في الصورة؟', one: 'apple', many: 'apples' },
-  flowers: { art: '🌼', ar: 'كم وردة في الصورة؟', one: 'flower', many: 'flowers' },
-  frogs: { art: '🐸', ar: 'كم ضفدع في الصورة؟', one: 'frog', many: 'frogs' },
-  fish: { art: '🐠', ar: 'كم سمكة في الصورة؟', one: 'fish', many: 'fish' },
-  cookies: { art: '🍪', ar: 'كم بسكوتة في الصورة؟', one: 'cookie', many: 'cookies' },
-  cars: { art: '🚗', ar: 'كم سيارة في الصورة؟', one: 'car', many: 'cars' },
-  cows: { art: '🐄', ar: 'كم بقرة في الصورة؟', one: 'cow', many: 'cows' },
+  bears: { pic: 'teddy', ar: 'كم دبدوب في الصورة؟' },
+  apples: { pic: 'apple', ar: 'كم تفاحة في الصورة؟' },
+  flowers: { pic: 'flower', ar: 'كم وردة في الصورة؟' },
+  frogs: { pic: 'frog', ar: 'كم ضفدع في الصورة؟' },
+  cars: { pic: 'car', ar: 'كم سيارة في الصورة؟' },
+  cows: { pic: 'cow', ar: 'كم بقرة في الصورة؟' },
 } as const
 
 type Countable = keyof typeof COUNTABLES
+
+const NUMBER_WORDS = ['', 'one', 'two', 'three', 'four', 'five', 'six'] as const
 
 const cap = (text: string) => text.charAt(0).toUpperCase() + text.slice(1)
 
@@ -144,245 +195,37 @@ export const clip = {
   letter: (letter: string) => `en/letter/${letter.toLowerCase()}`,
   word: (word: string) => `en/word/${word}`,
   number: (n: number) => `en/num/${n}`,
-  /** Phrasing 0 is the main explanation; 1 and 2 are the alternatives. */
-  fact: (id: string, phrasing = 0) => (phrasing === 0 ? `en/fact/${id}` : `en/fact/${id}-${phrasing + 1}`),
-  meaning: (word: string) => `ar/mean/${word}`,
   en: (id: EnUiClip) => `en/ui/${id}`,
   ask: (id: AskClip) => `ar/q/${id}`,
   count: (thing: Countable) => `ar/q/count-${thing}`,
-  topic: (id: TopicId) => `ar/t/${id}`,
   ui: (id: ArUiClip) => `ar/ui/${id}`,
 }
 
-// ── Facts: learn cards and explanations ──────────────────────────────────
-function caseFact(letter: string): Fact {
-  const big = letter.toUpperCase()
-  return {
-    id: `case-${letter}`,
-    topic: 'case',
-    text: `Big ${big}, small ${letter}`,
-    say: `Big ${big}… small ${letter}.`,
-    more: [
-      { text: `${big} and ${letter} are the same letter.`, say: `${big} and ${letter}… the same letter, big and small.` },
-      { text: `Capital ${big}, lowercase ${letter}`, say: `This is capital ${big}… and this is lowercase ${letter}.` },
-    ],
-    art: [`txt:${big}`, `txt:${letter}`],
-    learn: true,
-  }
-}
-
-const LETTER_WORDS: Record<string, string[]> = {
-  f: ['fan', 'fox', 'frog'],
-  m: ['mug', 'man', 'mat'],
-  b: ['box', 'bat', 'bag'],
-  a: ['ant', 'apple', 'arm'],
-  l: ['lamb', 'lion', 'lemon'],
-  c: ['cat', 'car', 'cow'],
-  e: ['egg', 'elephant', 'ear'],
-  h: ['hat', 'horse', 'hand'],
-  t: ['tiger', 'toy', 'teacher'],
-}
-
-function letterFact(letter: string): Fact {
-  const words = LETTER_WORDS[letter]!
-  const big = letter.toUpperCase()
-  const say = `${big} is for ${words.slice(0, -1).join(', ')} and ${words.at(-1)}.`
-  return { id: `letter-${letter}`, topic: 'letters', text: say, say, more: [], art: [`txt:${big}${letter}`], words, learn: true }
-}
-
-function wordFact(word: string): Fact {
-  const learn = (TEST_WORDS as readonly string[]).includes(word)
-  const big = word.charAt(0).toUpperCase()
-  const [first, second] = Object.keys(WORD_ART).filter((other) => other !== word && other.charAt(0) === word.charAt(0))
-  return {
-    id: `word-${word}`,
-    topic: 'missing',
-    text: `${cap(word)} starts with ${big}.`,
-    say: `${cap(word)}. ${cap(word)} starts with ${big}.`,
-    more: [
-      { text: `${big} is for ${word}!`, say: `${big}… ${big} is for ${word}!` },
-      { text: `${cap(word)} starts with ${big}, like ${first} and ${second}.`, say: `${cap(word)} starts with ${big}… just like ${first}, and ${second}.` },
-    ],
-    meaning: WORD_MEANING[word],
-    art: [],
-    words: [word],
-    learn,
-  }
-}
-
-function countFact(n: number, thing: Countable, learn = false): Fact {
-  const { art, one, many } = COUNTABLES[thing]
-  const counting = NUMBER_WORDS.slice(1, n + 1).map(cap).join(', ')
-  const name = n === 1 ? one : many
-  const word = NUMBER_WORDS[n]!
-  return {
-    id: `count-${n}-${thing}`,
-    topic: 'numbers',
-    text: `${n} ${name}`,
-    say: n === 1 ? `One. One ${name}!` : `${counting}. ${cap(word)} ${name}!`,
-    more: [
-      // "I can see …" is the book's own sentence (Unit 1, page 20).
-      { text: `I can see ${word} ${name}.`, say: `${cap(word)}! I can see ${word} ${name}.` },
-      n === 1
-        ? { text: `There is one ${name}.`, say: `Let's count… one! There is one ${name}.` }
-        : { text: `There are ${word} ${name}.`, say: `Let's count… ${counting.toLowerCase()}. There are ${word} ${name}!` },
-    ],
-    art: [`txt:${n}`, `count:${art}:${n}`],
-    learn,
-  }
-}
-
-// Learn cards count 1–6; the rest explain specific questions.
-const COUNT_FACTS: [number, Countable, boolean][] = [
-  [1, 'cars', true], [2, 'cows', true], [3, 'apples', true], [4, 'bears', true], [5, 'apples', true], [6, 'flowers', true],
-  [4, 'frogs', false], [6, 'fish', false], [5, 'cookies', false], [3, 'cars', false], [1, 'cows', false],
-  [2, 'apples', false], [4, 'apples', false], [6, 'apples', false],
-]
-
-const FACT_WORDS = [...new Set([...Object.values(LETTER_WORDS).flat(), 'feet', 'bed', 'bag', 'man', 'mat'])]
-
-export const FACTS: Fact[] = [
-  ...LETTERS.map(caseFact),
-  ...LETTERS.map(letterFact),
-  ...COUNT_FACTS.map(([n, thing, learn]) => countFact(n, thing, learn)),
-  // Test words first so their learn cards come first.
-  ...[...TEST_WORDS, ...FACT_WORDS.filter((word) => !(TEST_WORDS as readonly string[]).includes(word))].map(wordFact),
-]
-
-// ── Topics ────────────────────────────────────────────────────────────────
+// ── Lessons and the test's instruction lines ──────────────────────────────
 export const TOPICS: Topic[] = [
-  { id: 'case', title: 'الحرف الكبير والصغير', short: 'الحروف', say: 'كل حرف له شكلين… حرف كبير، وحرف صغير. خلنا نعرف كل حرف وشكله الصغير.', art: ['txt:A', 'txt:a'] },
-  { id: 'letters', title: 'الحرف والصورة', short: 'الحرف والصورة', say: 'كل صورة تبدأ بحرف… خلنا نسمع الكلمة، ونعرف أول حرف فيها.', art: ['txt:F', '🦊'] },
-  { id: 'numbers', title: 'الأرقام والعد', short: 'الأرقام', say: 'نعد الأشياء مع بعض… ونعرف الرقم. واحد، اثنين، ثلاثة… لين ستة.', art: ['🧸', 'txt:4'] },
-  { id: 'missing', title: 'الحرف الناقص', short: 'الحرف الناقص', say: 'كلمات الاختبار… كل كلمة ناقصها أول حرف. نشوف الصورة، ونعرف الحرف الناقص.', art: ['📦', 'txt:?'] },
+  { id: 'case', title: 'الحرف الكبير والصغير', art: ['txt:A', 'txt:a'] },
+  { id: 'letters', title: 'الحرف والرقم والصورة', art: ['txt:b', 'pic:bat'] },
+  { id: 'words', title: 'الكلمة والصورة', art: ['pic:cat', 'word:cat'] },
+  { id: 'writing', title: 'نسخ الكلمات والأرقام', art: ['✏️', 'txt:Aa'] },
+  { id: 'missing', title: 'الحرف الناقص', art: ['svg:train', 'txt:_rain'] },
 ]
 
-// ── Questions ─────────────────────────────────────────────────────────────
+export const FORMATS: Record<Format, FormatInfo> = {
+  'match-case': { instruction: 'Match the uppercase letters with the lowercase letters', help: 'نوصل كل حرف كبير بالحرف الصغير مثله', section: 'Reading' },
+  small: { instruction: 'Circle the lowercase letter', help: 'وين الحرف الصغير؟', section: 'Reading' },
+  big: { instruction: 'Circle the uppercase letter', help: 'وين الحرف الكبير؟', section: 'Reading' },
+  'match-letters': { instruction: 'Match letters to pictures', help: 'نوصل كل حرف بالصورة اللي تبدأ فيه', section: 'Reading' },
+  'match-numbers': { instruction: 'Match numbers to pictures', help: 'نوصل كل رقم بالصورة اللي فيها نفس العدد', section: 'Reading' },
+  'pic-for-letter': { instruction: 'Circle the correct picture', help: 'أي صورة تبدأ بهذا الحرف؟', section: 'Reading' },
+  count: { instruction: 'Count and circle', help: 'كم في الصورة؟', section: 'Reading' },
+  'find-number': { instruction: 'Circle the correct picture', help: 'وين الصورة اللي فيها هذا الرقم؟', section: 'Reading' },
+  word: { instruction: 'Circle the correct word', help: 'نختار الكلمة الصحيحة حسب الصورة', section: 'Reading' },
+  copy: { instruction: 'Copy the following', help: 'نكتب بإصبعنا فوق الكتابة الرمادية على الأربع سطور', section: 'Writing' },
+  missing: { instruction: 'Write the missing initial letters', help: 'شنو الحرف الناقص في أول الكلمة؟', section: 'Writing' },
+}
+
+// ── Question builders ─────────────────────────────────────────────────────
 type Extra = { difficulty: number; skills: string[] }
-
-function letterOption(letter: string, read = true): Option {
-  return { id: letter, art: `txt:${letter}`, label: letter, clip: read ? clip.letter(letter) : undefined }
-}
-
-function base(key: string, topic: TopicId, kind: QuestionKind, prompt: string, ask: string[], extra: Extra) {
-  return { key: `${topic}:${key}`, topic, kind, prompt, ask, pairs: [] as Pair[], options: [] as Option[], ...extra }
-}
-
-/** Capital shown, pick its small letter (options not read: the sound would give it away). */
-function smallOf(letter: string, others: string[], extra: Extra): Question {
-  return {
-    ...base(`small-${letter}`, 'case', 'pick', 'وين الحرف الصغير؟', [clip.letter(letter), clip.ask('find-small')], extra),
-    subject: `txt:${letter.toUpperCase()}`,
-    options: [letter, ...others].map((l) => letterOption(l, false)),
-    answer: letter,
-    facts: [`case-${letter}`],
-  }
-}
-
-/** Small letter shown, pick its capital. */
-function bigOf(letter: string, others: string[], extra: Extra): Question {
-  return {
-    ...base(`big-${letter}`, 'case', 'pick', 'وين الحرف الكبير؟', [clip.letter(letter), clip.ask('find-big')], extra),
-    subject: `txt:${letter}`,
-    options: [letter, ...others].map((l) => ({ ...letterOption(l, false), art: `txt:${l.toUpperCase()}`, label: l.toUpperCase() })),
-    answer: letter,
-    facts: [`case-${letter}`],
-  }
-}
-
-function wordOption(word: string): Option {
-  return { id: word, art: WORD_ART[word]!, label: word, clip: clip.word(word) }
-}
-
-/** Letter shown, pick the picture that starts with it. */
-function picFor(letter: string, word: string, others: string[], extra: Extra): Question {
-  return {
-    ...base(`${letter}-${word}`, 'letters', 'pick', 'أي صورة تبدأ بهذا الحرف؟', [clip.letter(letter), clip.ask('pic-for-letter')], extra),
-    subject: `txt:${letter.toUpperCase()}${letter}`,
-    options: [word, ...others].map(wordOption),
-    answer: word,
-    facts: [`word-${word}`],
-  }
-}
-
-/** Picture shown and named, pick its first letter. */
-function letterFor(word: string, others: string[], extra: Extra): Question {
-  const letter = word.charAt(0)
-  return {
-    ...base(word, 'letters', 'pick', 'بأي حرف تبدأ الكلمة؟', [clip.word(word), clip.ask('letter-for-pic')], extra),
-    subject: WORD_ART[word]!,
-    options: [letter, ...others].map((l) => letterOption(l)),
-    answer: letter,
-    facts: [`word-${word}`],
-  }
-}
-
-/** A picture with its first letter missing, as in the test: "_ox". */
-function missing(word: string, others: string[], extra: Extra): Question {
-  const letter = word.charAt(0)
-  return {
-    ...base(word, 'missing', 'pick', 'شنو الحرف الناقص؟', [clip.word(word), clip.ask('missing')], extra),
-    subject: WORD_ART[word]!,
-    blank: word.slice(1),
-    options: [letter, ...others].map((l) => letterOption(l)),
-    answer: letter,
-    facts: [`word-${word}`],
-  }
-}
-
-function numberOption(n: number): Option {
-  return { id: String(n), art: `txt:${n}`, label: String(n), clip: clip.number(n) }
-}
-
-/** Count the things, pick the number. */
-function countQ(thing: Countable, n: number, others: number[], extra: Extra): Question {
-  return {
-    ...base(`count-${thing}-${n}`, 'numbers', 'pick', COUNTABLES[thing].ar, [clip.count(thing)], extra),
-    subject: `count:${COUNTABLES[thing].art}:${n}`,
-    options: [n, ...others].map(numberOption),
-    answer: String(n),
-    facts: [`count-${n}-${thing}`],
-  }
-}
-
-/** Number shown, pick the picture with that many (pictures not read: that would count for the child). */
-function findNumber(n: number, thing: Countable, others: number[], extra: Extra): Question {
-  return {
-    ...base(`find-${n}`, 'numbers', 'pick', 'وين الصورة اللي فيها هذا العدد؟', [clip.number(n), clip.ask('find-number')], extra),
-    subject: `txt:${n}`,
-    options: [n, ...others].map((m) => ({ id: String(m), art: `count:${COUNTABLES[thing].art}:${m}`, label: `${m}` })),
-    answer: String(n),
-    facts: [`count-${n}-${thing}`],
-  }
-}
-
-/** Matching board, like the worksheet: join each item on the left to its partner. */
-function matchCase(key: string, letters: string[], extra: Extra): Question {
-  return {
-    ...base(`match-${key}`, 'case', 'match', 'نوصل الحرف الكبير بالحرف الصغير', [clip.ask('match-case')], extra),
-    pairs: letters.map((l) => ({ id: l, left: `txt:${l.toUpperCase()}`, right: `txt:${l}`, label: `${l.toUpperCase()} ${l}`, clip: clip.letter(l), fact: `case-${l}` })),
-    answer: '',
-    facts: letters.map((l) => `case-${l}`),
-  }
-}
-
-function matchPictures(key: string, words: string[], extra: Extra): Question {
-  return {
-    ...base(`match-${key}`, 'letters', 'match', 'نوصل كل حرف بالصورة اللي تبدأ فيه', [clip.ask('match-pic')], extra),
-    pairs: words.map((w) => ({ id: w, left: `txt:${w.charAt(0).toUpperCase()}${w.charAt(0)}`, right: WORD_ART[w]!, label: w, clip: clip.letter(w.charAt(0)), fact: `word-${w}` })),
-    answer: '',
-    facts: words.map((w) => `word-${w}`),
-  }
-}
-
-function matchNumbers(key: string, items: [number, Countable][], extra: Extra): Question {
-  return {
-    ...base(`match-${key}`, 'numbers', 'match', 'نوصل كل رقم بالصورة اللي فيها نفس العدد', [clip.ask('match-num')], extra),
-    pairs: items.map(([n, thing]) => ({ id: String(n), left: `txt:${n}`, right: `count:${COUNTABLES[thing].art}:${n}`, label: String(n), clip: clip.number(n), fact: `count-${n}-${thing}` })),
-    answer: '',
-    facts: items.map(([n, thing]) => `count-${n}-${thing}`),
-  }
-}
 
 const S = {
   case: ['letter_case', 'visual_match'],
@@ -391,106 +234,402 @@ const S = {
   initialBoard: ['initial_sound', 'matching'],
   count: ['counting', 'number_recognition'],
   numberBoard: ['counting', 'matching'],
+  reading: ['word_reading', 'picture_word'],
+  copyLetters: ['handwriting', 'letter_formation'],
+  copyNumbers: ['handwriting', 'number_formation'],
+  copyWords: ['handwriting', 'copying'],
   missing: ['initial_sound', 'missing_letter', 'spelling'],
 }
 
+function pickOne<T>(items: readonly T[], random: Random): T {
+  return items[Math.floor(random() * items.length)] ?? items[0]!
+}
+
+/** `count` different items, in random order. */
+function pickSome<T>(items: readonly T[], count: number, random: Random): T[] {
+  const pool = [...items]
+  const picked: T[] = []
+  while (picked.length < count && pool.length > 0) picked.push(...pool.splice(Math.floor(random() * pool.length), 1))
+  return picked
+}
+
+function base(key: string, topic: TopicId, kind: QuestionKind, format: Format, extra: Extra) {
+  return { key: `${topic}:${key}`, topic, kind, format, ask: [] as string[], options: [] as Option[], pairs: [] as Pair[], decoys: [] as Decoy[], reveal: [] as string[], note: '', ...extra }
+}
+
+function letterOption(letter: string, big = false): Option {
+  const shown = big ? letter.toUpperCase() : letter
+  return { id: letter, art: `txt:${shown}`, label: shown }
+}
+
+function pictureOption(word: string): Option {
+  return { id: word, art: WORD_ART[word]!, label: word }
+}
+
+/** Capital shown, circle its small letter (the letters are not read: the sound would give it away). */
+function smallOf(letter: Letter, others: Letter[], extra: Extra): Question {
+  return {
+    ...base(`small-${letter}`, 'case', 'pick', 'small', extra),
+    ask: [clip.letter(letter), clip.ask('find-small')],
+    subject: `txt:${letter.toUpperCase()}`,
+    options: [letter, ...others].map((l) => letterOption(l)),
+    answer: letter,
+    reveal: [clip.letter(letter)],
+    note: `${letter.toUpperCase()} ${letter}`,
+  }
+}
+
+/** Small letter shown, circle its capital. */
+function bigOf(letter: Letter, others: Letter[], extra: Extra): Question {
+  return {
+    ...base(`big-${letter}`, 'case', 'pick', 'big', extra),
+    ask: [clip.letter(letter), clip.ask('find-big')],
+    subject: `txt:${letter}`,
+    options: [letter, ...others].map((l) => letterOption(l, true)),
+    answer: letter,
+    reveal: [clip.letter(letter)],
+    note: `${letter.toUpperCase()} ${letter}`,
+  }
+}
+
+function casePair(letter: string): Pair {
+  return { id: letter, top: `txt:${letter.toUpperCase()}`, bottom: `txt:${letter}`, label: letter.toUpperCase(), topClip: clip.letter(letter), clip: clip.letter(letter) }
+}
+
+/**
+ * The test's first board: capitals on top, small letters below with one extra small letter,
+ * exactly as on pages 21 and 39. Each round draws the capitals from `pool`.
+ */
+function matchCase(key: string, pool: Letter[], count: number, extra: Extra): Question {
+  const dress = (letters: Letter[], decoy: Letter): Dress => ({
+    pairs: letters.map(casePair),
+    decoys: [{ id: `extra-${decoy}`, art: `txt:${decoy}`, label: decoy }],
+    note: letters.map((l) => `${l.toUpperCase()} ${l}`).join('   '),
+  })
+  const first = pool.slice(0, count)
+  return {
+    ...base(`match-${key}`, 'case', 'match', 'match-case', extra),
+    ask: [clip.ask('match-case')],
+    ...dress(first, (pool[count] ?? LETTERS.find((l) => !first.includes(l)))!),
+    answer: '',
+    vary: (random) => {
+      const letters = pickSome(pool, count, random)
+      const spare = pool.filter((l) => !letters.includes(l))
+      return dress(letters, pickOne(spare.length > 0 ? spare : LETTERS.filter((l) => !letters.includes(l)), random))
+    },
+  } as Question
+}
+
+/** Small letters on top, pictures below (one picture starts with none of them). */
+function matchLetters(key: string, pool: Letter[], count: number, extra: Extra): Question {
+  const dress = (letters: Letter[], words: string[], decoy: string): Dress => ({
+    pairs: letters.map((l, n) => ({ id: l, top: `txt:${l}`, bottom: WORD_ART[words[n]!]!, label: l, topClip: clip.letter(l), clip: clip.word(words[n]!) })),
+    decoys: [{ id: `extra-${decoy}`, art: WORD_ART[decoy]!, label: decoy }],
+    note: letters.map((l, n) => `${l} — ${words[n]}`).join('   '),
+  })
+  const first = pool.slice(0, count)
+  const firstDecoy = LETTERS.find((l) => !first.includes(l))!
+  return {
+    ...base(`match-${key}`, 'letters', 'match', 'match-letters', extra),
+    ask: [clip.ask('match-pic')],
+    ...dress(first, first.map((l) => LETTER_WORDS[l][0]!), LETTER_WORDS[firstDecoy][0]!),
+    answer: '',
+    vary: (random) => {
+      const letters = pickSome(pool, count, random)
+      const others = LETTERS.filter((l) => !letters.includes(l))
+      return dress(letters, letters.map((l) => pickOne(LETTER_WORDS[l], random)), pickOne(LETTER_WORDS[pickOne(others, random)], random))
+    },
+  } as Question
+}
+
+/** Numbers on top, groups to count below (one group matches none of them). */
+function matchNumbers(key: string, pool: number[], count: number, extra: Extra): Question {
+  const dress = (numbers: number[], decoy: number, pics: string[]): Dress => ({
+    pairs: numbers.map((n, k) => ({ id: String(n), top: `txt:${n}`, bottom: `count:${pics[k]}:${n}`, label: String(n), topClip: clip.number(n), clip: clip.number(n) })),
+    decoys: [{ id: `extra-${decoy}`, art: `count:${pics[numbers.length]}:${decoy}`, label: String(decoy) }],
+    note: numbers.join('   '),
+  })
+  const first = pool.slice(0, count)
+  return {
+    ...base(`numbers-${key}`, 'letters', 'match', 'match-numbers', extra),
+    ask: [clip.ask('match-num')],
+    ...dress(first, pool[count]!, [...COUNT_PICS].slice(0, count + 1)),
+    answer: '',
+    vary: (random) => {
+      const numbers = pickSome(pool, count, random)
+      return dress(numbers, pickOne(pool.filter((n) => !numbers.includes(n)), random), pickSome(COUNT_PICS, count + 1, random))
+    },
+  } as Question
+}
+
+/** A letter, and three pictures: circle the one that starts with it. */
+function picFor(letter: Letter, extra: Extra): Question {
+  const dress = (word: string, others: string[]): Dress => ({
+    options: [word, ...others].map(pictureOption),
+    answer: word,
+    reveal: [clip.word(word)],
+    note: `${cap(word)} starts with ${letter}`,
+  })
+  const others = LETTERS.filter((l) => l !== letter && l !== 'x')
+  return {
+    ...base(`pic-${letter}`, 'letters', 'pick', 'pic-for-letter', extra),
+    ask: [clip.letter(letter), clip.ask('pic-for-letter')],
+    subject: `txt:${letter.toUpperCase()}${letter}`,
+    ...dress(LETTER_WORDS[letter][0]!, [LETTER_WORDS[others[0]!][0]!, LETTER_WORDS[others[1]!][0]!]),
+    vary: (random) =>
+      dress(
+        pickOne(LETTER_WORDS[letter], random),
+        pickSome(others, 2, random).map((l) => pickOne(LETTER_WORDS[l], random)),
+      ),
+  } as Question
+}
+
+function numberOption(n: number): Option {
+  return { id: String(n), art: `txt:${n}`, label: String(n) }
+}
+
+/** Two other numbers from 1–6, near the answer. */
+function nearNumbers(n: number, random: Random): number[] {
+  const near = [n - 2, n - 1, n + 1, n + 2].filter((m) => m >= 1 && m <= 6)
+  return pickSome(near, 2, random)
+}
+
+/** A group to count: circle the number. */
+function countQ(n: number, extra: Extra): Question {
+  const dress = (thing: Countable, others: number[]): Dress => ({
+    ask: [clip.count(thing)],
+    help: COUNTABLES[thing].ar,
+    subject: `count:${COUNTABLES[thing].pic}:${n}`,
+    options: [n, ...others].map(numberOption),
+  })
+  return {
+    ...base(`count-${n}`, 'letters', 'pick', 'count', extra),
+    ...dress('bears', nearNumbers(n, () => 0)),
+    answer: String(n),
+    reveal: [clip.number(n)],
+    note: `${n} · ${NUMBER_WORDS[n]}`,
+    vary: (random) => dress(pickOne(Object.keys(COUNTABLES) as Countable[], random), nearNumbers(n, random)),
+  } as Question
+}
+
+/** A number: circle the group with that many (the groups are not read: that would count for the child). */
+function findNumber(n: number, extra: Extra): Question {
+  const dress = (pic: string, others: number[]): Dress => ({
+    options: [n, ...others].map((m) => ({ id: String(m), art: `count:${pic}:${m}`, label: String(m) })),
+  })
+  return {
+    ...base(`find-${n}`, 'letters', 'pick', 'find-number', extra),
+    ask: [clip.number(n), clip.ask('find-number')],
+    subject: `txt:${n}`,
+    ...dress('cupcake', nearNumbers(n, () => 0)),
+    answer: String(n),
+    reveal: [clip.number(n)],
+    note: `${n} · ${NUMBER_WORDS[n]}`,
+    vary: (random) => dress(pickOne(COUNT_PICS, random), nearNumbers(n, random)),
+  } as Question
+}
+
+/** «Circle the correct word»: a picture and three words, as on pages 21 and 39. */
+function wordQ(answer: string, others: [string, string], extra: Extra, subject = WORD_ART[answer]!): Question {
+  return {
+    ...base(answer, 'words', 'pick', 'word', extra),
+    ask: [clip.ask('circle-word')],
+    subject,
+    options: [answer, ...others].map((word) => ({ id: word, art: `word:${word}`, label: word })),
+    answer,
+    reveal: [clip.word(answer)],
+    note: answer,
+  }
+}
+
+/** «Copy the following»: write over the grey text on four lines. */
+function copyQ(key: string, text: string, extra: Extra): Question {
+  const tokens = text.split(' ')
+  const reveal = tokens.map((token) => (/^\d$/.test(token) ? clip.number(Number(token)) : token.length === 1 ? clip.letter(token) : clip.word(token)))
+  return {
+    ...base(key, 'writing', 'trace', 'copy', extra),
+    ask: [clip.ask('trace')],
+    text,
+    answer: text,
+    reveal: [...new Set(reveal)],
+    note: text,
+  }
+}
+
+/** «Write the missing initial letters»: a picture and its word without the first letter. */
+function missing(word: string, extra: Extra): Question {
+  const letter = word.charAt(0) as Letter
+  // Six keys in alphabetical order, like a keyboard.
+  const keys = (others: Letter[]): Option[] => [letter, ...others].sort().map((l) => letterOption(l))
+  const others = LETTERS.filter((l) => l !== letter)
+  return {
+    ...base(word, 'missing', 'missing', 'missing', extra),
+    ask: [clip.word(word), clip.ask('missing')],
+    subject: WORD_ART[word]!,
+    word,
+    options: keys(others.slice(0, 5)),
+    answer: letter,
+    reveal: [clip.letter(letter), clip.word(word)],
+    note: word,
+    vary: (random) => ({ options: keys(pickSome(others, 5, random)) }),
+  }
+}
+
+// ── The question bank ─────────────────────────────────────────────────────
+const d = (difficulty: number, skills: string[]): Extra => ({ difficulty, skills })
+
 export const QUESTIONS: Question[] = [
-  // Big and small letters
-  smallOf('f', ['t', 'l'], { difficulty: 25, skills: S.case }),
-  smallOf('m', ['h', 'e'], { difficulty: 20, skills: S.case }),
-  smallOf('b', ['h', 'l'], { difficulty: 30, skills: S.case }),
-  smallOf('a', ['e', 'c'], { difficulty: 30, skills: S.case }),
-  smallOf('l', ['t', 'f'], { difficulty: 35, skills: S.case }),
-  smallOf('c', ['e', 'a'], { difficulty: 15, skills: S.case }),
-  smallOf('e', ['c', 'a'], { difficulty: 35, skills: S.case }),
-  smallOf('h', ['b', 'm'], { difficulty: 40, skills: S.case }),
-  smallOf('t', ['f', 'l'], { difficulty: 35, skills: S.case }),
-  bigOf('b', ['h', 'e'], { difficulty: 40, skills: S.case }),
-  bigOf('f', ['e', 't'], { difficulty: 35, skills: S.case }),
-  bigOf('m', ['h', 'a'], { difficulty: 25, skills: S.case }),
-  bigOf('l', ['t', 'h'], { difficulty: 40, skills: S.case }),
-  bigOf('a', ['h', 'm'], { difficulty: 45, skills: S.case }),
-  bigOf('e', ['f', 'c'], { difficulty: 45, skills: S.case }),
-  matchCase('fmb', ['f', 'm', 'b'], { difficulty: 30, skills: S.caseBoard }),
-  matchCase('alt', ['a', 'l', 't'], { difficulty: 40, skills: S.caseBoard }),
-  matchCase('ceh', ['c', 'e', 'h'], { difficulty: 40, skills: S.caseBoard }),
-  matchCase('bfl', ['b', 'f', 'l'], { difficulty: 50, skills: S.caseBoard }),
+  // 1. Big and small letters
+  matchCase('unit1', UNIT_1, 5, d(30, S.caseBoard)),
+  matchCase('unit2', UNIT_2, 5, d(35, S.caseBoard)),
+  matchCase('tall', ['b', 'f', 'h', 'l', 't'], 4, d(45, S.caseBoard)),
+  matchCase('round', ['c', 'o', 'x', 'u', 'e', 'a'], 4, d(25, S.caseBoard)),
+  matchCase('mix', [...LETTERS], 5, d(50, S.caseBoard)),
+  smallOf('a', ['e', 'o'], d(30, S.case)),
+  smallOf('c', ['o', 'e'], d(15, S.case)),
+  smallOf('e', ['c', 'a'], d(35, S.case)),
+  smallOf('h', ['b', 'l'], d(40, S.case)),
+  smallOf('l', ['t', 'h'], d(35, S.case)),
+  smallOf('t', ['f', 'l'], d(40, S.case)),
+  smallOf('f', ['t', 'l'], d(35, S.case)),
+  smallOf('m', ['u', 'h'], d(25, S.case)),
+  smallOf('b', ['h', 'l'], d(40, S.case)),
+  smallOf('o', ['c', 'a'], d(15, S.case)),
+  smallOf('x', ['c', 'u'], d(20, S.case)),
+  smallOf('u', ['m', 'o'], d(30, S.case)),
+  bigOf('a', ['h', 'm'], d(45, S.case)),
+  bigOf('e', ['f', 'c'], d(45, S.case)),
+  bigOf('h', ['b', 'l'], d(40, S.case)),
+  bigOf('b', ['h', 'e'], d(40, S.case)),
+  bigOf('t', ['f', 'l'], d(35, S.case)),
+  bigOf('u', ['o', 'x'], d(30, S.case)),
 
-  // Letter and picture
-  picFor('f', 'frog', ['mug', 'box'], { difficulty: 25, skills: S.initial }),
-  picFor('f', 'fan', ['bat', 'lamb'], { difficulty: 35, skills: S.initial }),
-  picFor('m', 'mug', ['fox', 'bag'], { difficulty: 20, skills: S.initial }),
-  picFor('m', 'man', ['frog', 'bed'], { difficulty: 30, skills: S.initial }),
-  picFor('b', 'box', ['mat', 'fan'], { difficulty: 20, skills: S.initial }),
-  picFor('b', 'bat', ['mug', 'fox'], { difficulty: 30, skills: S.initial }),
-  picFor('b', 'bag', ['man', 'frog'], { difficulty: 35, skills: S.initial }),
-  picFor('a', 'ant', ['bat', 'mug'], { difficulty: 25, skills: S.initial }),
-  picFor('l', 'lamb', ['box', 'ant'], { difficulty: 30, skills: S.initial }),
-  picFor('l', 'lion', ['tiger', 'horse'], { difficulty: 40, skills: S.initial }),
-  picFor('c', 'cat', ['hat', 'bat'], { difficulty: 45, skills: S.initial }),
-  picFor('t', 'tiger', ['lion', 'cat'], { difficulty: 40, skills: S.initial }),
-  letterFor('fox', ['b', 'm'], { difficulty: 25, skills: S.initial }),
-  letterFor('mat', ['f', 'b'], { difficulty: 30, skills: S.initial }),
-  letterFor('bed', ['m', 'f'], { difficulty: 30, skills: S.initial }),
-  letterFor('apple', ['e', 'l'], { difficulty: 35, skills: S.initial }),
-  letterFor('lemon', ['m', 't'], { difficulty: 45, skills: S.initial }),
-  letterFor('egg', ['a', 'h'], { difficulty: 45, skills: S.initial }),
-  letterFor('horse', ['c', 'f'], { difficulty: 40, skills: S.initial }),
-  matchPictures('fmb', ['fox', 'mug', 'box'], { difficulty: 30, skills: S.initialBoard }),
-  matchPictures('alb', ['ant', 'lamb', 'bat'], { difficulty: 35, skills: S.initialBoard }),
-  matchPictures('fmt', ['fan', 'man', 'tiger'], { difficulty: 45, skills: S.initialBoard }),
-  matchPictures('ceh', ['cat', 'egg', 'hat'], { difficulty: 50, skills: S.initialBoard }),
+  // 2. Letters and numbers to pictures
+  matchLetters('unit1', UNIT_1, 4, d(35, S.initialBoard)),
+  matchLetters('unit2', ['f', 'm', 'b', 'o', 'u'], 4, d(40, S.initialBoard)),
+  matchLetters('mix', [...LETTERS].filter((l) => l !== 'x'), 4, d(50, S.initialBoard)),
+  matchLetters('vowels', ['a', 'e', 'o', 'u'], 4, d(45, S.initialBoard)),
+  matchNumbers('123', [1, 2, 3], 2, d(15, S.numberBoard)),
+  matchNumbers('456', [4, 5, 6], 2, d(35, S.numberBoard)),
+  matchNumbers('mix', [1, 2, 3, 4, 5, 6], 2, d(40, S.numberBoard)),
+  ...LETTERS.filter((l) => l !== 'x').map((l, n) => picFor(l, d([25, 30, 35, 30, 35, 40, 30, 30, 35, 45, 45][n]!, S.initial))),
+  countQ(1, d(10, S.count)),
+  countQ(2, d(15, S.count)),
+  countQ(3, d(20, S.count)),
+  countQ(4, d(30, S.count)),
+  countQ(5, d(35, S.count)),
+  countQ(6, d(40, S.count)),
+  findNumber(3, d(25, S.count)),
+  findNumber(4, d(30, S.count)),
+  findNumber(5, d(40, S.count)),
+  findNumber(6, d(45, S.count)),
 
-  // Numbers 1–6 (4, 5, 6 are this unit)
-  countQ('bears', 4, [5, 6], { difficulty: 20, skills: S.count }),
-  countQ('apples', 5, [4, 6], { difficulty: 30, skills: S.count }),
-  countQ('flowers', 6, [4, 5], { difficulty: 35, skills: S.count }),
-  countQ('frogs', 4, [3, 6], { difficulty: 25, skills: S.count }),
-  countQ('fish', 6, [5, 4], { difficulty: 40, skills: S.count }),
-  countQ('cookies', 5, [6, 3], { difficulty: 35, skills: S.count }),
-  countQ('cars', 3, [2, 4], { difficulty: 15, skills: S.count }),
-  countQ('cows', 2, [1, 3], { difficulty: 10, skills: S.count }),
-  findNumber(4, 'bears', [5, 6], { difficulty: 30, skills: S.count }),
-  findNumber(5, 'apples', [4, 6], { difficulty: 40, skills: S.count }),
-  findNumber(6, 'flowers', [4, 5], { difficulty: 45, skills: S.count }),
-  findNumber(3, 'cars', [2, 4], { difficulty: 25, skills: S.count }),
-  findNumber(1, 'cows', [2, 3], { difficulty: 15, skills: S.count }),
-  matchNumbers('456', [[4, 'bears'], [5, 'apples'], [6, 'flowers']], { difficulty: 40, skills: S.numberBoard }),
-  matchNumbers('123', [[1, 'cars'], [2, 'cows'], [3, 'apples']], { difficulty: 20, skills: S.numberBoard }),
-  matchNumbers('246', [[2, 'apples'], [4, 'apples'], [6, 'apples']], { difficulty: 50, skills: S.numberBoard }),
+  // 3. Circle the correct word (the book's four first)
+  wordQ('ears', ['legs', 'eyes'], d(40, S.reading)),
+  wordQ('horse', ['lamb', 'tiger'], d(30, S.reading)),
+  wordQ('sister', ['brother', 'father'], d(45, S.reading), 'pic:sisters'),
+  wordQ('orange', ['brown', 'blue'], d(40, S.reading)),
+  wordQ('cat', ['cap', 'car'], d(35, S.reading)),
+  wordQ('cap', ['cat', 'cow'], d(35, S.reading)),
+  wordQ('car', ['cat', 'cap'], d(35, S.reading)),
+  wordQ('cow', ['cat', 'car'], d(30, S.reading)),
+  wordQ('ant', ['arm', 'apple'], d(35, S.reading)),
+  wordQ('apple', ['ant', 'arm'], d(30, S.reading)),
+  wordQ('arm', ['eyes', 'head'], d(35, S.reading)),
+  wordQ('egg', ['ear', 'elbow'], d(35, S.reading)),
+  wordQ('elbow', ['elephant', 'egg'], d(45, S.reading)),
+  wordQ('elephant', ['egg', 'elbow'], d(30, S.reading)),
+  wordQ('hat', ['hand', 'horse'], d(30, S.reading)),
+  wordQ('hand', ['head', 'hat'], d(40, S.reading)),
+  wordQ('head', ['hand', 'horse'], d(40, S.reading)),
+  wordQ('nose', ['mouth', 'hand'], d(35, S.reading)),
+  wordQ('mouth', ['nose', 'hand'], d(40, S.reading)),
+  wordQ('lion', ['lemon', 'lamb'], d(35, S.reading)),
+  wordQ('lemon', ['lion', 'lamb'], d(35, S.reading)),
+  wordQ('lamb', ['lion', 'legs'], d(40, S.reading)),
+  wordQ('legs', ['ears', 'eyes'], d(40, S.reading)),
+  wordQ('toe', ['toy', 'tiger'], d(45, S.reading)),
+  wordQ('tiger', ['toe', 'teacher'], d(30, S.reading)),
+  wordQ('teacher', ['tiger', 'toy'], d(40, S.reading)),
+  wordQ('father', ['mother', 'brother'], d(40, S.reading)),
+  wordQ('mother', ['father', 'sister'], d(40, S.reading)),
+  wordQ('brother', ['sister', 'father'], d(45, S.reading)),
+  wordQ('fan', ['fox', 'man'], d(35, S.reading)),
+  wordQ('fox', ['box', 'frog'], d(40, S.reading)),
+  wordQ('frog', ['fox', 'fan'], d(35, S.reading)),
+  wordQ('mug', ['man', 'mat'], d(40, S.reading)),
+  wordQ('man', ['mat', 'mug'], d(40, S.reading)),
+  wordQ('mat', ['man', 'bat'], d(45, S.reading)),
+  wordQ('box', ['fox', 'bag'], d(40, S.reading)),
+  wordQ('bat', ['bag', 'bed'], d(45, S.reading)),
+  wordQ('bag', ['bat', 'box'], d(45, S.reading)),
+  wordQ('bed', ['bag', 'bat'], d(40, S.reading)),
+  wordQ('oven', ['open', 'on'], d(45, S.reading)),
+  wordQ('umbrella', ['up', 'under'], d(35, S.reading)),
+  wordQ('under', ['up', 'upset'], d(50, S.reading)),
+  wordQ('blue', ['black', 'brown'], d(40, S.reading)),
+  wordQ('brown', ['orange', 'blue'], d(45, S.reading)),
 
-  // Missing first letter (the five test words first)
-  missing('box', ['m', 'f'], { difficulty: 25, skills: S.missing }),
-  missing('ant', ['e', 'm'], { difficulty: 30, skills: S.missing }),
-  missing('mug', ['b', 'l'], { difficulty: 25, skills: S.missing }),
-  missing('lamb', ['t', 'b'], { difficulty: 40, skills: S.missing }),
-  missing('bat', ['f', 'm'], { difficulty: 30, skills: S.missing }),
-  missing('frog', ['b', 'm'], { difficulty: 30, skills: S.missing }),
-  missing('feet', ['m', 't'], { difficulty: 40, skills: S.missing }),
-  missing('fan', ['m', 'c'], { difficulty: 35, skills: S.missing }),
-  missing('fox', ['b', 'l'], { difficulty: 30, skills: S.missing }),
-  missing('man', ['f', 'b'], { difficulty: 30, skills: S.missing }),
-  missing('mat', ['c', 'h'], { difficulty: 40, skills: S.missing }),
-  missing('bag', ['f', 'm'], { difficulty: 35, skills: S.missing }),
-  missing('bed', ['m', 'h'], { difficulty: 40, skills: S.missing }),
-  missing('cat', ['h', 'm'], { difficulty: 45, skills: S.missing }),
-  missing('hat', ['c', 'b'], { difficulty: 50, skills: S.missing }),
+  // 4. Copy the following (letters, numbers and the book's words)
+  ...LETTERS.map((l, n) => copyQ(`pair-${l}`, `${l.toUpperCase()} ${l}`, d([20, 15, 25, 30, 20, 25, 30, 35, 35, 15, 20, 25][n]!, S.copyLetters))),
+  copyQ('num-123', '1 2 3', d(15, S.copyNumbers)),
+  copyQ('num-456', '4 5 6', d(25, S.copyNumbers)),
+  ...['cat', 'hat', 'ant', 'bat', 'fan', 'cut', 'mat', 'car', 'toe', 'on', 'box', 'bed'].map((word, n) =>
+    copyQ(`word-${word}`, word, d([30, 35, 30, 35, 35, 35, 30, 35, 30, 20, 35, 35][n]!, S.copyWords)),
+  ),
+
+  // 5. Write the missing initial letter (the card's six words first)
+  missing('train', d(45, S.missing)),
+  missing('toe', d(40, S.missing)),
+  missing('mat', d(30, S.missing)),
+  missing('lemon', d(35, S.missing)),
+  missing('on', d(40, S.missing)),
+  missing('car', d(30, S.missing)),
+  missing('elbow', d(45, S.missing)),
+  missing('arm', d(40, S.missing)),
+  missing('head', d(35, S.missing)),
+  missing('leg', d(35, S.missing)),
+  missing('box', d(30, S.missing)),
+  missing('foot', d(40, S.missing)),
+  missing('under', d(45, S.missing)),
+  missing('ant', d(35, S.missing)),
+  missing('apple', d(30, S.missing)),
+  missing('cat', d(25, S.missing)),
+  missing('cow', d(30, S.missing)),
+  missing('egg', d(35, S.missing)),
+  missing('ear', d(40, S.missing)),
+  missing('hat', d(30, S.missing)),
+  missing('hand', d(35, S.missing)),
+  missing('lion', d(30, S.missing)),
+  missing('tiger', d(30, S.missing)),
+  missing('fan', d(30, S.missing)),
+  missing('fox', d(30, S.missing)),
+  missing('frog', d(35, S.missing)),
+  missing('mug', d(30, S.missing)),
+  missing('man', d(30, S.missing)),
+  missing('bat', d(30, S.missing)),
+  missing('bed', d(35, S.missing)),
+  missing('bag', d(35, S.missing)),
+  missing('oven', d(45, S.missing)),
+  missing('up', d(45, S.missing)),
+  missing('umbrella', d(40, S.missing)),
 ]
 
 // ── Narration ─────────────────────────────────────────────────────────────
 // Arabic: Maryam Essa (Kuwaiti), the voice approved for «بصمة وأثر»; no diacritics.
 // English: Alice (British educator) — chosen by the family on 2026-10-13 because she
-// reads lone letters as letter names.
+// reads lone letters as letter names. Lines kept from the first test keep their recordings.
 export const ASK_CLIPS = {
   'find-small': 'وين الحرف الصغير؟',
   'find-big': 'وين الحرف الكبير؟',
   'pic-for-letter': 'أي صورة تبدأ بهذا الحرف؟',
-  'letter-for-pic': 'بأي حرف تبدأ هذي الكلمة؟',
   missing: 'شنو الحرف الناقص في أول هذي الكلمة؟',
   'find-number': 'وين الصورة اللي فيها هذا الرقم؟',
   'match-case': 'نوصل كل حرف كبير… بالحرف الصغير مثله.',
   'match-pic': 'نوصل كل حرف… بالصورة اللي تبدأ فيه.',
   'match-num': 'نوصل كل رقم… بالصورة اللي فيها نفس العدد.',
+  'circle-word': 'نختار الكلمة الصحيحة… حسب الصورة.',
+  trace: 'نكتب بإصبعنا فوق الكتابة الرمادية… على الأربع سطور.',
 } as const
 
 export type AskClip = keyof typeof ASK_CLIPS
@@ -498,10 +637,10 @@ export type AskClip = keyof typeof ASK_CLIPS
 export const AR_UI_CLIPS = {
   welcome: 'هلا والله! يلا نتدرب على الإنجليزي… نختار درس، ونبدأ.',
   'test-intro': 'هذا اختبار تجريبي… فيه أسئلة من كل الدروس. يلا نبدأ!',
-  'learn-done': 'خلصنا الدرس! يلا نتدرب.',
   'match-wrong': 'لا… نجرب مرة ثانية.',
-  'match-left-first': 'نختار من جهة اليسار أول… وبعدين الجواب.',
-  'review': 'خلنا نتذكر مع بعض…',
+  'match-top-first': 'نختار من فوق أول… وبعدين من تحت.',
+  'trace-again': 'نكتب فوق الكتابة الرمادية بالضبط… ونحاول مرة ثانية.',
+  review: 'خلنا نتذكر مع بعض…',
   // Arabic cheers, mixed in with the English ones.
   'cheer-1': 'كفو!',
   'cheer-2': 'ما شاء الله! صح.',
@@ -559,11 +698,7 @@ export const RETRIES = (Object.keys(AR_UI_CLIPS) as ArUiClip[])
   .filter((id) => id.startsWith('retry-'))
   .map((id) => ({ text: AR_UI_CLIPS[id].replace('الجواب الصح…', '').replace('…', '').trim(), clip: clip.ui(id) }))
 
-/** All the ways a fact can be said, each with its clip. */
-export function phrasings(fact: Fact): (Phrasing & { clip: string })[] {
-  return [fact, ...fact.more].map((phrasing, n) => ({ text: phrasing.text, say: phrasing.say, clip: clip.fact(fact.id, n) }))
-}
-
+/** Letters whose bare name is misread ("H" came out as "haitch"). */
 const LETTER_NAMES: Record<string, string> = { h: 'Aitch.' }
 
 export interface AudioCue {
@@ -576,49 +711,54 @@ export function bare(text: string): string {
   return text.replace(/[ً-ْٰ]/g, '')
 }
 
+/** Every English word a question says: its pictures, its words to circle and its copy words. */
+export function spokenWords(): string[] {
+  const words = new Set<string>()
+  for (const id of QUESTIONS.flatMap((question) => [...question.reveal, ...question.ask, ...question.pairs.map((pair) => pair.clip)])) {
+    if (id.startsWith('en/word/')) words.add(id.slice('en/word/'.length))
+  }
+  // Drawn pictures are said too.
+  for (const list of Object.values(LETTER_WORDS)) list.forEach((word) => words.add(word))
+  return [...words].sort()
+}
+
 export function audioCues(): AudioCue[] {
   const en = (id: string, text: string): AudioCue => ({ id, text, lang: 'en' })
   const ar = (id: string, text: string): AudioCue => ({ id, text: bare(text), lang: 'ar' })
-  const words = Object.keys(WORD_ART)
   return [
-    // Spelled-out names where the bare letter is misread (H came out as "haitch").
     ...LETTERS.map((letter) => en(clip.letter(letter), LETTER_NAMES[letter] ?? `${letter.toUpperCase()}.`)),
-    ...words.map((word) => en(clip.word(word), `${cap(word)}.`)),
+    ...spokenWords().map((word) => en(clip.word(word), `${cap(word)}.`)),
     ...[1, 2, 3, 4, 5, 6].map((n) => en(clip.number(n), `${cap(NUMBER_WORDS[n]!)}.`)),
-    ...FACTS.flatMap((fact) => phrasings(fact).map((phrasing) => en(phrasing.clip, phrasing.say))),
-    ...Object.entries(WORD_MEANING).map(([word, meaning]) => ar(clip.meaning(word), `يعني… ${meaning}.`)),
     ...(Object.keys(EN_UI_CLIPS) as EnUiClip[]).map((id) => en(clip.en(id), EN_UI_CLIPS[id])),
     ...(Object.keys(ASK_CLIPS) as AskClip[]).map((id) => ar(clip.ask(id), ASK_CLIPS[id])),
     ...(Object.keys(COUNTABLES) as Countable[]).map((thing) => ar(clip.count(thing), COUNTABLES[thing].ar)),
-    ...TOPICS.map((topic) => ar(clip.topic(topic.id), topic.say)),
     ...(Object.keys(AR_UI_CLIPS) as ArUiClip[]).map((id) => ar(clip.ui(id), AR_UI_CLIPS[id])),
   ]
+}
+
+/** Every clip a question can play in any of its draws. */
+function questionClips(question: Question): string[] {
+  const clips = [...question.ask, ...question.reveal, ...question.pairs.flatMap((pair) => [pair.topClip, pair.clip])]
+  if (question.format === 'match-letters' || question.format === 'pic-for-letter') {
+    clips.push(...Object.values(LETTER_WORDS).flat().map(clip.word), ...LETTERS.map(clip.letter))
+  }
+  if (question.format === 'count') clips.push(...(Object.keys(COUNTABLES) as Countable[]).map(clip.count))
+  return clips
 }
 
 /** Every clip a round needs, so it can be loaded before the first question. */
 export function roundClips(questions: Question[]): string[] {
   return [
-    ...questions.flatMap((question) => [
-      ...question.ask,
-      ...question.options.flatMap((option) => (option.clip ? [option.clip] : [])),
-      ...question.pairs.map((pair) => pair.clip),
-      ...question.facts.flatMap((id) => {
-        const fact = factById(id)
-        return [...phrasings(fact).map((phrasing) => phrasing.clip), ...(fact.meaning ? [clip.meaning(id.replace('word-', ''))] : [])]
-      }),
+    ...new Set([
+      ...questions.flatMap(questionClips),
+      clip.ui('match-wrong'),
+      clip.ui('match-top-first'),
+      clip.ui('trace-again'),
+      clip.ui('review'),
+      ...CHEERS.map((cheer) => cheer.clip),
+      ...RETRIES.map((retry) => retry.clip),
+      clip.en('done-great'),
+      clip.en('done-good'),
     ]),
-    clip.ui('match-wrong'),
-    clip.ui('match-left-first'),
-    clip.ui('review'),
-    ...CHEERS.map((cheer) => cheer.clip),
-    ...RETRIES.map((retry) => retry.clip),
-    clip.en('done-great'),
-    clip.en('done-good'),
   ]
-}
-
-export function factById(id: string): Fact {
-  const fact = FACTS.find((entry) => entry.id === id)
-  if (!fact) throw new Error(`Unknown fact ${id}`)
-  return fact
 }

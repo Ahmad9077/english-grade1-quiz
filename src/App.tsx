@@ -3,23 +3,19 @@ import { wakeAudio } from './audio/context'
 import { Narrator } from './audio/player'
 import { NarratorContext } from './audio/NarratorContext'
 import { setSfxEnabled } from './audio/sfx'
-import { TOPICS, clip, type TopicId } from './data/catalog'
-import { loadProgress, recordLearned, recordRound, saveProgress, type SavedProgress } from './domain/progress'
+import { clip, type TopicId } from './data/catalog'
+import { loadProgress, recordRound, saveProgress, type SavedProgress } from './domain/progress'
 import { buildPractice, buildTest, starsFor } from './domain/round'
 import type { BootstrapContext } from './hub/bootstrap'
 import type { Attempt, HubBridge } from './hub/bridge'
 import { Home } from './components/Home'
-import { LearnScreen } from './components/LearnScreen'
 import { QuizScreen, type Round } from './components/QuizScreen'
 import { ResultsScreen } from './components/ResultsScreen'
 import { Splash } from './components/Splash'
-import { TopicScreen } from './components/TopicScreen'
 
 type Screen =
   | { name: 'splash' }
   | { name: 'home' }
-  | { name: 'topic'; topic: TopicId }
-  | { name: 'learn'; topic: TopicId }
   | { name: 'quiz'; round: Round }
   | { name: 'results'; round: Round; attempts: Attempt[] }
 
@@ -34,7 +30,6 @@ function readMuted(): boolean {
 }
 
 function screenKey(screen: Screen): string {
-  if (screen.name === 'topic' || screen.name === 'learn') return `${screen.name}-${screen.topic}`
   if (screen.name === 'quiz' || screen.name === 'results') return `${screen.name}-${screen.round.id}`
   return screen.name
 }
@@ -72,7 +67,7 @@ export default function App({ context, bridge }: { context: BootstrapContext; br
     wakeAudio()
     setScreen({ name: 'home' })
     void narrator.play([{ clip: clip.ui('welcome') }])
-    narrator.preload([...TOPICS.map((topic) => clip.topic(topic.id)), clip.ui('test-intro')])
+    narrator.preload([clip.ui('test-intro')])
   }, [narrator])
 
   const startPractice = useCallback(
@@ -111,7 +106,7 @@ export default function App({ context, bridge }: { context: BootstrapContext; br
   return (
     <NarratorContext.Provider value={narrator}>
       <div className="paper" aria-hidden="true">
-        {['A', 'b', 'F', 'm', 'B', '4', 'a', '6'].map((glyph, n) => (
+        {['A', 'b', 'T', 'm', 'O', '4', 'u', '6'].map((glyph, n) => (
           <span key={n} className={`float-glyph glyph-${n + 1}`}>
             {glyph}
           </span>
@@ -124,32 +119,15 @@ export default function App({ context, bridge }: { context: BootstrapContext; br
             progress={progress}
             muted={muted}
             onToggleSound={() => setMuted((value) => !value)}
-            onOpenTopic={(topic) => setScreen({ name: 'topic', topic })}
+            onOpenTopic={startPractice}
             onStartTest={startTest}
-          />
-        ) : null}
-        {screen.name === 'topic' ? (
-          <TopicScreen
-            topic={screen.topic}
-            progress={progress}
-            onBack={goHome}
-            onLearn={() => setScreen({ name: 'learn', topic: screen.topic })}
-            onPractice={() => startPractice(screen.topic)}
-          />
-        ) : null}
-        {screen.name === 'learn' ? (
-          <LearnScreen
-            topic={screen.topic}
-            onBack={() => setScreen({ name: 'topic', topic: screen.topic })}
-            onDone={() => setProgress((current) => recordLearned(current, screen.topic))}
-            onPractice={() => startPractice(screen.topic)}
           />
         ) : null}
         {screen.name === 'quiz' ? (
           <QuizScreen
             round={screen.round}
             intro={screen.round.kind === 'test'}
-            onExit={screen.round.kind === 'test' ? goHome : () => setScreen({ name: 'topic', topic: screen.round.tone as TopicId })}
+            onExit={goHome}
             onFinish={(attempts) => finishRound(screen.round, attempts)}
           />
         ) : null}

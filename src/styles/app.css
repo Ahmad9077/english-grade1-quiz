@@ -234,7 +234,6 @@ p {
 }
 
 .is-pulsing::after,
-.mode-card.is-suggested::after,
 .option.is-reveal::after,
 .track-step.is-current::after {
   content: '';
@@ -244,8 +243,7 @@ p {
   pointer-events: none;
 }
 
-.is-pulsing::after,
-.mode-card.is-suggested::after {
+.is-pulsing::after {
   border: 5px solid var(--sun);
   animation: ring 1.9s ease-out infinite;
 }
@@ -411,10 +409,10 @@ p {
 .blank-slot {
   display: inline-block;
   width: 0.62em;
-  height: 0.9em;
+  height: 0.7em;
   margin-inline-end: 0.06em;
   border-bottom: 0.08em solid var(--tone);
-  vertical-align: -0.08em;
+  vertical-align: baseline;
 }
 
 /* Things to count: a tidy grid, at most three in a row, like the book's boxes. */
@@ -675,262 +673,6 @@ p {
   margin-inline: auto;
 }
 
-/* ── Topic ─────────────────────────────────────────────── */
-.topic-hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 18px 12px 22px;
-  border: var(--edge);
-  border-radius: 32px;
-  background:
-    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.75) 0 26px, transparent 27px),
-    radial-gradient(circle at 15% 75%, rgba(255, 255, 255, 0.55) 0 16px, transparent 17px),
-    var(--tint);
-  box-shadow: var(--lift);
-}
-
-.topic-hero-art {
-  position: relative;
-  width: 220px;
-  max-width: 100%;
-  height: 140px;
-}
-
-.hero-art {
-  position: absolute;
-}
-
-.hero-art-0 {
-  font-size: 92px;
-  top: 0;
-  right: 18px;
-}
-
-.hero-art-1 {
-  font-size: 74px;
-  bottom: 0;
-  left: 18px;
-}
-
-.topic-title {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(1.8rem, 7vw, 2.4rem);
-  line-height: 1.5;
-  color: var(--deep);
-  text-align: center;
-  text-wrap: balance;
-}
-
-.mode-cards {
-  display: grid;
-  gap: 14px;
-}
-
-.mode-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  padding: 14px 16px;
-  border: var(--edge);
-  border-radius: var(--radius);
-  background: var(--paper);
-  box-shadow: var(--lift);
-  text-align: start;
-}
-
-
-
-.mode-icon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 70px;
-  height: 70px;
-  border-radius: 22px;
-  background: var(--tint);
-  font-size: 40px;
-}
-
-.mode-text {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-}
-
-.mode-title {
-  font-family: var(--font-display);
-  font-size: 1.9rem;
-  line-height: 1.3;
-  color: var(--deep);
-}
-
-.mode-sub {
-  color: var(--ink-soft);
-  font-weight: 700;
-}
-
-/* ── Learn ─────────────────────────────────────────────── */
-.dots {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  flex: 1;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  background: var(--paper);
-  transition: width 0.3s, background 0.3s;
-}
-
-.dot.is-done {
-  background: var(--tint);
-}
-
-.dot.is-current {
-  width: 30px;
-  background: var(--tone);
-}
-
-.learn-stage {
-  display: grid;
-  flex: 1;
-  min-height: 380px;
-}
-
-.learn-stage > * {
-  grid-area: 1 / 1;
-}
-
-.learn-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  padding: 34px 18px 26px;
-  border: var(--edge);
-  border-radius: 34px;
-  background:
-    radial-gradient(circle at 50% 0%, var(--tint) 0 46%, transparent 46.5%),
-    var(--paper);
-  box-shadow: 0 8px 0 var(--ink);
-  touch-action: pan-y;
-  cursor: grab;
-}
-
-.learn-card:active {
-  cursor: grabbing;
-}
-
-.learn-count {
-  position: absolute;
-  top: 12px;
-  inset-inline-start: 16px;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: var(--paper);
-  border: 2px solid var(--ink);
-  font-weight: 800;
-  font-size: 0.9rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.learn-art {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-size: 92px;
-}
-
-.learn-art.count-3 {
-  font-size: 76px;
-}
-
-.learn-art.count-4,
-.learn-art.count-5 {
-  font-size: 58px;
-}
-
-.learn-art-item {
-  display: grid;
-  place-items: center;
-}
-
-.learn-text {
-  max-width: 24ch;
-  font-size: clamp(1.45rem, 5.4vw, 2rem);
-  font-weight: 800;
-  line-height: 1.7;
-  text-align: center;
-  text-wrap: balance;
-}
-
-.learn-done {
-  gap: 14px;
-}
-
-.learn-done-art {
-  font-size: 110px;
-}
-
-.learn-done-title {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 2rem;
-  line-height: 1.4;
-  color: var(--deep);
-  text-align: center;
-  text-wrap: balance;
-}
-
-.learn-done-sub {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--ink-soft);
-}
-
-.learn-nav {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.nav-button {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 64px;
-  height: 64px;
-  border: var(--edge);
-  border-radius: 50%;
-  background: var(--paper);
-  box-shadow: var(--lift);
-  color: var(--ink);
-}
-
-.nav-button:disabled {
-  opacity: 0.35;
-  box-shadow: 0 2px 0 var(--ink);
-}
-
-.learn-next {
-  flex: 1;
-}
-
 /* ── Quiz ──────────────────────────────────────────────── */
 .quiz-screen.has-feedback {
   padding-bottom: 250px;
@@ -1009,30 +751,6 @@ p {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.prompt-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  border: var(--edge);
-  border-radius: 26px;
-  background: var(--paper);
-  box-shadow: 0 5px 0 var(--ink);
-}
-
-.prompt {
-  flex: 1;
-  min-width: 0;
-  font-size: clamp(1.3rem, 4.8vw, 1.8rem);
-  font-weight: 800;
-  line-height: 1.6;
-  text-wrap: balance;
-}
-
-.question-tf .prompt {
-  font-size: clamp(1.35rem, 5vw, 1.9rem);
 }
 
 .subject {
@@ -1471,9 +1189,6 @@ p {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .mode-cards {
-    grid-template-columns: 1fr 1fr;
-  }
 
   .option {
     min-height: 170px;
@@ -1598,22 +1313,9 @@ p {
     font-size: 54px;
   }
 
-  .hero-art-0 {
-    font-size: 120px;
-  }
 
-  .hero-art-1 {
-    font-size: 96px;
-  }
 
-  .topic-hero-art {
-    width: 280px;
-    height: 180px;
-  }
 
-  .prompt {
-    font-size: 2.2rem;
-  }
 
   .subject-art {
     font-size: 130px;
@@ -1649,26 +1351,10 @@ p {
     padding-inline: 32px;
   }
 
-  .learn-art {
-    font-size: 130px;
-  }
 
-  .learn-art.count-3 {
-    font-size: 104px;
-  }
 
-  .learn-art.count-4,
-  .learn-art.count-5 {
-    font-size: 84px;
-  }
 
-  .learn-text {
-    font-size: 2.3rem;
-  }
 
-  .learn-stage {
-    min-height: 520px;
-  }
 
   .results-star .star-icon {
     width: 104px;
@@ -1684,14 +1370,12 @@ p {
 /* Pointer devices only: a small lift on hover (touch screens keep tap feedback). */
 @media (hover: hover) and (pointer: fine) {
   .topic-card,
-  .test-banner,
-  .mode-card {
+  .test-banner {
     transition: translate 0.15s ease-out;
   }
 
   .topic-card:hover,
-  .test-banner:hover,
-  .mode-card:hover {
+  .test-banner:hover {
     translate: 0 -3px;
   }
 }
@@ -1881,61 +1565,6 @@ p {
   max-width: none;
 }
 
-.learn-card {
-  transition: transform 0.35s cubic-bezier(0.3, 1.3, 0.5, 1);
-  will-change: transform;
-}
-
-.learn-card.is-dragging {
-  transition: none;
-}
-
-.card-in-next {
-  animation: card-in-next 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.05) backwards;
-}
-
-.card-in-prev {
-  animation: card-in-prev 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.05) backwards;
-}
-
-@keyframes card-in-next {
-  from {
-    opacity: 0;
-    transform: translateX(-70px) rotate(-3deg);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes card-in-prev {
-  from {
-    opacity: 0;
-    transform: translateX(70px) rotate(3deg);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.learn-art-item {
-  flex-direction: column;
-  gap: 4px;
-}
-
-.learn-art-label {
-  padding: 0 10px;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  background: var(--tint);
-  color: var(--deep);
-  font-size: 1rem;
-  font-weight: 800;
-  line-height: 1.6;
-}
-
 .confetti-canvas {
   position: fixed;
   inset: 0;
@@ -1957,183 +1586,414 @@ p {
   }
 }
 
-@media (min-width: 760px) {
-  .learn-art-label {
-    font-size: 1.25rem;
-  }
+
+/* ── The second test: the book's Progress Test, question by question ──────────
+   Each question sits in a blue box like the test's, under its English instruction line
+   (underlined, as printed) and a short Arabic help line with the speaker. */
+:root {
+  --font-school: 'Edu NSW ACT Foundation', 'Andika', 'Comic Sans MS', sans-serif;
+  --box-blue: #3d8fd8;
+  --box-tint: #f4faff;
+  --pen: #2e5bd8;
+  --ring-good: #1f9d55;
+  --ring-miss: #d6312f;
 }
 
-/* ── English: letters, counting, the missing letter and the matching board ── */
-.subject-text .subject-art,
-.learn-glyph {
+.paper-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.paper-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  text-align: left;
+}
+
+.paper-part {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-latin);
+  font-weight: 700;
+}
+
+.paper-section {
   position: relative;
-  padding: 0.06em 0.34em 0;
-  border: var(--edge);
-  border-radius: 24px;
-  background:
-    linear-gradient(180deg, transparent 18%, var(--rule-red) 18% calc(18% + 2px), transparent calc(18% + 2px)),
-    repeating-linear-gradient(90deg, var(--rule-blue) 0 10px, transparent 10px 18px) 0 50% / 100% 2px no-repeat,
-    linear-gradient(180deg, transparent 80%, var(--rule-red) 80% calc(80% + 3px), transparent calc(80% + 3px)),
-    var(--paper);
-  box-shadow: var(--lift);
+  padding: 0 18px 0 12px;
+  border-radius: 6px 0 0 6px;
+  background: #cfe6fa;
+  color: var(--ink);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
 }
 
-.subject-text .subject-art {
-  font-size: 104px;
+.paper-letter {
+  font-size: 1.2rem;
 }
 
-.subject-text .art-text {
+.paper-instruction {
+  margin: 0;
+  font-family: var(--font-latin);
+  font-size: clamp(1.15rem, 4.6vw, 1.55rem);
+  font-weight: 700;
+  line-height: 1.35;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  text-wrap: balance;
+}
+
+.paper-help {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.paper-help p {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
   color: var(--deep);
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.5;
 }
 
-.subject-picture .subject-art {
-  font-size: 104px;
+.paper-help .speaker-button {
+  width: 52px;
+  height: 52px;
+  flex: none;
 }
 
-.subject-count .subject-art {
-  padding: 10px 18px;
-  border: var(--edge);
-  border-radius: 24px;
-  background: var(--paper);
-  box-shadow: var(--lift);
+.paper-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 12px 18px;
+  border: 3px solid var(--box-blue);
+  border-radius: 16px;
+  background: var(--box-tint);
+}
+
+/* Pictures from the book, fitted inside their box whatever their shape. */
+.art-pic {
+  position: relative;
+  display: inline-block;
+}
+
+.art-pic img {
+  position: absolute;
+  inset: 0;
+}
+
+.art-pic img,
+.count-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.art-count {
+  display: inline-grid;
+  direction: ltr;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.05em;
+  width: auto;
+  height: auto;
+  font-size: inherit;
+}
+
+.art-count .count-item {
+  display: block;
+  width: 0.42em;
+  height: 0.42em;
+}
+
+.art-count.count-of-1 {
+  grid-template-columns: 1fr;
+}
+
+.art-count.count-of-1 .count-item {
+  width: 0.8em;
+  height: 0.8em;
+}
+
+.art-count.count-of-2,
+.art-count.count-of-4 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.art-count.count-of-2 .count-item,
+.art-count.count-of-4 .count-item {
+  width: 0.5em;
+  height: 0.5em;
+}
+
+/* A word as printed in the test: in a small box. */
+.art-word {
+  width: auto;
+  height: auto;
+  padding: 0.05em 0.45em 0.12em;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: #ffffff;
+  font-family: var(--font-latin);
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* The question's picture or letter. */
+.subject {
+  display: grid;
+  place-items: center;
+  min-height: 0;
   font-size: 150px;
 }
 
-.blank-word {
-  font-family: var(--font-latin);
-  font-weight: 700;
-  font-size: 3.4rem;
-  line-height: 1.2;
-  letter-spacing: 0.02em;
+.subject-txt {
+  padding: 0 0.32em;
+  border: var(--edge);
+  border-radius: 22px;
+  background: var(--paper);
+  box-shadow: var(--lift);
+  font-size: 96px;
 }
 
-.blank-word .blank-slot.is-filled {
-  border-bottom-color: var(--good);
-  color: var(--good-deep);
-  text-align: center;
+.subject-txt .art-text {
+  color: var(--deep);
 }
 
-.options.count-3 .option-slot {
-  flex-basis: calc(33.33% - 8px);
-  max-width: calc(33.33% - 8px);
+.subject-count {
+  padding: 8px 14px;
+  border: var(--edge);
+  border-radius: 22px;
+  background: var(--paper);
+  box-shadow: var(--lift);
+  font-size: 170px;
 }
 
-.option-text .option-art {
+.question-pick.format-word .subject {
+  font-size: 170px;
+}
+
+/* Choices: a row of tiles; a pen ring circles the chosen one. */
+.options {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.option-slot {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 190px;
+}
+
+.option {
+  width: 100%;
+  min-height: 112px;
+  padding: 10px 6px;
+  border-radius: 20px;
+}
+
+.option-txt .option-art {
+  font-size: 76px;
+}
+
+.option-pic .option-art,
+.option-svg .option-art {
   font-size: 84px;
 }
 
-.option-text .art-text {
-  color: var(--ink);
-}
-
-.option-picture .option-art {
-  font-size: 64px;
-}
-
-/* Choosing between groups to count: one wide row each, so every item stays big. */
-.options.holds-option-count .option-slot {
-  flex-basis: 100%;
-  max-width: 100%;
-}
-
-.options.holds-option-count .option {
-  min-height: 96px;
-}
-
 .option-count .option-art {
-  font-size: 110px;
+  font-size: 104px;
 }
 
-.option-count .art-count {
-  grid-template-columns: repeat(6, auto);
+.options.holds-word .option-slot {
+  max-width: 220px;
 }
 
-.feedback-answer {
-  display: inline-grid;
-  place-items: center;
-  min-width: 64px;
-  padding: 2px 14px;
-  font-size: 52px;
-  line-height: 1;
+.option-word {
+  min-height: 78px;
+  border-radius: 16px;
 }
 
-.feedback-answer.option-count {
-  font-size: 90px;
+.option-word .option-art {
+  font-size: clamp(1.45rem, 6vw, 2.1rem);
 }
 
-.feedback-facts {
-  margin: 0;
+.option-word .art-word {
+  border: 0;
   padding: 0;
-  list-style: none;
-  font-family: var(--font-latin);
+  background: none;
 }
 
-.feedback-fact {
-  font-weight: 700;
+.option.is-correct,
+.option.is-reveal {
+  box-shadow: 0 6px 0 var(--good-deep);
 }
 
-/* The matching board: items on the left, partners on the right, lines between. */
-.match-board {
+.option.is-reveal::after {
+  content: none;
+}
+
+.ink-ring {
+  position: absolute;
+  inset: -8px -6px;
+  width: calc(100% + 12px);
+  height: calc(100% + 16px);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.ink-ring path {
+  fill: none;
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  vector-effect: non-scaling-stroke;
+  animation: ink-draw 0.55s ease-out 0.05s forwards;
+}
+
+.ink-good path {
+  stroke: var(--ring-good);
+}
+
+.ink-miss path {
+  stroke: var(--ring-miss);
+}
+
+@keyframes ink-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* «Match»: items on top, partners below, dot to dot as in the book. */
+.match-rows {
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: clamp(56px, 20vw, 190px);
-  width: 100%;
-  max-width: 640px;
-  align-self: center;
-}
-
-.match-column {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: clamp(56px, 16vw, 110px);
+  width: 100%;
 }
 
-.match-slot {
+.match-row {
   display: flex;
+  justify-content: space-around;
+  gap: 8px;
+}
+
+.match-row .match-slot {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 150px;
 }
 
 .match-item {
   position: relative;
-  z-index: 1;
-  flex: 1;
   display: grid;
   place-items: center;
-  min-height: 104px;
-  padding: 8px;
+  width: 100%;
+  min-height: 74px;
+  padding: 6px 2px;
   border: var(--edge);
-  border-radius: 24px;
+  border-radius: 16px;
   background: var(--paper);
-  box-shadow: var(--lift);
-  transition: transform 0.2s cubic-bezier(0.3, 1.4, 0.5, 1), background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 0 var(--ink);
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.25s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+.match-item:not(:disabled):active {
+  transform: scale(0.94);
 }
 
 .match-item .option-art {
-  font-size: 64px;
+  font-size: 58px;
 }
 
-.match-item.option-text .option-art {
-  font-size: 70px;
+.match-txt .option-art {
+  font-size: clamp(40px, 11vw, 64px);
 }
 
-.match-item.option-count .option-art {
-  font-size: 92px;
+.match-pic .option-art,
+.match-svg .option-art {
+  font-size: clamp(48px, 13vw, 92px);
+}
+
+.match-count .option-art,
+.option-count .option-art {
+  font-size: clamp(80px, 25vw, 160px);
+}
+
+/* Groups to count in a tile: two to a row, so even six fit. */
+.match-count .art-count,
+.option-count .art-count {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.match-count .art-count .count-item,
+.option-count .art-count .count-item {
+  width: 0.42em;
+  height: 0.42em;
+}
+
+.match-count .art-count.count-of-1 .count-item,
+.option-count .art-count.count-of-1 .count-item {
+  width: 0.8em;
+  height: 0.8em;
+}
+
+.match-dot {
+  position: absolute;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: #6cc3df;
+}
+
+.match-dot.dot-bottom {
+  bottom: -13px;
+}
+
+.match-dot.dot-top {
+  top: -13px;
 }
 
 .match-item.is-selected {
-  transform: translateY(-4px) scale(1.04);
   border-color: var(--deep);
   background: var(--tint);
-  box-shadow: 0 8px 0 var(--deep), 0 0 0 6px var(--tone);
+  box-shadow: 0 4px 0 var(--deep), 0 0 0 5px var(--tone);
+  transform: translateY(-3px);
+}
+
+.match-row-bottom .match-item.is-waiting {
+  opacity: 0.85;
+}
+
+.match-row-top.nudge .match-item:not(.is-matched) {
+  animation: shake 0.5s ease-in-out;
+  box-shadow: 0 4px 0 var(--ink), 0 0 0 5px var(--sun);
 }
 
 .match-item.is-matched {
-  transform: none;
+  cursor: default;
 }
-
-.match-item.match-color-0 { border-color: #c2264f; background: #ffe3ea; box-shadow: 0 6px 0 #c2264f; }
-.match-item.match-color-1 { border-color: #22508f; background: #dfeafc; box-shadow: 0 6px 0 #22508f; }
-.match-item.match-color-2 { border-color: #a3570a; background: #ffebd1; box-shadow: 0 6px 0 #a3570a; }
 
 .match-lines {
   position: absolute;
@@ -2145,340 +2005,417 @@ p {
 }
 
 .match-line {
-  stroke-width: 7;
+  stroke-width: 5;
   stroke-linecap: round;
-  stroke-dasharray: 800;
-  stroke-dashoffset: 800;
-  animation: draw-line 0.45s ease-out forwards;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: line-draw 0.5s ease-out forwards;
 }
 
-.match-line.match-color-0 { stroke: #e8446b; }
-.match-line.match-color-1 { stroke: #3a7bd5; }
-.match-line.match-color-2 { stroke: #f08a12; }
-
-@keyframes draw-line {
+@keyframes line-draw {
   to {
     stroke-dashoffset: 0;
   }
 }
 
-.shake {
-  animation: shake 0.45s ease-in-out;
+.match-color-0 { --pair: #e8446b; }
+.match-color-1 { --pair: #3a7bd5; }
+.match-color-2 { --pair: #f08a12; }
+.match-color-3 { --pair: #2fa86b; }
+.match-color-4 { --pair: #7b5ce0; }
+
+.match-line {
+  stroke: var(--pair);
 }
 
-/* A book word: picture, then the word with its first letter in red, as in the book. */
-.word-card {
-  display: grid;
-  justify-items: center;
-  gap: 6px;
+.match-item.is-matched {
+  border-color: var(--pair);
+  box-shadow: 0 4px 0 var(--pair);
 }
 
-.word-card-art {
+.match-item.is-matched .match-dot {
+  border-color: var(--pair);
+  background: var(--pair);
+}
+
+/* «Copy the following»: the four-line strip to write on. */
+.trace-board {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.trace-pad {
+  position: relative;
+  width: 100%;
+  height: clamp(150px, 40vw, 230px);
+  border: 2px solid #cfe2f3;
+  border-radius: 12px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.trace-pad canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.trace-ink {
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.trace-board.is-good .trace-pad {
+  border-color: var(--good);
+  box-shadow: 0 0 0 4px var(--good-tint);
+}
+
+.trace-board.is-missed .trace-pad {
+  border-color: var(--miss);
+}
+
+.trace-stamp {
+  position: absolute;
+  top: 8px;
+  right: 10px;
   display: grid;
   place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--good);
+  color: #ffffff;
+  font-size: 1.6rem;
+  font-weight: 900;
 }
 
-.word-label {
-  padding: 0 14px;
-  border: 2px solid var(--ink);
-  border-radius: 14px;
+.trace-tools {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.tool-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 0 22px;
+  border: var(--edge);
+  border-radius: 999px;
   background: var(--paper);
+  box-shadow: 0 4px 0 var(--ink);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.tool-button svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tool-check {
+  background: var(--good);
+  color: #ffffff;
+}
+
+.tool-button:disabled {
+  opacity: 0.45;
+  box-shadow: 0 2px 0 var(--ink);
+}
+
+/* «Write the missing initial letters»: picture, the word on four lines, and letter keys. */
+.missing-board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.missing-picture {
+  display: grid;
+  place-items: center;
+  font-size: 130px;
+}
+
+.word-strip {
+  position: relative;
+  width: min(100%, 420px);
+  height: clamp(118px, 30vw, 170px);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.word-strip canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.letter-keys {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  width: min(100%, 520px);
+}
+
+.letter-key {
+  min-height: 64px;
+  border: var(--edge);
+  border-radius: 16px;
+  background: var(--paper);
+  box-shadow: 0 4px 0 var(--ink);
+  font-family: var(--font-school);
+  font-size: 2.3rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.letter-key.is-correct,
+.letter-key.is-reveal {
+  border-color: var(--good-deep);
+  background: var(--good-tint);
+  box-shadow: 0 4px 0 var(--good-deep), 0 0 0 4px var(--good);
+}
+
+.letter-key.is-wrong {
+  animation: shake 0.5s ease-in-out;
+  border-color: var(--miss-deep);
+  background: var(--miss-tint);
+}
+
+.letter-key.is-dim {
+  opacity: 0.4;
+}
+
+/* Feedback: the right answer in words. */
+.feedback-note {
+  margin: 0;
   font-family: var(--font-latin);
+  font-size: 1.45rem;
   font-weight: 700;
-  font-size: 1.5rem;
   line-height: 1.4;
-  color: var(--ink);
+  white-space: pre-wrap;
+}
+
+.feedback-note:empty {
+  display: none;
 }
 
 .first-letter {
-  color: var(--miss);
+  color: var(--miss-deep);
 }
 
-.learn-art {
-  font-size: 84px;
+.feedback-answer {
+  display: inline-grid;
+  place-items: center;
+  min-width: 64px;
+  padding: 2px 12px;
+  font-size: 52px;
+  line-height: 1;
 }
 
-.learn-glyph {
-  font-size: 1.15em;
+.feedback-answer.option-word {
+  font-size: 1.5rem;
 }
 
-.learn-picture .art-count {
-  font-size: 0.62em;
+.feedback-answer.option-count {
+  font-size: 80px;
 }
 
-.learn-picture .art-count.count-of-1 {
-  font-size: 1em;
-}
-
-.learn-art.has-0-words .learn-glyph + .learn-glyph {
-  margin-inline-start: 6px;
-}
-
-.learn-art.has-3-words {
-  font-size: 64px;
-}
-
-.learn-art.has-3-words .learn-glyph {
-  flex-basis: 100%;
+/* Home: five parts, in the card's order; the fifth spans the row. */
+.section-title {
   display: flex;
-  justify-content: center;
-  border: 0;
-  background: none;
-  box-shadow: none;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
 }
 
-.learn-art.has-3-words .learn-glyph > .art-text {
-  padding: 0 0.3em;
-  border: var(--edge);
-  border-radius: 20px;
-  background: var(--paper);
-  box-shadow: var(--lift);
-  color: var(--deep);
-}
-
-.learn-art.learn-numbers {
-  font-size: 96px;
-}
-
-.learn-art.learn-numbers {
-  flex-direction: column;
-}
-
-.learn-art.has-1-words {
-  font-size: 120px;
-}
-
-.learn-text {
-  font-family: var(--font-latin);
+.section-sub {
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: 1rem;
   font-weight: 700;
 }
 
-.topic-card-art .art-text,
-.hero-art .art-text {
-  color: var(--deep);
+.topic-card {
+  position: relative;
 }
 
-@media (max-width: 480px) {
-  .question .subject-text .subject-art,
-  .question .subject-picture .subject-art {
-    font-size: 84px;
-  }
-
-  .question .subject-count .subject-art {
-    font-size: 120px;
-  }
-
-  .blank-word {
-    font-size: 2.8rem;
-  }
-
-  .question .option-text .option-art {
-    font-size: 64px;
-  }
-
-  .question .option-picture .option-art {
-    font-size: 52px;
-  }
-
-  .question.question-pick .options.count-3 .option {
-    min-height: 112px;
-  }
-
-  .question.question-pick .options.holds-option-count .option {
-    min-height: 80px;
-  }
-
-  .question .option-count .option-art {
-    font-size: 90px;
-  }
-
-  .match-item {
-    min-height: 88px;
-  }
-
-  .match-item .option-art {
-    font-size: 52px;
-  }
-
-  .match-item.option-text .option-art {
-    font-size: 58px;
-  }
-
-  .match-item.option-count .option-art {
-    font-size: 74px;
-  }
-
-  .learn-art.has-3-words {
-    font-size: 54px;
-  }
-
-  .word-label {
-    font-size: 1.25rem;
-  }
+.topic-card-number {
+  position: absolute;
+  top: 10px;
+  inset-inline-start: 12px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1;
 }
 
-@media (min-width: 760px) {
-  .subject-text .subject-art,
-  .subject-picture .subject-art {
-    font-size: 150px;
-  }
-
-  .subject-count .subject-art {
-    font-size: 210px;
-  }
-
-  .blank-word {
-    font-size: 4.6rem;
-  }
-
-  .option-text .option-art {
-    font-size: 124px;
-  }
-
-  .option-picture .option-art {
-    font-size: 100px;
-  }
-
-  .option-count .option-art {
-    font-size: 150px;
-  }
-
-  .options.holds-option-count .option {
-    min-height: 130px;
-  }
-
-  .match-item {
-    min-height: 150px;
-  }
-
-  .match-item .option-art {
-    font-size: 92px;
-  }
-
-  .match-item.option-text .option-art {
-    font-size: 104px;
-  }
-
-  .match-item.option-count .option-art {
-    font-size: 130px;
-  }
-
-  .feedback-answer {
-    font-size: 72px;
-  }
-
-  .learn-art {
-    font-size: 120px;
-  }
-
-  .learn-art.has-3-words {
-    font-size: 96px;
-  }
-
-  .learn-art.has-1-words {
-    font-size: 170px;
-  }
-
-  .word-label {
-    font-size: 2rem;
-  }
-}
-
-/* Letters in lesson pictures: the reading font needs a larger size to match an emoji. */
-.topic-card-art .art-text.art-back {
-  font-size: 60px;
-}
-
-.topic-card-art .art-text.art-front {
-  font-size: 70px;
-}
-
-.hero-art .art-text {
-  font-size: 1.1em;
-}
-
-@media (min-width: 760px) {
-  .topic-card-art .art-text.art-back {
-    font-size: 84px;
-  }
-
-  .topic-card-art .art-text.art-front {
-    font-size: 100px;
-  }
-}
-
-.match-wrap {
-  display: flex;
-  justify-content: center;
-}
-
-/* Four lessons: two by two on wider screens, never three and one. */
+/* Two by two on every screen, the fifth part across the row. */
 @media (min-width: 640px) {
   .topic-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* Feedback extras: a kind word before the right answer, and the word's meaning. */
-.feedback-encourage {
-  margin: 0;
-  font-weight: 800;
-  font-size: 1.05rem;
-  color: var(--ink-soft);
+.topic-grid > .topic-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
 }
 
-.feedback-title.cheer-en {
+/* «_rain»: the blank sits on the line, before the rest of the word. */
+.art-text {
+  display: inline-block;
+}
+
+.topic-card-art .art-word {
+  font-size: 0.55em;
+}
+
+.review-q {
   font-family: var(--font-latin);
-  font-weight: 700;
 }
 
-.feedback-meaning,
-.learn-meaning {
-  display: block;
-  font-family: var(--font-body);
-  font-weight: 800;
-  color: var(--deep);
-}
+@media (max-width: 480px) {
+  .paper-box {
+    padding: 14px 8px 16px;
+  }
 
-.feedback-meaning {
-  font-size: 1.05rem;
-}
+  .subject {
+    font-size: 124px;
+  }
 
-.learn-meaning {
-  margin: 0;
-  padding: 2px 16px;
-  border-radius: 999px;
-  background: var(--tint);
-  font-size: 1.3rem;
-}
+  .subject-txt {
+    font-size: 80px;
+  }
 
-.learn-meaning bdi,
-.feedback-meaning bdi {
-  font-family: var(--font-latin);
-  font-weight: 700;
-}
+  .question-pick.format-word .subject {
+    font-size: 140px;
+  }
 
-/* Matching: the right column waits until something on the left is chosen. */
-.match-item.is-waiting {
-  opacity: 0.72;
-}
+  .option {
+    min-height: 96px;
+  }
 
-.match-column-left.nudge .match-item:not(.is-matched) {
-  animation: nudge 0.6s ease-in-out;
-}
+  .option-txt .option-art {
+    font-size: 62px;
+  }
 
-@keyframes nudge {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-8px) scale(1.03); }
-  60% { transform: translateX(6px) scale(1.03); }
+  .option-pic .option-art,
+  .option-svg .option-art {
+    font-size: 70px;
+  }
+
+  .option-count .option-art {
+    font-size: 84px;
+  }
+
+  .missing-picture {
+    font-size: 108px;
+  }
+
+  .letter-key {
+    min-height: 58px;
+    font-size: 2rem;
+  }
 }
 
 @media (min-width: 760px) {
-  .feedback-meaning {
-    font-size: 1.3rem;
+  .paper-instruction {
+    font-size: 1.75rem;
   }
 
-  .learn-meaning {
-    font-size: 1.7rem;
+  .paper-help p {
+    font-size: 1.35rem;
+  }
+
+  .paper-box {
+    padding: 24px 22px 26px;
+    gap: 22px;
+  }
+
+  .subject {
+    font-size: 210px;
+  }
+
+  .subject-txt {
+    font-size: 130px;
+  }
+
+  .question-pick.format-word .subject {
+    font-size: 230px;
+  }
+
+  .option {
+    min-height: 150px;
+  }
+
+  .option-txt .option-art {
+    font-size: 104px;
+  }
+
+  .option-pic .option-art,
+  .option-svg .option-art {
+    font-size: 120px;
+  }
+
+  .option-count .option-art {
+    font-size: 150px;
+  }
+
+  .option-word {
+    min-height: 96px;
+  }
+
+  .option-word .option-art {
+    font-size: 2.6rem;
+  }
+
+  .match-item {
+    min-height: 130px;
+  }
+
+  .match-txt .option-art {
+    font-size: 84px;
+  }
+
+  .trace-pad {
+    height: 300px;
+  }
+
+  .word-strip {
+    width: min(100%, 600px);
+    height: 220px;
+  }
+
+  .missing-picture {
+    font-size: 220px;
+  }
+
+  .letter-keys {
+    width: min(100%, 660px);
+    gap: 12px;
+  }
+
+  .letter-key {
+    min-height: 84px;
+    font-size: 3rem;
+  }
+
+  .tool-button {
+    min-height: 64px;
+    font-size: 1.3rem;
   }
 }

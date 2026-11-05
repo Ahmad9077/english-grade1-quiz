@@ -8,7 +8,7 @@ import type { HubWindow } from '../../src/hub/contracts'
 
 const attempts: Attempt[] = [
   { questionKey: 'missing:box', chosen: 'b', correct: true },
-  { questionKey: 'missing:lamb', chosen: 't', correct: false },
+  { questionKey: 'missing:train', chosen: 'm', correct: false },
 ]
 const info = { kind: 'practice' as const, topic: 'missing', difficulty: 'medium' as const }
 
@@ -29,7 +29,7 @@ describe('hub contract', () => {
     expect(await bridge.reportRound(attempts, info)).toBe('adaptive')
     expect(recordAttempt).toHaveBeenCalledWith([
       { question: { key: 'missing:box' }, correct: true },
-      { question: { key: 'missing:lamb' }, correct: false },
+      { question: { key: 'missing:train' }, correct: false },
     ])
     expect(record).not.toHaveBeenCalled()
   })

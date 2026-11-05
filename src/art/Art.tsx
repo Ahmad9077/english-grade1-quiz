@@ -5,11 +5,22 @@ interface ArtProps {
   className?: string
 }
 
+const PICS = `${import.meta.env.BASE_URL}pics/`
+
 /**
- * Renders a picture at the size of its container: an emoji, an `svg:` drawing,
- * `txt:` letters or numbers in the reading font, or `count:<emoji>:<n>` things to count.
+ * Renders a picture at the size of its container: `pic:` a picture from the book, an `svg:`
+ * drawing, `txt:` letters or numbers in the reading font, `word:` a word box as printed in the
+ * test, `count:<pic>:<n>` things to count, or an emoji.
  */
 export function Art({ art, className = '' }: ArtProps) {
+  if (art.startsWith('pic:')) {
+    return (
+      <span className={`art art-pic ${className}`} aria-hidden="true">
+        <img src={`${PICS}${art.slice(4)}.webp`} alt="" draggable={false} decoding="async" />
+      </span>
+    )
+  }
+
   if (art.startsWith('svg:')) {
     const Drawing = DRAWINGS[art.slice(4)]
     if (!Drawing) throw new Error(`Missing drawing: ${art}`)
@@ -36,14 +47,22 @@ export function Art({ art, className = '' }: ArtProps) {
     )
   }
 
+  if (art.startsWith('word:')) {
+    return (
+      <span className={`art art-word ${className}`} aria-hidden="true" dir="ltr">
+        {art.slice(5)}
+      </span>
+    )
+  }
+
   if (art.startsWith('count:')) {
-    const [, emoji, amount] = art.split(':')
+    const [, pic, amount] = art.split(':')
     const n = Number(amount)
     return (
       <span className={`art art-count count-of-${n} ${className}`} aria-hidden="true">
         {Array.from({ length: n }, (_, k) => (
           <span key={k} className="count-item">
-            {emoji}
+            <img src={`${PICS}${pic}.webp`} alt="" draggable={false} decoding="async" />
           </span>
         ))}
       </span>

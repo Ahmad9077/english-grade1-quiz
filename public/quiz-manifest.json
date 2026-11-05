@@ -2,15 +2,16 @@
   "id": "english-grade1",
   "quizId": "english-grade1",
   "title": "English",
-  "description": "تدريب للاختبار القصير ١ في الإنجليزي للصف الأول: الحرف الكبير والصغير، والحرف والصورة، والأرقام ١–٦، والحرف الناقص (box, ant, mug, lamb, bat).",
+  "description": "تدريب لاختبار الإنجليزي للصف الأول (الاثنين ٩ نوفمبر ٢٠٢٦، كتاب الطالب ص ١١–٤٠): توصيل الحرف الكبير بالصغير، توصيل الحرف والرقم بالصورة، اختيار الكلمة حسب الصورة، نسخ الكلمات والأرقام على أربعة سطور، والحرف الناقص (train, toe, mat, lemon, on, car).",
   "recommendedAge": "5–7",
   "basePath": "/english-grade1-quiz/",
   "questionsPerRound": 8,
-  "testQuestions": 12,
+  "testQuestions": 10,
   "topics": [
     "case",
     "letters",
-    "numbers",
+    "words",
+    "writing",
     "missing"
   ],
   "capabilities": {
@@ -20,5 +21,5 @@
     "answerReview": true,
     "challenge": false
   },
-  "version": "1.0.0"
+  "version": "2.0.0"
 }
