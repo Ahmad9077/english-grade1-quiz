@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { CARD_WORDS, QUESTIONS, TOPICS } from '../../src/data/catalog'
+import { ASK_LINES, CARD_WORDS, CHEERS, QUESTIONS, RETRIES, STREAKS, TOPICS } from '../../src/data/catalog'
 import { PRACTICE_SIZE, TEST_PLAN, TEST_SIZE, arrangeOptions, buildPractice, buildTest, dressQuestion, orderQuestions, starsFor, testSlot } from '../../src/domain/round'
+import { Deck } from '../../src/domain/variety'
+import { cheerFor, explainClips, kindWord } from '../../src/domain/voice'
 
 function seeded(seed: number) {
   let value = seed
@@ -71,5 +73,70 @@ describe('rounds', () => {
     expect(starsFor(5, 8)).toBe(2)
     expect(starsFor(2, 8)).toBe(1)
     expect(starsFor(0, 0)).toBe(1)
+  })
+})
+
+describe('variety', () => {
+  it('deals every item before any comes back, and never the same twice running', () => {
+    const deck = new Deck(['a', 'b', 'c', 'd'])
+    const dealt = Array.from({ length: 40 }, (_, n) => deck.next(seeded(n + 1)))
+    for (let n = 0; n < 40; n += 4) expect(new Set(dealt.slice(n, n + 4)).size).toBe(4)
+    for (let n = 1; n < 40; n += 1) expect(dealt[n]).not.toBe(dealt[n - 1])
+  })
+
+  it('does not say the same instruction twice running, in a lesson or across rounds', () => {
+    for (const topic of TOPICS) {
+      const said = [1, 2, 3].flatMap((seed) => buildPractice(topic.id, [], [], seeded(seed))).map((q) => q.ask.at(-1))
+      const byStyle = new Map<string, string[]>()
+      const rounds = [1, 2, 3].flatMap((seed) => buildPractice(topic.id, [], [], seeded(seed + 10)))
+      for (const q of rounds) byStyle.set(q.lines, [...(byStyle.get(q.lines) ?? []), q.ask.at(-1)!])
+      for (const [style, lines] of byStyle) {
+        if (ASK_LINES[style as keyof typeof ASK_LINES].length < 2) continue
+        for (let n = 1; n < lines.length; n += 1) expect(lines[n], `${topic.id} ${style}`).not.toBe(lines[n - 1])
+      }
+      // In one round a style uses all its lines before any comes back; a one-line style
+      // (counting one kind of thing) comes at most once.
+      for (let seed = 1; seed < 20; seed += 1) {
+        const round = buildPractice(topic.id, [], [], seeded(seed))
+        for (const style of new Set(round.map((q) => q.lines))) {
+          const said = round.filter((q) => q.lines === style).map((q) => q.ask.at(-1))
+          expect(new Set(said).size, `${topic.id} ${style}`).toBe(Math.min(said.length, ASK_LINES[style].length))
+        }
+      }
+      expect(new Set(said).size, topic.id).toBeGreaterThanOrEqual(5)
+    }
+    const words = buildPractice('words', [], [], seeded(4))
+    expect(new Set(words.map((q) => q.help)).size).toBeGreaterThanOrEqual(5)
+  })
+
+  it('gives the mock test’s twin questions different words', () => {
+    for (let seed = 1; seed < 10; seed += 1) {
+      const round = buildTest([], [], seeded(seed))
+      expect(round[2]!.help).not.toBe(round[3]!.help)
+      expect(new Set([round[7]!.help, round[8]!.help, round[9]!.help]).size).toBe(3)
+    }
+  })
+
+  it('cheers in turn, with a streak cheer on the third and fifth right answer running', () => {
+    const question = QUESTIONS.find((q) => q.format === 'word')!
+    const random = seeded(7)
+    const cheers = Array.from({ length: 30 }, () => cheerFor(question, 1, random).text)
+    for (let n = 1; n < cheers.length; n += 1) expect(cheers[n]).not.toBe(cheers[n - 1])
+    expect(new Set(cheers).size).toBeGreaterThanOrEqual(15)
+    expect(cheers.some((text) => !CHEERS.some((cheer) => cheer.text === text))).toBe(true)
+    expect(STREAKS[3]).toContainEqual(cheerFor(question, 3))
+    expect(STREAKS[5]).toContainEqual(cheerFor(question, 5))
+    const kind = Array.from({ length: RETRIES.length }, () => kindWord().text)
+    expect(new Set(kind).size).toBe(RETRIES.length)
+  })
+
+  it('explains a miss: counts along, says the word or the first letter', () => {
+    const count = QUESTIONS.find((q) => q.key === 'letters:count-3')!
+    expect(explainClips(count).slice(1)).toEqual(['en/num/1', 'en/num/2', 'en/num/3'])
+    expect(explainClips(count)[0]).toMatch(/^ar\/ui\/x-count-\d$/)
+    const train = QUESTIONS.find((q) => q.key === 'missing:train')!
+    const said = explainClips(train)
+    expect([said[0], said[2]]).toEqual(['en/word/train', 'en/letter/t'])
+    expect(said[1]).toMatch(/^ar\/ui\/x-missing-\d$/)
   })
 })

@@ -2,8 +2,11 @@ import fs from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { DRAWINGS } from '../../src/art/drawings'
 import {
+  AR_LINES,
+  ASK_LINES,
   CARD_WORDS,
   CHEERS,
+  EN_LINES,
   FORMATS,
   LETTERS,
   LETTER_WORDS,
@@ -14,9 +17,21 @@ import {
   WORD_ART,
   audioCues,
   roundClips,
+  shown,
   type Question,
 } from '../../src/data/catalog'
 import { PRACTICE_SIZE, dressQuestion } from '../../src/domain/round'
+
+/** Lines of the family's earlier quizzes (Arabic, Math, Social studies, Islamic, the first English test): not said here. */
+const OLD_LINES = [
+  'كفو!', 'ما شاء الله! صح.', 'واو! جواب صح!', 'برافو! جواب ممتاز.', 'الله! جواب حلو.', 'تمام التمام!', 'عفية!', 'صح! رائع.', 'زين! جواب صحيح.', 'يا سلام! صح.',
+  'مو مشكلة… الجواب الصح…', 'قربنا! الجواب الصح…', 'خلنا نتعلمها مع بعض… الجواب الصح…', 'محاولة حلوة! الجواب الصح…', 'نشوف مع بعض… الجواب الصح…',
+  'خلنا نتذكر مع بعض…', 'لا… نجرب مرة ثانية.', 'هلا والله! يلا نتدرب على الإنجليزي… نختار درس، ونبدأ.', 'هذا اختبار تجريبي… فيه أسئلة من كل الدروس. يلا نبدأ!',
+  'وين الحرف الصغير؟', 'وين الحرف الكبير؟', 'أي صورة تبدأ بهذا الحرف؟', 'شنو الحرف الناقص في أول هذي الكلمة؟', 'وين الصورة اللي فيها هذا الرقم؟',
+  'نوصل كل حرف كبير… بالحرف الصغير مثله.', 'نوصل كل حرف… بالصورة اللي تبدأ فيه.', 'نوصل كل رقم… بالصورة اللي فيها نفس العدد.', 'نختار الكلمة الصحيحة… حسب الصورة.',
+  'نكتب بإصبعنا فوق الكتابة الرمادية… على الأربع سطور.', 'كم دبدوب في الصورة؟', 'كم تفاحة في الصورة؟', 'كم وردة في الصورة؟', 'كم ضفدع في الصورة؟', 'كم سيارة في الصورة؟', 'كم بقرة في الصورة؟',
+  'Great job!', 'Well done!', 'Super!', 'Excellent!', 'Awesome!', 'Fantastic!', 'You got it!', 'Brilliant!', 'Wonderful!', 'Perfect!', 'Good thinking!', 'Yes! That’s right!',
+]
 
 function seeded(seed: number) {
   let value = seed
@@ -170,23 +185,41 @@ describe('narration', () => {
   it('sends no diacritics to the voice and shows none on screen', () => {
     const marks = /[ً-ْٰ]/
     for (const cue of audioCues()) expect(cue.text, cue.id).not.toMatch(marks)
-    for (const f of Object.values(FORMATS)) expect(f.help).not.toMatch(marks)
+    for (const q of DRESSED) expect(q.help, q.key).not.toMatch(marks)
     for (const t of TOPICS) expect(t.title, t.id).not.toMatch(marks)
   })
 
   it('speaks to every child the same way (no girl- or boy-only words)', () => {
-    const words = ['أحسنتي', 'شطورة', 'بطلة', 'عليج', 'إنتي', 'أنتي', 'تبين', 'تعلمي', 'تدربي', 'اسمعي', 'حاولي', 'اختاري', 'اكتبي', 'شطور', 'بطل', 'عليك', 'اختار', 'اسمع', 'حاول', 'تبي', 'اكتب']
+    const words = ['أحسنتي', 'شطورة', 'بطلة', 'عليج', 'إنتي', 'أنتي', 'تبين', 'تعلمي', 'تدربي', 'اسمعي', 'حاولي', 'اختاري', 'اكتبي', 'حوطي', 'شطور', 'بطل', 'عليك', 'اختار', 'اسمع', 'حاول', 'تبي', 'اكتب', 'حوط', 'تستاهل', 'تستاهلين']
     const gendered = new RegExp(`(?<![\\u0600-\\u06FF])(${words.join('|')})(?![\\u0600-\\u06FF])`)
     for (const cue of audioCues().filter((c) => c.lang === 'ar')) expect(cue.text, cue.id).not.toMatch(gendered)
-    for (const f of Object.values(FORMATS)) expect(f.help).not.toMatch(gendered)
   })
 
   it('shows the Arabic line Maryam says', () => {
     for (const q of DRESSED) {
       const said = cues.get(q.ask.at(-1)!)!
-      const shown = q.help ?? FORMATS[q.format].help
-      expect(said.replace(/[…؟.!]/g, ' ').replace(/\s+/g, ' ').replace('هذي ', '').trim(), q.key).toBe(shown.replace(/[؟.!]/g, '').replace(/\s+/g, ' ').trim())
+      expect(q.help, q.key).toBe(shown(said))
     }
+    expect(shown('نطالع الصورة… ونحوط اسمها.')).toBe('نطالع الصورة، ونحوط اسمها.')
+  })
+
+  it('asks every question style in at least three ways, each a complete sentence', () => {
+    for (const format of Object.keys(FORMATS)) {
+      const groups = new Set(DRESSED.filter((q) => q.format === format).map((q) => q.lines))
+      // A count question draws one of six things, each with its own line.
+      if (format === 'count') for (const group of Object.keys(ASK_LINES)) if (group.startsWith('count-')) groups.add(group as keyof typeof ASK_LINES)
+      const lines = [...groups].flatMap((group) => ASK_LINES[group])
+      expect(new Set(lines).size, format).toBeGreaterThanOrEqual(3)
+      for (const line of lines) expect(line, format).toMatch(/[؟.!]$/)
+    }
+    expect(ASK_LINES.word.length).toBeGreaterThanOrEqual(6)
+    expect(ASK_LINES.missing.length).toBeGreaterThanOrEqual(6)
+  })
+
+  it('is worded afresh: no line from the family’s other quizzes, and no line twice', () => {
+    const all = [...Object.values(ASK_LINES), ...Object.values(AR_LINES), ...Object.values(EN_LINES)].flat() as string[]
+    for (const line of all) expect(OLD_LINES, line).not.toContain(line)
+    expect(new Set(all).size).toBe(all.length)
   })
 
   it('has a current clip for every cue, in the right language', () => {
@@ -204,22 +237,33 @@ describe('narration', () => {
   })
 
   it('has a recording for every clip any draw of a round can ask for', () => {
-    for (const id of roundClips(DRESSED)) expect(cues.has(id), id).toBe(true)
-    for (const q of DRESSED) for (const id of [...q.ask, ...q.reveal, ...q.pairs.flatMap((p) => [p.topClip, p.clip])]) expect(cues.has(id), `${q.key} ${id}`).toBe(true)
+    const used = roundClips(DRESSED)
+    for (const id of used) expect(cues.has(id), id).toBe(true)
+    for (const q of DRESSED) {
+      const explain = q.explain.filter((item): item is string => typeof item === 'string')
+      for (const id of [...q.ask, ...q.reveal, ...explain, ...q.pairs.flatMap((p) => [p.topClip, p.clip])]) expect(cues.has(id), `${q.key} ${id}`).toBe(true)
+      expect(q.explain.length, q.key).toBeGreaterThan(0)
+    }
+    // Every recording is reachable from some round (the welcome and the test's introduction are said outside one).
+    const outside = [...AR_LINES.welcome.keys()].map((n) => `ar/ui/welcome-${n + 1}`).concat([...AR_LINES['test-intro'].keys()].map((n) => `ar/ui/test-intro-${n + 1}`))
+    for (const id of cues.keys()) expect([...used, ...outside], id).toContain(id)
   })
 
   it('ends every question with a complete Arabic sentence', () => {
     for (const q of DRESSED) {
       const last = q.ask.at(-1)!
-      expect(last.startsWith('ar/'), q.key).toBe(true)
+      expect(last.startsWith('ar/q/'), q.key).toBe(true)
       expect(cues.get(last), q.key).toMatch(/[؟.!]$/)
     }
   })
 
-  it('has many cheers in English and Arabic, and several kind words after a miss', () => {
-    expect(CHEERS.length).toBeGreaterThanOrEqual(16)
-    expect(CHEERS.some((cheer) => cheer.lang === 'ar')).toBe(true)
+  it('has many cheers in English and Arabic, cheers for each kind of question, and kind words after a miss', () => {
+    expect(CHEERS.length).toBeGreaterThanOrEqual(18)
+    expect(CHEERS.filter((cheer) => cheer.lang === 'ar').length).toBeGreaterThanOrEqual(8)
     expect(new Set(CHEERS.map((cheer) => cheer.text)).size).toBe(CHEERS.length)
-    expect(RETRIES.length).toBeGreaterThanOrEqual(5)
+    expect(RETRIES.length).toBeGreaterThanOrEqual(6)
+    for (const kind of ['match', 'trace', 'missing', 'word', 'count'] as const) {
+      expect(AR_LINES[`cheer-${kind}`].length + EN_LINES[`cheer-${kind}`].length, kind).toBeGreaterThanOrEqual(2)
+    }
   })
 })

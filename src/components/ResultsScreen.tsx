@@ -3,10 +3,11 @@ import { Art } from '../art/Art'
 import { burst } from '../art/confetti'
 import { useNarrator } from '../audio/NarratorContext'
 import { sfx } from '../audio/sfx'
-import { FORMATS, QUESTIONS, clip } from '../data/catalog'
+import { FORMATS, QUESTIONS } from '../data/catalog'
 import { TONES, toneStyle } from '../data/tones'
 import { arabicNumber } from '../domain/format'
 import { starsFor } from '../domain/round'
+import { doneLine } from '../domain/voice'
 import type { Attempt } from '../hub/bridge'
 import type { Round } from './QuizScreen'
 import { BigButton, StarIcon, order } from './ui'
@@ -32,7 +33,7 @@ export function ResultsScreen({ round, attempts, onAgain, onHome }: ResultsProps
     const timers = [1, 2, 3].filter((n) => n <= stars).map((n) => window.setTimeout(() => sfx.star(), 350 + n * 260))
     timers.push(
       window.setTimeout(() => {
-        void narrator.play([{ clip: clip.en(stars === 3 ? 'done-great' : 'done-good') }])
+        void narrator.play([{ clip: doneLine(stars === 3).clip }])
         if (stars >= 2) burst(TONES[round.tone].tone)
       }, 1200),
     )
@@ -86,7 +87,7 @@ export function ResultsScreen({ round, attempts, onAgain, onHome }: ResultsProps
                       {FORMATS[question.format].instruction}
                     </span>
                     <span className="review-fact" dir="ltr">
-                      {question.word ?? question.text ?? (question.format === 'word' ? question.answer : FORMATS[question.format].help)}
+                      {question.word ?? question.text ?? (question.format === 'word' ? question.answer : question.help)}
                     </span>
                   </span>
                 </li>

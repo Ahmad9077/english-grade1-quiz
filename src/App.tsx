@@ -3,9 +3,10 @@ import { wakeAudio } from './audio/context'
 import { Narrator } from './audio/player'
 import { NarratorContext } from './audio/NarratorContext'
 import { setSfxEnabled } from './audio/sfx'
-import { clip, type TopicId } from './data/catalog'
+import { arLines, type TopicId } from './data/catalog'
 import { loadProgress, recordRound, saveProgress, type SavedProgress } from './domain/progress'
 import { buildPractice, buildTest, starsFor } from './domain/round'
+import { sayLine } from './domain/voice'
 import type { BootstrapContext } from './hub/bootstrap'
 import type { Attempt, HubBridge } from './hub/bridge'
 import { Home } from './components/Home'
@@ -66,8 +67,8 @@ export default function App({ context, bridge }: { context: BootstrapContext; br
   const start = useCallback(() => {
     wakeAudio()
     setScreen({ name: 'home' })
-    void narrator.play([{ clip: clip.ui('welcome') }])
-    narrator.preload([clip.ui('test-intro')])
+    void narrator.play([{ clip: sayLine('welcome').clip }])
+    narrator.preload(arLines('test-intro').map((line) => line.clip))
   }, [narrator])
 
   const startPractice = useCallback(

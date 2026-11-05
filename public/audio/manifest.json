@@ -16,203 +16,623 @@
     "style": 0.2
   },
   "clips": {
-    "ar/q/circle-word": {
-      "text": "نختار الكلمة الصحيحة… حسب الصورة.",
-      "hash": "aa41a27ea01217e4",
-      "durationMs": 3268,
+    "ar/q/big-1": {
+      "text": "وين أخوه الكبير؟",
+      "hash": "c00d0a4db3c7ac41",
+      "durationMs": 1393,
+      "bytes": 11745
+    },
+    "ar/q/big-2": {
+      "text": "نحوط نفس الحرف… بس كبير.",
+      "hash": "a9b3ffee38578b93",
+      "durationMs": 2861,
+      "bytes": 23448
+    },
+    "ar/q/big-3": {
+      "text": "هذا الصغير… ندور على الكبير مثله!",
+      "hash": "461d399f03efcafe",
+      "durationMs": 3397,
+      "bytes": 27837
+    },
+    "ar/q/copy-num-1": {
+      "text": "نكتب الأرقام بالترتيب… واحد واحد.",
+      "hash": "01e40cccaf543a9f",
+      "durationMs": 3964,
+      "bytes": 32225
+    },
+    "ar/q/copy-num-2": {
+      "text": "ثلاث أرقام… نمشي بإصبعنا فوقها.",
+      "hash": "f9b18e0bbeafe15f",
+      "durationMs": 3244,
+      "bytes": 26583
+    },
+    "ar/q/copy-pair-1": {
+      "text": "حرفين: كبير وصغير… نكتبهم فوق الرمادي.",
+      "hash": "05ec9741cbe828f8",
+      "durationMs": 4471,
+      "bytes": 36405
+    },
+    "ar/q/copy-pair-2": {
+      "text": "نمشي بإصبعنا على الحرفين… على مهل.",
+      "hash": "f7820f9b1375ab02",
+      "durationMs": 3466,
+      "bytes": 28255
+    },
+    "ar/q/copy-pair-3": {
+      "text": "نكتب الحرف الكبير… وبعده أخوه الصغير.",
+      "hash": "74672f80c6b8ae1a",
+      "durationMs": 3873,
+      "bytes": 31598
+    },
+    "ar/q/copy-word-1": {
+      "text": "نكتب الكلمة حرف حرف… من اليسار لليمين.",
+      "hash": "e341060e311c04c2",
+      "durationMs": 4253,
+      "bytes": 34524
+    },
+    "ar/q/copy-word-2": {
+      "text": "نمشي فوق الرمادي بالضبط… ولا نطلع برا.",
+      "hash": "fa1476cec6bdcffd",
+      "durationMs": 3592,
+      "bytes": 29300
+    },
+    "ar/q/copy-word-3": {
+      "text": "نكتب الكلمة على مهل… مثل ما في الكتاب.",
+      "hash": "394aca43cc150bc1",
+      "durationMs": 3680,
+      "bytes": 29927
+    },
+    "ar/q/count-apples-1": {
+      "text": "نعد التفاح مع بعض… كم تفاحة؟",
+      "hash": "0b7043ffae11e325",
+      "durationMs": 3062,
+      "bytes": 25120
+    },
+    "ar/q/count-bears-1": {
+      "text": "كم دبدوب يبي يلعب معانا؟",
+      "hash": "f4fab270b272fcee",
+      "durationMs": 2341,
+      "bytes": 19269
+    },
+    "ar/q/count-cars-1": {
+      "text": "نعد السيارات بإصبعنا… كم سيارة؟",
+      "hash": "28655ebcdc1300d3",
+      "durationMs": 3385,
+      "bytes": 27628
+    },
+    "ar/q/count-cows-1": {
+      "text": "كم بقرة في المزرعة؟",
+      "hash": "3e45ffd24c35117c",
+      "durationMs": 1613,
+      "bytes": 13417
+    },
+    "ar/q/count-flowers-1": {
+      "text": "نعد الورد على مهل… كم وردة؟",
+      "hash": "66614e2b5ab19f6d",
+      "durationMs": 3200,
+      "bytes": 26165
+    },
+    "ar/q/count-frogs-1": {
+      "text": "نعد الضفادع… كم ضفدع هني؟",
+      "hash": "11f195d51c50a246",
+      "durationMs": 2924,
+      "bytes": 23866
+    },
+    "ar/q/find-number-1": {
+      "text": "نعد كل مجموعة… ونلقى اللي فيها هالعدد.",
+      "hash": "386ea4351d5dda10",
+      "durationMs": 3343,
+      "bytes": 27210
+    },
+    "ar/q/find-number-2": {
+      "text": "نعد قبل لا نحوط… أي مجموعة فيها هالعدد؟",
+      "hash": "ee06f03620b9a05a",
+      "durationMs": 4023,
+      "bytes": 32643
+    },
+    "ar/q/find-number-3": {
+      "text": "هالرقم يدور على صورته… نعد ونلقاها!",
+      "hash": "db53b3a6a97077e6",
+      "durationMs": 3946,
+      "bytes": 32225
+    },
+    "ar/q/match-case-1": {
+      "text": "الحروف الكبيرة فوق… تدور على أخوانها الصغار تحت!",
+      "hash": "2d624d4330f1b53c",
+      "durationMs": 4744,
+      "bytes": 38495
+    },
+    "ar/q/match-case-2": {
+      "text": "كل حرف كبير له حرف صغير… نربطهم بخط.",
+      "hash": "a65de1478cdbe523",
+      "durationMs": 4283,
+      "bytes": 34733
+    },
+    "ar/q/match-case-3": {
+      "text": "نوصل الكبير بالصغير… وتحت حرف زيادة، ننتبه له!",
+      "hash": "abddf152ff82586d",
+      "durationMs": 4862,
+      "bytes": 39540
+    },
+    "ar/q/match-letters-1": {
+      "text": "كل حرف يدور على صورة تبدأ فيه… نوصلهم!",
+      "hash": "cefde91365d1787f",
+      "durationMs": 4102,
+      "bytes": 33479
+    },
+    "ar/q/match-letters-2": {
+      "text": "نقول اسم كل صورة… ونسمع أول حرف فيها.",
+      "hash": "3456b3c111f0835f",
+      "durationMs": 4002,
+      "bytes": 32643
+    },
+    "ar/q/match-letters-3": {
+      "text": "حرف فوق… وصورته تحت. وفي صورة زيادة!",
+      "hash": "d77a3d8920de6a34",
+      "durationMs": 4094,
+      "bytes": 33270
+    },
+    "ar/q/match-numbers-1": {
+      "text": "نعد الأشياء في كل صورة… ونوصلها برقمها.",
+      "hash": "720e3b995c717e06",
+      "durationMs": 4023,
+      "bytes": 32643
+    },
+    "ar/q/match-numbers-2": {
+      "text": "كل رقم له صورة فيها نفس العدد… نلقاها!",
+      "hash": "ad9fa1d3fd79de5f",
+      "durationMs": 3988,
+      "bytes": 32434
+    },
+    "ar/q/match-numbers-3": {
+      "text": "نعد على أصابعنا… ونربط كل رقم بصورته.",
+      "hash": "2049d65a686aa059",
+      "durationMs": 3985,
+      "bytes": 32434
+    },
+    "ar/q/missing-1": {
+      "text": "ناقصها أول حرف… أي حرف نحط؟",
+      "hash": "655e6749a7cf6897",
+      "durationMs": 3061,
+      "bytes": 25120
+    },
+    "ar/q/missing-2": {
+      "text": "نسمع أول صوت في الكلمة… ونلقى حرفه.",
+      "hash": "a8b32fbb98ef47b8",
+      "durationMs": 3600,
+      "bytes": 29300
+    },
+    "ar/q/missing-3": {
+      "text": "حرف ضاع من أول الكلمة! نرجعه مكانه.",
+      "hash": "82f8d0aea47c499b",
+      "durationMs": 3472,
+      "bytes": 28255
+    },
+    "ar/q/missing-4": {
+      "text": "نقولها على مهل… شنو أول حرف فيها؟",
+      "hash": "b27d693bdc45fdc0",
+      "durationMs": 3321,
+      "bytes": 27210
+    },
+    "ar/q/missing-5": {
+      "text": "الصورة تساعدنا… أي حرف يكمل الكلمة؟",
+      "hash": "86e9a53efd537c6a",
+      "durationMs": 3866,
+      "bytes": 31389
+    },
+    "ar/q/missing-6": {
+      "text": "أول خانة فاضية… نعبيها بالحرف الصح.",
+      "hash": "c32d59a2f97e93f7",
+      "durationMs": 3600,
+      "bytes": 29300
+    },
+    "ar/q/pic-for-letter-1": {
+      "text": "وحدة بس من الصور تبدأ بهالحرف… وينها؟",
+      "hash": "8d09fcb5a4c1c5d8",
+      "durationMs": 3802,
+      "bytes": 30972
+    },
+    "ar/q/pic-for-letter-2": {
+      "text": "نقول أسماء الصور… ونسمع أي وحدة تبدأ فيه.",
+      "hash": "82e6c2d23e71c591",
+      "durationMs": 3777,
+      "bytes": 30763
+    },
+    "ar/q/pic-for-letter-3": {
+      "text": "هالحرف يدور على صورته!",
+      "hash": "acf1e404c5548319",
+      "durationMs": 2427,
+      "bytes": 19896
+    },
+    "ar/q/small-1": {
+      "text": "وين أخوه الصغير؟",
+      "hash": "b7ccb9612cdd0933",
+      "durationMs": 1514,
+      "bytes": 12581
+    },
+    "ar/q/small-2": {
+      "text": "نحوط نفس الحرف… بس صغير.",
+      "hash": "8f3b942def5118d5",
+      "durationMs": 2740,
+      "bytes": 22403
+    },
+    "ar/q/small-3": {
+      "text": "هذا الكبير… ندور على الصغير مثله!",
+      "hash": "a51c49ce2306123b",
+      "durationMs": 3378,
+      "bytes": 27628
+    },
+    "ar/q/word-1": {
+      "text": "نطالع الصورة… ونحوط اسمها.",
+      "hash": "877f6d15452f4899",
+      "durationMs": 2788,
+      "bytes": 22821
+    },
+    "ar/q/word-2": {
+      "text": "ثلاث كلمات… وحدة بس اسم الصورة. وينها؟",
+      "hash": "876d37e2907e8877",
+      "durationMs": 4222,
+      "bytes": 34315
+    },
+    "ar/q/word-3": {
+      "text": "نقرأ أول حرف من كل كلمة… يساعدنا نلقى الصح.",
+      "hash": "19a41dfbdb38c525",
+      "durationMs": 4202,
+      "bytes": 34106
+    },
+    "ar/q/word-4": {
+      "text": "شنو اسم هالصورة بالإنجليزي؟ نلقاه بين الكلمات.",
+      "hash": "e45df89c98489573",
+      "durationMs": 4110,
+      "bytes": 33479
+    },
+    "ar/q/word-5": {
+      "text": "نقرأ الكلمات على مهل… أي وحدة تناسب الصورة؟",
+      "hash": "67f628e0622e9f3d",
+      "durationMs": 4026,
+      "bytes": 32852
+    },
+    "ar/q/word-6": {
+      "text": "تحدي القراءة! نحوط الكلمة الصح.",
+      "hash": "8e523db0efa69f15",
+      "durationMs": 3269,
       "bytes": 26792
     },
-    "ar/q/count-apples": {
-      "text": "كم تفاحة في الصورة؟",
-      "hash": "bcfd2e0ab3c3ee8f",
-      "durationMs": 1766,
-      "bytes": 14671
+    "ar/ui/cheer-1": {
+      "text": "صح مية بالمية!",
+      "hash": "c5225decda34701a",
+      "durationMs": 1913,
+      "bytes": 15925
     },
-    "ar/q/count-bears": {
-      "text": "كم دبدوب في الصورة؟",
-      "hash": "5de51b54935480d9",
-      "durationMs": 1561,
-      "bytes": 12999
+    "ar/ui/cheer-2": {
+      "text": "ضربة معلم!",
+      "hash": "faed5a76793bea04",
+      "durationMs": 1237,
+      "bytes": 10492
     },
-    "ar/q/count-cars": {
-      "text": "كم سيارة في الصورة؟",
-      "hash": "d5d6f26a9c03152a",
-      "durationMs": 1534,
-      "bytes": 12790
-    },
-    "ar/q/count-cows": {
-      "text": "كم بقرة في الصورة؟",
-      "hash": "0b4468e501d2774d",
+    "ar/ui/cheer-3": {
+      "text": "يا حلو هالجواب!",
+      "hash": "0ed877ec9bd16e73",
       "durationMs": 1760,
       "bytes": 14671
     },
-    "ar/q/count-flowers": {
-      "text": "كم وردة في الصورة؟",
-      "hash": "6c1ef9c63870ac1b",
-      "durationMs": 1481,
-      "bytes": 12372
-    },
-    "ar/q/count-frogs": {
-      "text": "كم ضفدع في الصورة؟",
-      "hash": "925e646e9d683722",
-      "durationMs": 1518,
-      "bytes": 12790
-    },
-    "ar/q/find-big": {
-      "text": "وين الحرف الكبير؟",
-      "hash": "a2f62e03107ec4a4",
-      "durationMs": 1498,
-      "bytes": 12581
-    },
-    "ar/q/find-number": {
-      "text": "وين الصورة اللي فيها هذا الرقم؟",
-      "hash": "ffe3b8a73046ddb4",
-      "durationMs": 2352,
-      "bytes": 19478
-    },
-    "ar/q/find-small": {
-      "text": "وين الحرف الصغير؟",
-      "hash": "1bc88ff99e398d96",
-      "durationMs": 1458,
-      "bytes": 12163
-    },
-    "ar/q/match-case": {
-      "text": "نوصل كل حرف كبير… بالحرف الصغير مثله.",
-      "hash": "d572c129a3df9b4f",
-      "durationMs": 3903,
-      "bytes": 31807
-    },
-    "ar/q/match-num": {
-      "text": "نوصل كل رقم… بالصورة اللي فيها نفس العدد.",
-      "hash": "8592f7ce760cde2e",
-      "durationMs": 4061,
-      "bytes": 33061
-    },
-    "ar/q/match-pic": {
-      "text": "نوصل كل حرف… بالصورة اللي تبدأ فيه.",
-      "hash": "d3a3c1f97b59f2ea",
-      "durationMs": 3528,
-      "bytes": 28882
-    },
-    "ar/q/missing": {
-      "text": "شنو الحرف الناقص في أول هذي الكلمة؟",
-      "hash": "3910c8fc868e2256",
-      "durationMs": 2970,
-      "bytes": 24284
-    },
-    "ar/q/pic-for-letter": {
-      "text": "أي صورة تبدأ بهذا الحرف؟",
-      "hash": "3fb6db558cdc9ae3",
-      "durationMs": 2453,
-      "bytes": 20105
-    },
-    "ar/q/trace": {
-      "text": "نكتب بإصبعنا فوق الكتابة الرمادية… على الأربع سطور.",
-      "hash": "dfed9b46d5741b25",
-      "durationMs": 4703,
-      "bytes": 38286
-    },
-    "ar/ui/cheer-1": {
-      "text": "كفو!",
-      "hash": "691bf115203a21a3",
-      "durationMs": 831,
-      "bytes": 7148
-    },
-    "ar/ui/cheer-2": {
-      "text": "ما شاء الله! صح.",
-      "hash": "1b1894ccde64e863",
-      "durationMs": 1949,
-      "bytes": 16134
-    },
-    "ar/ui/cheer-3": {
-      "text": "واو! جواب صح!",
-      "hash": "16f0fbe7ad477eed",
-      "durationMs": 1953,
-      "bytes": 16134
-    },
     "ar/ui/cheer-4": {
-      "text": "برافو! جواب ممتاز.",
-      "hash": "437f5c27a4682f59",
-      "durationMs": 2378,
-      "bytes": 19687
+      "text": "ولا غلطة!",
+      "hash": "3b0ad25f3850fe5b",
+      "durationMs": 1318,
+      "bytes": 11118
     },
     "ar/ui/cheer-5": {
-      "text": "الله! جواب حلو.",
-      "hash": "a48a02c8b261ade5",
-      "durationMs": 2263,
-      "bytes": 18642
+      "text": "جواب ذهب!",
+      "hash": "15c2a281129cfa61",
+      "durationMs": 1760,
+      "bytes": 14671
     },
     "ar/ui/cheer-6": {
-      "text": "تمام التمام!",
-      "hash": "77721d814b803515",
-      "durationMs": 1425,
-      "bytes": 11954
+      "text": "هذا هو بالضبط!",
+      "hash": "ecc52700c5df3cd7",
+      "durationMs": 1840,
+      "bytes": 15298
     },
-    "ar/ui/match-top-first": {
+    "ar/ui/cheer-7": {
+      "text": "شغل نظيف!",
+      "hash": "e3045fa9d09a543d",
+      "durationMs": 1475,
+      "bytes": 12372
+    },
+    "ar/ui/cheer-8": {
+      "text": "تصفيقة كبيرة!",
+      "hash": "9d9d7565ccd10e02",
+      "durationMs": 1679,
+      "bytes": 14044
+    },
+    "ar/ui/cheer-count-1": {
+      "text": "عدينا صح!",
+      "hash": "57539d811e8e36c0",
+      "durationMs": 1467,
+      "bytes": 12372
+    },
+    "ar/ui/cheer-match-1": {
+      "text": "كل الخطوط في مكانها!",
+      "hash": "8fe643d6c7901f66",
+      "durationMs": 1991,
+      "bytes": 16552
+    },
+    "ar/ui/cheer-match-2": {
+      "text": "توصيل مضبوط!",
+      "hash": "1b36eccca8c9894c",
+      "durationMs": 1680,
+      "bytes": 14044
+    },
+    "ar/ui/cheer-missing-1": {
+      "text": "رجع الحرف مكانه!",
+      "hash": "ef97a0caf3a8c8e3",
+      "durationMs": 1781,
+      "bytes": 14880
+    },
+    "ar/ui/cheer-missing-2": {
+      "text": "الكلمة صارت كاملة!",
+      "hash": "b64b0af44861b7e2",
+      "durationMs": 1916,
+      "bytes": 15925
+    },
+    "ar/ui/cheer-trace-1": {
+      "text": "كتابة مرتبة… مثل الكتاب!",
+      "hash": "e703e2a2de9223cc",
+      "durationMs": 2918,
+      "bytes": 23866
+    },
+    "ar/ui/cheer-trace-2": {
+      "text": "خط ولا أحلى!",
+      "hash": "ea15a1faf336da0e",
+      "durationMs": 2000,
+      "bytes": 16552
+    },
+    "ar/ui/cheer-word-1": {
+      "text": "قراءة ممتازة!",
+      "hash": "74564fc5375f48f6",
+      "durationMs": 1840,
+      "bytes": 15298
+    },
+    "ar/ui/done-good-1": {
+      "text": "زين! كل ما نتدرب… نصير أحسن.",
+      "hash": "c9c55bdc03ea059d",
+      "durationMs": 3481,
+      "bytes": 28464
+    },
+    "ar/ui/done-good-2": {
+      "text": "حلو التدريب! نعيدها ونجمع نجوم أكثر.",
+      "hash": "010feb8c2f9c1696",
+      "durationMs": 3760,
+      "bytes": 30554
+    },
+    "ar/ui/done-great-1": {
+      "text": "جولة ولا أروع! النجوم كلها لنا.",
+      "hash": "538cbb61f2063273",
+      "durationMs": 3841,
+      "bytes": 31389
+    },
+    "ar/ui/done-great-2": {
+      "text": "جولة ذهبية… نجوم كاملة!",
+      "hash": "e0acc45a08890e28",
+      "durationMs": 3190,
+      "bytes": 26165
+    },
+    "ar/ui/match-wrong-1": {
+      "text": "مو هذي… خلنا نجرب غيرها.",
+      "hash": "354bf9a73afff24c",
+      "durationMs": 2774,
+      "bytes": 22821
+    },
+    "ar/ui/match-wrong-2": {
+      "text": "ما ضبطت… نطالع زين ونجرب.",
+      "hash": "46dde10b0b0005b2",
+      "durationMs": 3132,
+      "bytes": 25538
+    },
+    "ar/ui/match-wrong-3": {
+      "text": "قريب! بس مو هذي.",
+      "hash": "ddc42517beebd640",
+      "durationMs": 2135,
+      "bytes": 17597
+    },
+    "ar/ui/retry-1": {
+      "text": "أوه! كانت قريبة.",
+      "hash": "a33b38fe567a62d8",
+      "durationMs": 2004,
+      "bytes": 16552
+    },
+    "ar/ui/retry-2": {
+      "text": "ولا يهم!",
+      "hash": "3ad2eff9554bf3b9",
+      "durationMs": 1065,
+      "bytes": 9029
+    },
+    "ar/ui/retry-3": {
+      "text": "عادي… نتعلم من الغلط.",
+      "hash": "8c3f9209974a198b",
+      "durationMs": 2426,
+      "bytes": 19896
+    },
+    "ar/ui/retry-4": {
+      "text": "هذي صعبة شوي.",
+      "hash": "cd8eb409c70cfeb7",
+      "durationMs": 1739,
+      "bytes": 14462
+    },
+    "ar/ui/retry-5": {
+      "text": "ما عليه… نشوفها مع بعض.",
+      "hash": "c17cc039d86dfa96",
+      "durationMs": 2346,
+      "bytes": 19269
+    },
+    "ar/ui/retry-6": {
+      "text": "المرة الجاية أسهل!",
+      "hash": "0bec4c609bf575b6",
+      "durationMs": 1840,
+      "bytes": 15298
+    },
+    "ar/ui/retry-7": {
+      "text": "خطوة خطوة نتعلم.",
+      "hash": "bed5227749c4f35b",
+      "durationMs": 2191,
+      "bytes": 18015
+    },
+    "ar/ui/review-1": {
+      "text": "نشوفها مع بعض…",
+      "hash": "06f42346dc784a08",
+      "durationMs": 1303,
+      "bytes": 10909
+    },
+    "ar/ui/review-2": {
+      "text": "يلا نراجعها سوا…",
+      "hash": "b2814149b7b79bd8",
+      "durationMs": 1460,
+      "bytes": 12163
+    },
+    "ar/ui/review-3": {
+      "text": "نسمعها مرة ثانية…",
+      "hash": "90190b1259aab049",
+      "durationMs": 1446,
+      "bytes": 12163
+    },
+    "ar/ui/streak-1": {
+      "text": "ثلاث صح ورا بعض!",
+      "hash": "81f9213fb7f08754",
+      "durationMs": 1933,
+      "bytes": 15925
+    },
+    "ar/ui/streak-2": {
+      "text": "خمس صح ورا بعض… ما في أحلى!",
+      "hash": "c6f3c7e05da1b69b",
+      "durationMs": 3020,
+      "bytes": 24702
+    },
+    "ar/ui/test-intro-1": {
+      "text": "اختبار تجريبي مثل ورقة الاختبار… نبدأ بالقراءة، وبعدها الكتابة. يلا!",
+      "hash": "d6501a9d9482b29e",
+      "durationMs": 6558,
+      "bytes": 53123
+    },
+    "ar/ui/test-intro-2": {
+      "text": "جاهزين؟ عشر أسئلة مثل الاختبار بالضبط… أول شي القراءة.",
+      "hash": "944ed29b83b50bfe",
+      "durationMs": 5881,
+      "bytes": 47690
+    },
+    "ar/ui/to-writing-1": {
+      "text": "خلصنا القراءة! الحين جزء الكتابة.",
+      "hash": "86aff215be7bd1b1",
+      "durationMs": 3312,
+      "bytes": 27001
+    },
+    "ar/ui/to-writing-2": {
+      "text": "القراءة خلصت… الحين نكتب!",
+      "hash": "4addd85d32c87425",
+      "durationMs": 2976,
+      "bytes": 24284
+    },
+    "ar/ui/top-first-1": {
       "text": "نختار من فوق أول… وبعدين من تحت.",
       "hash": "0d733d4216d8b44d",
       "durationMs": 3407,
       "bytes": 27837
     },
-    "ar/ui/match-wrong": {
-      "text": "لا… نجرب مرة ثانية.",
-      "hash": "3f7a6fadd8f0f515",
-      "durationMs": 2400,
-      "bytes": 19687
-    },
-    "ar/ui/retry-1": {
-      "text": "مو مشكلة… الجواب الصح…",
-      "hash": "d4023bc2a9fb4b51",
-      "durationMs": 2562,
-      "bytes": 21149
-    },
-    "ar/ui/retry-2": {
-      "text": "قربنا! الجواب الصح…",
-      "hash": "dc437e4238565bf1",
-      "durationMs": 2271,
-      "bytes": 18642
-    },
-    "ar/ui/retry-3": {
-      "text": "خلنا نتعلمها مع بعض… الجواب الصح…",
-      "hash": "74cf9656fe83d22c",
-      "durationMs": 3360,
-      "bytes": 27419
-    },
-    "ar/ui/retry-4": {
-      "text": "محاولة حلوة! الجواب الصح…",
-      "hash": "63bdc19efb1ddd10",
-      "durationMs": 2714,
-      "bytes": 22194
-    },
-    "ar/ui/retry-5": {
-      "text": "نشوف مع بعض… الجواب الصح…",
-      "hash": "3a627ddb334b0d79",
-      "durationMs": 2694,
-      "bytes": 22194
-    },
-    "ar/ui/review": {
-      "text": "خلنا نتذكر مع بعض…",
-      "hash": "761c595d8d556cdc",
-      "durationMs": 1714,
-      "bytes": 14253
-    },
-    "ar/ui/test-intro": {
-      "text": "هذا اختبار تجريبي… فيه أسئلة من كل الدروس. يلا نبدأ!",
-      "hash": "dc1d19349831fa74",
-      "durationMs": 4889,
-      "bytes": 39749
-    },
-    "ar/ui/trace-again": {
+    "ar/ui/trace-again-1": {
       "text": "نكتب فوق الكتابة الرمادية بالضبط… ونحاول مرة ثانية.",
       "hash": "5723facd62c18148",
       "durationMs": 4478,
       "bytes": 36405
     },
-    "ar/ui/welcome": {
-      "text": "هلا والله! يلا نتدرب على الإنجليزي… نختار درس، ونبدأ.",
-      "hash": "263f22e908af3b91",
-      "durationMs": 5206,
-      "bytes": 42256
+    "ar/ui/trace-again-2": {
+      "text": "باقي شوي! نمشي على الرمادي بالضبط.",
+      "hash": "ad0735bed2030a0f",
+      "durationMs": 3379,
+      "bytes": 27628
+    },
+    "ar/ui/welcome-1": {
+      "text": "أهلين! جاهزين للإنجليزي؟ نختار درس ونبدأ.",
+      "hash": "e2b4fb967b5a998c",
+      "durationMs": 4272,
+      "bytes": 34733
+    },
+    "ar/ui/welcome-2": {
+      "text": "يا هلا! الحروف والكلمات تنتظرنا… من وين نبدأ؟",
+      "hash": "2b9d929f20be659e",
+      "durationMs": 4557,
+      "bytes": 37032
+    },
+    "ar/ui/welcome-3": {
+      "text": "مرحبا! يلا نتدرب على الإنجليزي… نختار درس.",
+      "hash": "fc1a714f52316108",
+      "durationMs": 4219,
+      "bytes": 34315
+    },
+    "ar/ui/x-big-1": {
+      "text": "حرفه الكبير هو…",
+      "hash": "a060f5d8e1222e75",
+      "durationMs": 1886,
+      "bytes": 15716
+    },
+    "ar/ui/x-count-1": {
+      "text": "نعدها مع بعض…",
+      "hash": "8469f2fc8db6bccb",
+      "durationMs": 1308,
+      "bytes": 11118
+    },
+    "ar/ui/x-count-2": {
+      "text": "نعد على مهل…",
+      "hash": "5d7fdc927c702175",
+      "durationMs": 1760,
+      "bytes": 14671
+    },
+    "ar/ui/x-find-1": {
+      "text": "نعد الصورة الصح مع بعض…",
+      "hash": "ac48c73bc3a1de93",
+      "durationMs": 1964,
+      "bytes": 16343
+    },
+    "ar/ui/x-missing-1": {
+      "text": "تبدأ بحرف…",
+      "hash": "e0701a6c7723475c",
+      "durationMs": 1384,
+      "bytes": 11536
+    },
+    "ar/ui/x-missing-2": {
+      "text": "أول حرف فيها…",
+      "hash": "d625bd95f1fa0f88",
+      "durationMs": 1603,
+      "bytes": 13417
+    },
+    "ar/ui/x-pic-1": {
+      "text": "الصورة اللي تبدأ فيه…",
+      "hash": "0a68fc4c0e1778df",
+      "durationMs": 1920,
+      "bytes": 15925
+    },
+    "ar/ui/x-pic-2": {
+      "text": "هالحرف يبدأ فيه اسم…",
+      "hash": "cb44bfdf5eb25e85",
+      "durationMs": 2160,
+      "bytes": 17806
+    },
+    "ar/ui/x-small-1": {
+      "text": "حرفه الصغير هو…",
+      "hash": "46976f423af1d1aa",
+      "durationMs": 1860,
+      "bytes": 15507
+    },
+    "ar/ui/x-word-1": {
+      "text": "هذي الصورة اسمها…",
+      "hash": "1aba8d712287207d",
+      "durationMs": 2000,
+      "bytes": 16552
+    },
+    "ar/ui/x-word-2": {
+      "text": "اسمها بالإنجليزي…",
+      "hash": "60090a97221ad3fd",
+      "durationMs": 1652,
+      "bytes": 13835
     },
     "en/letter/a": {
       "text": "A.",
@@ -322,89 +742,167 @@
       "durationMs": 880,
       "bytes": 7566
     },
-    "en/ui/done-good": {
+    "en/ui/cheer-1": {
+      "text": "Spot on!",
+      "hash": "c2de1107df8797f7",
+      "durationMs": 1113,
+      "bytes": 9447
+    },
+    "en/ui/cheer-10": {
+      "text": "Keep it up!",
+      "hash": "2b810201820abbf3",
+      "durationMs": 916,
+      "bytes": 7984
+    },
+    "en/ui/cheer-11": {
+      "text": "High five!",
+      "hash": "5e69063a9110918e",
+      "durationMs": 1139,
+      "bytes": 9656
+    },
+    "en/ui/cheer-12": {
+      "text": "Nailed it!",
+      "hash": "a9d59c29e768c7ab",
+      "durationMs": 1111,
+      "bytes": 9447
+    },
+    "en/ui/cheer-2": {
+      "text": "Nice one!",
+      "hash": "f73be66eee4afd8a",
+      "durationMs": 979,
+      "bytes": 8402
+    },
+    "en/ui/cheer-3": {
+      "text": "Way to go!",
+      "hash": "2b53cf79e0cf9b72",
+      "durationMs": 1298,
+      "bytes": 10909
+    },
+    "en/ui/cheer-4": {
+      "text": "Hooray!",
+      "hash": "ce59e8434272ae43",
+      "durationMs": 1044,
+      "bytes": 8820
+    },
+    "en/ui/cheer-5": {
+      "text": "That’s it!",
+      "hash": "1afca39da031ec7f",
+      "durationMs": 963,
+      "bytes": 8193
+    },
+    "en/ui/cheer-6": {
+      "text": "Top marks!",
+      "hash": "44a5c20994f71d12",
+      "durationMs": 1238,
+      "bytes": 10492
+    },
+    "en/ui/cheer-7": {
+      "text": "So clever!",
+      "hash": "7b565b26bd3212bc",
+      "durationMs": 1432,
+      "bytes": 11954
+    },
+    "en/ui/cheer-8": {
+      "text": "Bingo!",
+      "hash": "bc22f931abd9519b",
+      "durationMs": 890,
+      "bytes": 7775
+    },
+    "en/ui/cheer-9": {
+      "text": "Yay! Correct!",
+      "hash": "8062d4f4dbc26fc3",
+      "durationMs": 1840,
+      "bytes": 15298
+    },
+    "en/ui/cheer-count-1": {
+      "text": "Great counting!",
+      "hash": "8e821bf4e89c8e7b",
+      "durationMs": 1404,
+      "bytes": 11745
+    },
+    "en/ui/cheer-match-1": {
+      "text": "All matched up!",
+      "hash": "ec94f2cd8df30909",
+      "durationMs": 1242,
+      "bytes": 10492
+    },
+    "en/ui/cheer-match-2": {
+      "text": "Every line is right!",
+      "hash": "5d820a32768d9b9b",
+      "durationMs": 1994,
+      "bytes": 16552
+    },
+    "en/ui/cheer-missing-1": {
+      "text": "The word is complete!",
+      "hash": "27cf6d2b7b025725",
+      "durationMs": 1938,
+      "bytes": 16134
+    },
+    "en/ui/cheer-missing-2": {
+      "text": "You found the missing letter!",
+      "hash": "e4961a95cf55cabc",
+      "durationMs": 1810,
+      "bytes": 15089
+    },
+    "en/ui/cheer-trace-1": {
+      "text": "Lovely writing!",
+      "hash": "e8cdf64c38fcf2cb",
+      "durationMs": 1490,
+      "bytes": 12581
+    },
+    "en/ui/cheer-trace-2": {
+      "text": "Neat and tidy!",
+      "hash": "f784d405ea1de0e9",
+      "durationMs": 1627,
+      "bytes": 13626
+    },
+    "en/ui/cheer-word-1": {
+      "text": "Great reading!",
+      "hash": "ad4bfd9d282c22bc",
+      "durationMs": 1360,
+      "bytes": 11536
+    },
+    "en/ui/cheer-word-2": {
+      "text": "What a reader!",
+      "hash": "f0807d6f39d6423e",
+      "durationMs": 1470,
+      "bytes": 12372
+    },
+    "en/ui/done-good-1": {
       "text": "Good job! Let’s practise again.",
       "hash": "57f2b3a1ed1d5b46",
       "durationMs": 2493,
       "bytes": 20523
     },
-    "en/ui/done-great": {
+    "en/ui/done-good-2": {
+      "text": "Nice work! Practice makes perfect.",
+      "hash": "87f52f81199593f5",
+      "durationMs": 3036,
+      "bytes": 24911
+    },
+    "en/ui/done-great-1": {
       "text": "Amazing! You are a superstar!",
       "hash": "7ec1767e480424f7",
       "durationMs": 2885,
       "bytes": 23657
     },
-    "en/ui/praise-1": {
-      "text": "Great job!",
-      "hash": "dea45d3eeb00c36b",
-      "durationMs": 1184,
-      "bytes": 10074
+    "en/ui/done-great-2": {
+      "text": "Wow! What a round!",
+      "hash": "a1a02d22c38607d9",
+      "durationMs": 2320,
+      "bytes": 19060
     },
-    "en/ui/praise-10": {
-      "text": "Perfect!",
-      "hash": "25487b0a9bdee5b6",
-      "durationMs": 1120,
-      "bytes": 9447
+    "en/ui/streak-1": {
+      "text": "Three in a row!",
+      "hash": "574dd835ca10319f",
+      "durationMs": 1576,
+      "bytes": 13208
     },
-    "en/ui/praise-11": {
-      "text": "Good thinking!",
-      "hash": "c86b20632928d599",
-      "durationMs": 1220,
-      "bytes": 10283
-    },
-    "en/ui/praise-12": {
-      "text": "Yes! That’s right!",
-      "hash": "e45b606ae7e1b747",
-      "durationMs": 1805,
-      "bytes": 15089
-    },
-    "en/ui/praise-2": {
-      "text": "Well done!",
-      "hash": "85ef8ab948657a41",
-      "durationMs": 1186,
-      "bytes": 10074
-    },
-    "en/ui/praise-3": {
-      "text": "Super!",
-      "hash": "ea5705ec2446b768",
-      "durationMs": 932,
-      "bytes": 7984
-    },
-    "en/ui/praise-4": {
-      "text": "Excellent!",
-      "hash": "990ef8a4a6b44b60",
-      "durationMs": 978,
-      "bytes": 8402
-    },
-    "en/ui/praise-5": {
-      "text": "Awesome!",
-      "hash": "e18ed479eb164ab3",
-      "durationMs": 1120,
-      "bytes": 9447
-    },
-    "en/ui/praise-6": {
-      "text": "Fantastic!",
-      "hash": "10c3b9ff34187444",
-      "durationMs": 1267,
-      "bytes": 10700
-    },
-    "en/ui/praise-7": {
-      "text": "You got it!",
-      "hash": "6ceb575f64c56f2e",
-      "durationMs": 1248,
-      "bytes": 10492
-    },
-    "en/ui/praise-8": {
-      "text": "Brilliant!",
-      "hash": "185e1831374d8992",
-      "durationMs": 1088,
-      "bytes": 9238
-    },
-    "en/ui/praise-9": {
-      "text": "Wonderful!",
-      "hash": "0dfa7d3a55d7008e",
-      "durationMs": 1157,
-      "bytes": 9865
+    "en/ui/streak-2": {
+      "text": "Five in a row! Amazing!",
+      "hash": "a07d7d323eb1747e",
+      "durationMs": 2582,
+      "bytes": 21149
     },
     "en/word/ant": {
       "text": "Ant.",

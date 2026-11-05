@@ -1,6 +1,9 @@
-import { CARD_WORDS, FORMATS, QUESTIONS, type Format, type Option, type Question, type Random, type TopicId } from '../data/catalog'
+import { ASK_LINES, CARD_WORDS, FORMATS, QUESTIONS, type Format, type Option, type Question, type Random, type TopicId } from '../data/catalog'
+import { shuffle } from './variety'
+import { voiceQuestion } from './voice'
 
 export type { Random }
+export { shuffle }
 
 export const PRACTICE_SIZE = 8
 /** A practice round never has more of one question style than this. */
@@ -32,15 +35,6 @@ export const TEST_PLAN: Slot[] = [
 ]
 
 export const TEST_SIZE = TEST_PLAN.length
-
-export function shuffle<T>(items: readonly T[], random: Random = Math.random): T[] {
-  const copy = [...items]
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(random() * (i + 1))
-    ;[copy[i], copy[j]] = [copy[j] as T, copy[i] as T]
-  }
-  return copy
-}
 
 /** Hub-preferred keys first (in plan order), then questions not seen recently, then the rest. */
 export function orderQuestions(
@@ -91,7 +85,7 @@ export function buildPractice(
   add(unseen, true)
   add(unseen, false)
   add(ordered, false)
-  return mixFormats(chosen, random).map((question) => dressQuestion(question, random))
+  return dressRound(mixFormats(chosen, random), random)
 }
 
 export function buildTest(
@@ -110,7 +104,23 @@ export function buildTest(
     const pick = orderQuestions(pool, preferredKeys, recentKeys, random)[0]
     if (pick) chosen.push(pick)
   }
-  return chosen.map((question) => dressQuestion(question, random))
+  return dressRound(chosen, random)
+}
+
+/**
+ * Each question's draw and its turn of Maryam's lines. A style with a single line (counting
+ * bears, apples …) is drawn again rather than said twice in one round.
+ */
+function dressRound(questions: Question[], random: Random): Question[] {
+  const said = new Map<string, number[]>()
+  return questions.map((question) => {
+    let dressed = dressQuestion(question, random)
+    for (let tries = 0; tries < 8 && ASK_LINES[dressed.lines].length === 1 && said.has(dressed.lines); tries += 1) dressed = dressQuestion(question, random)
+    const before = said.get(dressed.lines) ?? []
+    const voiced = voiceQuestion(dressed, random, before)
+    said.set(dressed.lines, [...before, Number(voiced.ask.at(-1)!.split('-').at(-1)) - 1])
+    return voiced
+  })
 }
 
 /** The test's heading for question `index`: «Reading · A)». */

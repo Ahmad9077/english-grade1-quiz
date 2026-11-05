@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { ASK_LINES, shown } from '../../src/data/catalog'
 import { PRACTICE_SIZE, TEST_SIZE } from '../../src/domain/round'
 import { answer, current, noHorizontalScroll, start, trace } from './helpers'
 
@@ -22,8 +23,19 @@ test('a lesson starts straight away with the test’s instruction line and the A
   await start(page)
   await page.locator('.topic-card[data-topic="words"]').click()
   await expect(page.locator('.paper-instruction')).toHaveText('Circle the correct word')
-  await expect(page.locator('.paper-help p')).toHaveText('نختار الكلمة الصحيحة حسب الصورة')
   await expect(page.locator('.option-word')).toHaveCount(3)
+  // Maryam's line changes from question to question.
+  const lines = ASK_LINES.word.map(shown)
+  const seen: string[] = []
+  for (let n = 0; n < 3; n += 1) {
+    const help = (await page.locator('.paper-help p').textContent())!
+    expect(lines).toContain(help)
+    expect(seen.at(-1)).not.toBe(help)
+    seen.push(help)
+    await answer(page, true)
+    await expect(page.locator('.feedback-good')).toBeVisible()
+    await page.locator('.next-button').click()
+  }
 })
 
 test('a full missing-letter round writes the letter in, gives stars and a review of misses', async ({ page }) => {

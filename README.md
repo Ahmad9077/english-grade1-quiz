@@ -26,10 +26,17 @@ Pictures in `public/pics/` are cut from the Student's Book; «train» is not pic
 drawn (`src/art/drawings.tsx`). The four-line writing uses the school font Edu NSW ACT Foundation, whose
 small letters sit between lines 2 and 3 as in the book.
 
-Audio: Arabic help lines by Maryam (Kuwaiti), English letters, numbers and words by Alice (British
-educator, chosen by the family on 2026-10-13). Clips kept from the first test keep their recordings;
-33 new clips (316 characters) were recorded on 5 November 2026 and checked with Whisper. One copy for
-every child: the wording never speaks to a girl or a boy.
+Audio: Arabic lines by Maryam (Kuwaiti), English letters, numbers, words and praise by Alice (British
+educator, chosen by the family on 2026-10-13). On the family's request (5 November 2026) the words are
+varied and written for this quiz, not shared with the other quizzes: every question style has three to
+six Arabic lines (a picture to imagine, a tip, a challenge or a question), and every moment has several
+lines: 20 general cheers, cheers for boards, writing, reading, counting and the missing letter, streak
+cheers on 3 and 5 right answers running, seven kind words after a miss, and the start and end of a
+round. A round deals them in a shuffled order (`src/domain/variety.ts`), so the same words do not come
+twice running, and a new round carries on where the last one stopped. A miss is explained: the word is
+said with «تبدأ بحرف…» and its letter, a group is counted along (one, two, three …), a board says its
+pairs. 130 clips were recorded on 5 November 2026 (about 3,100 characters) and checked with Whisper.
+One copy for every child: the wording never speaks to a girl or a boy.
 
 ## Status
 Preview only (5 November 2026): not published. The live site and the Hub still show the first test

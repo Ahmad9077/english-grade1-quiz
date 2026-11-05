@@ -4,25 +4,14 @@ import { celebrate } from '../art/confetti'
 import { useNarrator } from '../audio/NarratorContext'
 import type { Cue } from '../audio/player'
 import { sfx } from '../audio/sfx'
-import { CHEERS, FORMATS, RETRIES, clip, roundClips, type Cheer, type Option, type Pair, type Question } from '../data/catalog'
+import { CHEERS, FORMATS, clip, roundClips, shown, type Line as Spoken, type Option, type Pair, type Question } from '../data/catalog'
 import { TONES, toneStyle, type ToneId } from '../data/tones'
 import { arabicNumber } from '../domain/format'
 import { arrangeOptions, shuffle, testSlot } from '../domain/round'
+import { cheerFor, explainClips, kindWord, sayLine } from '../domain/voice'
 import type { Attempt } from '../hub/bridge'
 import { TraceBoard, WordStrip } from './TraceBoard'
 import { ArrowIcon, BigButton, CloseButton, SpeakerButton, StarIcon, order } from './ui'
-
-/** Cheers rest for this many answers before they can come back. */
-const CHEER_REST = 6
-
-/** A random item that was not used recently; the pick joins the recent list. */
-function fresh<T>(items: readonly T[], recent: T[], rest: number): T {
-  const pool = items.filter((item) => !recent.includes(item))
-  const pick = pool[Math.floor(Math.random() * pool.length)] ?? items[0]!
-  recent.push(pick)
-  if (recent.length > rest) recent.shift()
-  return pick
-}
 
 // Narration starts once the question has settled on screen.
 const ASK_DELAY_MS = 380
@@ -50,10 +39,9 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
   const [phase, setPhase] = useState<Phase>('asking')
   const [chosen, setChosen] = useState<string | null>(null)
   const [attempts, setAttempts] = useState<Attempt[]>([])
-  const [cheer, setCheer] = useState<Cheer>(CHEERS[0]!)
-  const [retry, setRetry] = useState(RETRIES[0]!)
-  const recentCheers = useRef<Cheer[]>([])
-  const recentRetries = useRef<(typeof RETRIES)[number][]>([])
+  // What was said after the answer: the cheer or the kind word, then what «إعادة» replays.
+  const [said, setSaid] = useState<{ line: Spoken; replay: Cue[] }>({ line: CHEERS[0]!, replay: [] })
+  const streak = useRef(0)
   const [confirmExit, setConfirmExit] = useState(false)
   const tileRefs = useRef(new Map<string, HTMLButtonElement>())
   const bodyRef = useRef<HTMLDivElement>(null)
@@ -73,7 +61,14 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
   }, [narrator, round.questions])
 
   useEffect(() => {
-    const opening = intro && index === 0 ? [{ clip: clip.ui('test-intro') }, { ...askCues[0]!, gap: 500 }, ...askCues.slice(1)] : askCues
+    // The mock test opens with its introduction and says when the Writing part begins.
+    const before =
+      intro && index === 0
+        ? sayLine('test-intro').clip
+        : slot?.section === 'Writing' && testSlot(index - 1).section === 'Reading'
+          ? sayLine('to-writing').clip
+          : null
+    const opening = before ? [{ clip: before }, { ...askCues[0]!, gap: 500 }, ...askCues.slice(1)] : askCues
     const timer = window.setTimeout(() => void narrator.play(opening), ASK_DELAY_MS)
     return () => window.clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the intro plays once, before question one
@@ -99,26 +94,29 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
   }, [phase])
 
   function replay() {
-    void narrator.play(phase === 'asking' ? askCues : revealCues)
+    void narrator.play(phase === 'asking' ? askCues : said.replay)
   }
 
   function settle(correct: boolean, chosenId: string, anchor?: HTMLElement | null) {
     setPhase('answered')
     setAttempts((list) => [...list, { questionKey: question.key, chosen: chosenId, correct }])
+    // A miss explains the answer: the board's pairs, the copy's text, or how to find the choice.
+    const explainCues: Cue[] = explainClips(question).map((id, n) => ({ clip: id, gap: n === 0 ? 300 : 220 }))
     if (correct) {
       sfx.correct()
-      const pick = fresh(CHEERS, recentCheers.current, CHEER_REST)
-      setCheer(pick)
+      streak.current += 1
+      const line = cheerFor(question, streak.current)
+      // A board's cheer stands alone; replaying it says its pairs.
+      const after = question.kind === 'match' ? [] : revealCues
+      setSaid({ line, replay: after.length > 0 ? after : explainCues })
       celebrate(anchor ?? undefined, TONES[tone].tone)
-      void narrator.play([{ clip: pick.clip, gap: 300 }, ...revealCues])
-    } else if (question.kind === 'match' || question.kind === 'trace') {
-      sfx.wrong()
-      void narrator.play([{ clip: clip.ui('review'), gap: 450 }, ...revealCues])
+      void narrator.play([{ clip: line.clip, gap: 300 }, ...after])
     } else {
       sfx.wrong()
-      const pick = fresh(RETRIES, recentRetries.current, 2)
-      setRetry(pick)
-      void narrator.play([{ clip: pick.clip, gap: 450 }, ...revealCues])
+      streak.current = 0
+      const line = question.kind === 'match' || question.kind === 'trace' ? sayLine('review') : kindWord()
+      setSaid({ line, replay: explainCues })
+      void narrator.play([{ clip: line.clip, gap: 450 }, ...explainCues])
     }
   }
 
@@ -201,7 +199,7 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
           </div>
           <div className="paper-help">
             <SpeakerButton onClick={replay} />
-            <p>{question.help ?? info.help}</p>
+            <p>{question.help}</p>
           </div>
         </div>
 
@@ -217,9 +215,9 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
               }}
               onMiss={() => {
                 sfx.wrong()
-                void narrator.play([{ clip: clip.ui('match-wrong') }])
+                void narrator.play([{ clip: sayLine('match-wrong').clip }])
               }}
-              onTopFirst={() => void narrator.play([{ clip: clip.ui('match-top-first') }])}
+              onTopFirst={() => void narrator.play([{ clip: clip.ar('top-first') }])}
               onDone={(mistakes, board) => settle(mistakes === 0, `mistakes:${mistakes}`, board)}
             />
           ) : null}
@@ -231,7 +229,7 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
               locked={answered}
               onMiss={() => {
                 sfx.wrong()
-                void narrator.play([{ clip: clip.ui('trace-again') }])
+                void narrator.play([{ clip: sayLine('trace-again').clip }])
               }}
               onDone={(correct, board) => settle(correct, correct ? 'traced' : 'not-traced', board)}
             />
@@ -312,14 +310,14 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
             )}
             <div className="feedback-titles">
               {lastCorrect ? (
-                <p className={`feedback-title cheer-${cheer.lang}`} dir={cheer.lang === 'en' ? 'ltr' : 'rtl'}>
-                  {cheer.text}
+                <p className={`feedback-title cheer-${said.line.lang}`} dir={said.line.lang === 'en' ? 'ltr' : 'rtl'}>
+                  {shown(said.line.text)}
                 </p>
               ) : question.kind === 'match' || question.kind === 'trace' ? (
-                <p className="feedback-title">خلنا نتذكر:</p>
+                <p className="feedback-title">{shown(said.line.text)}:</p>
               ) : (
                 <>
-                  <p className="feedback-encourage">{retry.text}</p>
+                  <p className="feedback-encourage">{shown(said.line.text)}</p>
                   <p className="feedback-title">الجواب الصحيح:</p>
                   {question.kind === 'pick' && correctOption ? (
                     <span className={`feedback-answer option-${artKind(correctOption.art)}`} aria-label={correctOption.label}>
@@ -341,7 +339,7 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
             )}
           </p>
           <div className="feedback-actions">
-            <SpeakerButton onClick={() => void narrator.play(revealCues)} label="إعادة" />
+            <SpeakerButton onClick={() => void narrator.play(said.replay)} label="إعادة" />
             <BigButton onClick={next} pulse className="next-button">
               {index + 1 >= round.questions.length ? 'النتيجة' : 'التالي'}
               <ArrowIcon direction="next" />

@@ -11,8 +11,11 @@
 //      (the card's words: train, toe, mat, lemon, on, car)
 //
 // Pictures are the book's own, cut from the Student's Book (public/pics); «train» is not in the
-// book and is drawn (svg:train). Narration: Arabic help lines in Kuwaiti dialect (Maryam) and
-// English letters, numbers and words (Alice). Wording never speaks to a girl or a boy.
+// book and is drawn (svg:train). Narration: Arabic lines in Kuwaiti dialect (Maryam) and English
+// letters, numbers, words and praise (Alice). Every question style has several Arabic lines and
+// every moment (a cheer, a miss, the start, the end) several words, written afresh for this quiz;
+// a round hands them out so the same words do not come twice running. Wording never speaks to a
+// girl or a boy.
 // Question keys are permanent Hub identifiers: never rename or reuse one.
 // This file is self-contained so Node scripts can import it directly.
 
@@ -69,10 +72,15 @@ export interface Decoy {
   label: string
 }
 
+/** A clip, or one of Maryam's connecting lines (a round picks which of its variants). */
+export type Spoken = string | { line: ArGroup }
+
 /** The parts of a question that a round may draw afresh. */
 export interface Dress {
   ask?: string[]
+  lines?: LineGroup
   help?: string
+  explain?: Spoken[]
   subject?: ArtRef
   options?: Option[]
   pairs?: Pair[]
@@ -87,10 +95,12 @@ export interface Question {
   topic: TopicId
   kind: QuestionKind
   format: Format
-  /** What the question asks aloud, in order (English target, then the Arabic help). */
+  /** What the question asks aloud, in order: the English target, then Maryam's line. */
   ask: string[]
-  /** The Arabic line under the instruction, when it is not the format's own. */
-  help?: string
+  /** The style's set of Arabic lines; each round says one of them (see `voiceQuestion`). */
+  lines: LineGroup
+  /** The Arabic line under the instruction: the one Maryam says. */
+  help: string
   /** The big picture or letter the question is about. */
   subject?: ArtRef
   /** missing: the whole word; the first letter is the blank. */
@@ -103,6 +113,8 @@ export interface Question {
   answer: string
   /** Said after answering: the right answer. */
   reveal: string[]
+  /** Said after a miss, after a kind word: how to find the answer. */
+  explain: Spoken[]
   /** Shown in the feedback, in English. */
   note: string
   difficulty: number
@@ -121,8 +133,6 @@ export interface Topic {
 export interface FormatInfo {
   /** The test's instruction line, as printed in the book's Progress Tests. */
   instruction: string
-  /** The same in short Arabic, shown under it and spoken by Maryam. */
-  help: string
   section: 'Reading' | 'Writing'
 }
 
@@ -173,14 +183,14 @@ export const CARD_WORDS = ['train', 'toe', 'mat', 'lemon', 'on', 'car'] as const
 /** Single book pictures that can be shown many times for counting. */
 const COUNT_PICS = ['ball', 'cupcake', 'teddy', 'flower', 'icecream', 'cub', 'cup', 'minifan', 'redapple', 'apple', 'frog', 'car', 'cow'] as const
 
-/** Things a count question asks about, with the Arabic question Maryam reads. */
+/** Things a count question asks about; Maryam's question for each is `count-<thing>`. */
 const COUNTABLES = {
-  bears: { pic: 'teddy', ar: 'كم دبدوب في الصورة؟' },
-  apples: { pic: 'apple', ar: 'كم تفاحة في الصورة؟' },
-  flowers: { pic: 'flower', ar: 'كم وردة في الصورة؟' },
-  frogs: { pic: 'frog', ar: 'كم ضفدع في الصورة؟' },
-  cars: { pic: 'car', ar: 'كم سيارة في الصورة؟' },
-  cows: { pic: 'cow', ar: 'كم بقرة في الصورة؟' },
+  bears: { pic: 'teddy' },
+  apples: { pic: 'apple' },
+  flowers: { pic: 'flower' },
+  frogs: { pic: 'frog' },
+  cars: { pic: 'car' },
+  cows: { pic: 'cow' },
 } as const
 
 type Countable = keyof typeof COUNTABLES
@@ -195,10 +205,10 @@ export const clip = {
   letter: (letter: string) => `en/letter/${letter.toLowerCase()}`,
   word: (word: string) => `en/word/${word}`,
   number: (n: number) => `en/num/${n}`,
-  en: (id: EnUiClip) => `en/ui/${id}`,
-  ask: (id: AskClip) => `ar/q/${id}`,
-  count: (thing: Countable) => `ar/q/count-${thing}`,
-  ui: (id: ArUiClip) => `ar/ui/${id}`,
+  /** Maryam's line `n` (from 0) for a question style. */
+  line: (group: LineGroup, n = 0) => `ar/q/${group}-${n + 1}`,
+  ar: (group: ArGroup, n = 0) => `ar/ui/${group}-${n + 1}`,
+  en: (group: EnGroup, n = 0) => `en/ui/${group}-${n + 1}`,
 }
 
 // ── Lessons and the test's instruction lines ──────────────────────────────
@@ -211,17 +221,87 @@ export const TOPICS: Topic[] = [
 ]
 
 export const FORMATS: Record<Format, FormatInfo> = {
-  'match-case': { instruction: 'Match the uppercase letters with the lowercase letters', help: 'نوصل كل حرف كبير بالحرف الصغير مثله', section: 'Reading' },
-  small: { instruction: 'Circle the lowercase letter', help: 'وين الحرف الصغير؟', section: 'Reading' },
-  big: { instruction: 'Circle the uppercase letter', help: 'وين الحرف الكبير؟', section: 'Reading' },
-  'match-letters': { instruction: 'Match letters to pictures', help: 'نوصل كل حرف بالصورة اللي تبدأ فيه', section: 'Reading' },
-  'match-numbers': { instruction: 'Match numbers to pictures', help: 'نوصل كل رقم بالصورة اللي فيها نفس العدد', section: 'Reading' },
-  'pic-for-letter': { instruction: 'Circle the correct picture', help: 'أي صورة تبدأ بهذا الحرف؟', section: 'Reading' },
-  count: { instruction: 'Count and circle', help: 'كم في الصورة؟', section: 'Reading' },
-  'find-number': { instruction: 'Circle the correct picture', help: 'وين الصورة اللي فيها هذا الرقم؟', section: 'Reading' },
-  word: { instruction: 'Circle the correct word', help: 'نختار الكلمة الصحيحة حسب الصورة', section: 'Reading' },
-  copy: { instruction: 'Copy the following', help: 'نكتب بإصبعنا فوق الكتابة الرمادية على الأربع سطور', section: 'Writing' },
-  missing: { instruction: 'Write the missing initial letters', help: 'شنو الحرف الناقص في أول الكلمة؟', section: 'Writing' },
+  'match-case': { instruction: 'Match the uppercase letters with the lowercase letters', section: 'Reading' },
+  small: { instruction: 'Circle the lowercase letter', section: 'Reading' },
+  big: { instruction: 'Circle the uppercase letter', section: 'Reading' },
+  'match-letters': { instruction: 'Match letters to pictures', section: 'Reading' },
+  'match-numbers': { instruction: 'Match numbers to pictures', section: 'Reading' },
+  'pic-for-letter': { instruction: 'Circle the correct picture', section: 'Reading' },
+  count: { instruction: 'Count and circle', section: 'Reading' },
+  'find-number': { instruction: 'Circle the correct picture', section: 'Reading' },
+  word: { instruction: 'Circle the correct word', section: 'Reading' },
+  copy: { instruction: 'Copy the following', section: 'Writing' },
+  missing: { instruction: 'Write the missing initial letters', section: 'Writing' },
+}
+
+// ── What Maryam says for each question style ──────────────────────────────
+// Several lines per style, in different shapes (a picture to imagine, a tip, a challenge, a
+// question), written for this quiz rather than taken from the family's other quizzes. A round
+// hands them out in a shuffled order, so the same words do not come twice running. A question's
+// English target (a letter, a number or a word) is said just before its line. The lines speak to
+// every child alike («we» and questions, never a girl- or boy-only word) and carry no diacritics.
+export const ASK_LINES = {
+  'match-case': [
+    'الحروف الكبيرة فوق… تدور على أخوانها الصغار تحت!',
+    'كل حرف كبير له حرف صغير… نربطهم بخط.',
+    'نوصل الكبير بالصغير… وتحت حرف زيادة، ننتبه له!',
+  ],
+  // After the capital letter.
+  small: ['وين أخوه الصغير؟', 'نحوط نفس الحرف… بس صغير.', 'هذا الكبير… ندور على الصغير مثله!'],
+  // After the small letter.
+  big: ['وين أخوه الكبير؟', 'نحوط نفس الحرف… بس كبير.', 'هذا الصغير… ندور على الكبير مثله!'],
+  'match-letters': [
+    'كل حرف يدور على صورة تبدأ فيه… نوصلهم!',
+    'نقول اسم كل صورة… ونسمع أول حرف فيها.',
+    'حرف فوق… وصورته تحت. وفي صورة زيادة!',
+  ],
+  'match-numbers': [
+    'نعد الأشياء في كل صورة… ونوصلها برقمها.',
+    'كل رقم له صورة فيها نفس العدد… نلقاها!',
+    'نعد على أصابعنا… ونربط كل رقم بصورته.',
+  ],
+  // After the letter.
+  'pic-for-letter': ['وحدة بس من الصور تبدأ بهالحرف… وينها؟', 'نقول أسماء الصور… ونسمع أي وحدة تبدأ فيه.', 'هالحرف يدور على صورته!'],
+  // After the number.
+  'find-number': ['نعد كل مجموعة… ونلقى اللي فيها هالعدد.', 'نعد قبل لا نحوط… أي مجموعة فيها هالعدد؟', 'هالرقم يدور على صورته… نعد ونلقاها!'],
+  'count-bears': ['كم دبدوب يبي يلعب معانا؟'],
+  'count-apples': ['نعد التفاح مع بعض… كم تفاحة؟'],
+  'count-flowers': ['نعد الورد على مهل… كم وردة؟'],
+  'count-frogs': ['نعد الضفادع… كم ضفدع هني؟'],
+  'count-cars': ['نعد السيارات بإصبعنا… كم سيارة؟'],
+  'count-cows': ['كم بقرة في المزرعة؟'],
+  word: [
+    'نطالع الصورة… ونحوط اسمها.',
+    'ثلاث كلمات… وحدة بس اسم الصورة. وينها؟',
+    'نقرأ أول حرف من كل كلمة… يساعدنا نلقى الصح.',
+    'شنو اسم هالصورة بالإنجليزي؟ نلقاه بين الكلمات.',
+    'نقرأ الكلمات على مهل… أي وحدة تناسب الصورة؟',
+    'تحدي القراءة! نحوط الكلمة الصح.',
+  ],
+  'copy-pair': ['حرفين: كبير وصغير… نكتبهم فوق الرمادي.', 'نمشي بإصبعنا على الحرفين… على مهل.', 'نكتب الحرف الكبير… وبعده أخوه الصغير.'],
+  'copy-num': ['نكتب الأرقام بالترتيب… واحد واحد.', 'ثلاث أرقام… نمشي بإصبعنا فوقها.'],
+  'copy-word': ['نكتب الكلمة حرف حرف… من اليسار لليمين.', 'نمشي فوق الرمادي بالضبط… ولا نطلع برا.', 'نكتب الكلمة على مهل… مثل ما في الكتاب.'],
+  // After the word.
+  missing: [
+    'ناقصها أول حرف… أي حرف نحط؟',
+    'نسمع أول صوت في الكلمة… ونلقى حرفه.',
+    'حرف ضاع من أول الكلمة! نرجعه مكانه.',
+    'نقولها على مهل… شنو أول حرف فيها؟',
+    'الصورة تساعدنا… أي حرف يكمل الكلمة؟',
+    'أول خانة فاضية… نعبيها بالحرف الصح.',
+  ],
+} as const satisfies Record<string, readonly string[]>
+
+export type LineGroup = keyof typeof ASK_LINES
+
+/** A spoken line as it is shown on screen: its pauses become commas. */
+export function shown(text: string): string {
+  return text.replace(/\s*…\s*/g, '، ').replace(/[،\s]+$/, '').trim()
+}
+
+/** A question style's line set, with its first line as the one asked until a round picks. */
+function voiced(group: LineGroup, before: string[] = []): Pick<Question, 'lines' | 'ask' | 'help'> {
+  return { lines: group, ask: [...before, clip.line(group)], help: shown(ASK_LINES[group][0]) }
 }
 
 // ── Question builders ─────────────────────────────────────────────────────
@@ -254,8 +334,11 @@ function pickSome<T>(items: readonly T[], count: number, random: Random): T[] {
 }
 
 function base(key: string, topic: TopicId, kind: QuestionKind, format: Format, extra: Extra) {
-  return { key: `${topic}:${key}`, topic, kind, format, ask: [] as string[], options: [] as Option[], pairs: [] as Pair[], decoys: [] as Decoy[], reveal: [] as string[], note: '', ...extra }
+  return { key: `${topic}:${key}`, topic, kind, format, options: [] as Option[], pairs: [] as Pair[], decoys: [] as Decoy[], reveal: [] as string[], explain: [] as Spoken[], note: '', ...extra }
 }
+
+/** 1, 2, … n, said to count along. */
+const countTo = (n: number) => Array.from({ length: n }, (_, k) => clip.number(k + 1))
 
 function letterOption(letter: string, big = false): Option {
   const shown = big ? letter.toUpperCase() : letter
@@ -270,7 +353,8 @@ function pictureOption(word: string): Option {
 function smallOf(letter: Letter, others: Letter[], extra: Extra): Question {
   return {
     ...base(`small-${letter}`, 'case', 'pick', 'small', extra),
-    ask: [clip.letter(letter), clip.ask('find-small')],
+    ...voiced('small', [clip.letter(letter)]),
+    explain: [{ line: 'x-small' }, clip.letter(letter)],
     subject: `txt:${letter.toUpperCase()}`,
     options: [letter, ...others].map((l) => letterOption(l)),
     answer: letter,
@@ -283,7 +367,8 @@ function smallOf(letter: Letter, others: Letter[], extra: Extra): Question {
 function bigOf(letter: Letter, others: Letter[], extra: Extra): Question {
   return {
     ...base(`big-${letter}`, 'case', 'pick', 'big', extra),
-    ask: [clip.letter(letter), clip.ask('find-big')],
+    ...voiced('big', [clip.letter(letter)]),
+    explain: [{ line: 'x-big' }, clip.letter(letter)],
     subject: `txt:${letter}`,
     options: [letter, ...others].map((l) => letterOption(l, true)),
     answer: letter,
@@ -304,12 +389,13 @@ function matchCase(key: string, pool: Letter[], count: number, extra: Extra): Qu
   const dress = (letters: Letter[], decoy: Letter): Dress => ({
     pairs: letters.map(casePair),
     decoys: [{ id: `extra-${decoy}`, art: `txt:${decoy}`, label: decoy }],
+    explain: letters.map(clip.letter),
     note: letters.map((l) => `${l.toUpperCase()} ${l}`).join('   '),
   })
   const first = pool.slice(0, count)
   return {
     ...base(`match-${key}`, 'case', 'match', 'match-case', extra),
-    ask: [clip.ask('match-case')],
+    ...voiced('match-case'),
     ...dress(first, (pool[count] ?? LETTERS.find((l) => !first.includes(l)))!),
     answer: '',
     vary: (random) => {
@@ -325,13 +411,14 @@ function matchLetters(key: string, pool: Letter[], count: number, extra: Extra):
   const dress = (letters: Letter[], words: string[], decoy: string): Dress => ({
     pairs: letters.map((l, n) => ({ id: l, top: `txt:${l}`, bottom: WORD_ART[words[n]!]!, label: l, topClip: clip.letter(l), clip: clip.word(words[n]!) })),
     decoys: [{ id: `extra-${decoy}`, art: WORD_ART[decoy]!, label: decoy }],
+    explain: letters.flatMap((l, n) => [clip.letter(l), clip.word(words[n]!)]),
     note: letters.map((l, n) => `${l} — ${words[n]}`).join('   '),
   })
   const first = pool.slice(0, count)
   const firstDecoy = LETTERS.find((l) => !first.includes(l))!
   return {
     ...base(`match-${key}`, 'letters', 'match', 'match-letters', extra),
-    ask: [clip.ask('match-pic')],
+    ...voiced('match-letters'),
     ...dress(first, first.map((l) => LETTER_WORDS[l][0]!), LETTER_WORDS[firstDecoy][0]!),
     answer: '',
     vary: (random) => {
@@ -347,12 +434,13 @@ function matchNumbers(key: string, pool: number[], count: number, extra: Extra):
   const dress = (numbers: number[], decoy: number, pics: string[]): Dress => ({
     pairs: numbers.map((n, k) => ({ id: String(n), top: `txt:${n}`, bottom: `count:${pics[k]}:${n}`, label: String(n), topClip: clip.number(n), clip: clip.number(n) })),
     decoys: [{ id: `extra-${decoy}`, art: `count:${pics[numbers.length]}:${decoy}`, label: String(decoy) }],
+    explain: numbers.map(clip.number),
     note: numbers.join('   '),
   })
   const first = pool.slice(0, count)
   return {
     ...base(`numbers-${key}`, 'letters', 'match', 'match-numbers', extra),
-    ask: [clip.ask('match-num')],
+    ...voiced('match-numbers'),
     ...dress(first, pool[count]!, [...COUNT_PICS].slice(0, count + 1)),
     answer: '',
     vary: (random) => {
@@ -368,12 +456,13 @@ function picFor(letter: Letter, extra: Extra): Question {
     options: [word, ...others].map(pictureOption),
     answer: word,
     reveal: [clip.word(word)],
+    explain: [{ line: 'x-pic' }, clip.word(word)],
     note: `${cap(word)} starts with ${letter}`,
   })
   const others = LETTERS.filter((l) => l !== letter && l !== 'x')
   return {
     ...base(`pic-${letter}`, 'letters', 'pick', 'pic-for-letter', extra),
-    ask: [clip.letter(letter), clip.ask('pic-for-letter')],
+    ...voiced('pic-for-letter', [clip.letter(letter)]),
     subject: `txt:${letter.toUpperCase()}${letter}`,
     ...dress(LETTER_WORDS[letter][0]!, [LETTER_WORDS[others[0]!][0]!, LETTER_WORDS[others[1]!][0]!]),
     vary: (random) =>
@@ -397,8 +486,7 @@ function nearNumbers(n: number, random: Random): number[] {
 /** A group to count: circle the number. */
 function countQ(n: number, extra: Extra): Question {
   const dress = (thing: Countable, others: number[]): Dress => ({
-    ask: [clip.count(thing)],
-    help: COUNTABLES[thing].ar,
+    ...voiced(`count-${thing}`),
     subject: `count:${COUNTABLES[thing].pic}:${n}`,
     options: [n, ...others].map(numberOption),
   })
@@ -407,6 +495,7 @@ function countQ(n: number, extra: Extra): Question {
     ...dress('bears', nearNumbers(n, () => 0)),
     answer: String(n),
     reveal: [clip.number(n)],
+    explain: [{ line: 'x-count' }, ...countTo(n)],
     note: `${n} · ${NUMBER_WORDS[n]}`,
     vary: (random) => dress(pickOne(Object.keys(COUNTABLES) as Countable[], random), nearNumbers(n, random)),
   } as Question
@@ -419,7 +508,8 @@ function findNumber(n: number, extra: Extra): Question {
   })
   return {
     ...base(`find-${n}`, 'letters', 'pick', 'find-number', extra),
-    ask: [clip.number(n), clip.ask('find-number')],
+    ...voiced('find-number', [clip.number(n)]),
+    explain: [{ line: 'x-find' }, ...countTo(n)],
     subject: `txt:${n}`,
     ...dress('cupcake', nearNumbers(n, () => 0)),
     answer: String(n),
@@ -433,11 +523,12 @@ function findNumber(n: number, extra: Extra): Question {
 function wordQ(answer: string, others: [string, string], extra: Extra, subject = WORD_ART[answer]!): Question {
   return {
     ...base(answer, 'words', 'pick', 'word', extra),
-    ask: [clip.ask('circle-word')],
+    ...voiced('word'),
     subject,
     options: [answer, ...others].map((word) => ({ id: word, art: `word:${word}`, label: word })),
     answer,
     reveal: [clip.word(answer)],
+    explain: [{ line: 'x-word' }, clip.word(answer)],
     note: answer,
   }
 }
@@ -445,13 +536,15 @@ function wordQ(answer: string, others: [string, string], extra: Extra, subject =
 /** «Copy the following»: write over the grey text on four lines. */
 function copyQ(key: string, text: string, extra: Extra): Question {
   const tokens = text.split(' ')
-  const reveal = tokens.map((token) => (/^\d$/.test(token) ? clip.number(Number(token)) : token.length === 1 ? clip.letter(token) : clip.word(token)))
+  const reveal = [...new Set(tokens.map((token) => (/^\d$/.test(token) ? clip.number(Number(token)) : token.length === 1 ? clip.letter(token) : clip.word(token))))]
+  const lines: LineGroup = /^\d/.test(text) ? 'copy-num' : tokens.length === 2 ? 'copy-pair' : 'copy-word'
   return {
     ...base(key, 'writing', 'trace', 'copy', extra),
-    ask: [clip.ask('trace')],
+    ...voiced(lines),
     text,
     answer: text,
-    reveal: [...new Set(reveal)],
+    reveal,
+    explain: reveal,
     note: text,
   }
 }
@@ -464,12 +557,13 @@ function missing(word: string, extra: Extra): Question {
   const others = LETTERS.filter((l) => l !== letter)
   return {
     ...base(word, 'missing', 'missing', 'missing', extra),
-    ask: [clip.word(word), clip.ask('missing')],
+    ...voiced('missing', [clip.word(word)]),
     subject: WORD_ART[word]!,
     word,
     options: keys(others.slice(0, 5)),
     answer: letter,
     reveal: [clip.letter(letter), clip.word(word)],
+    explain: [clip.word(word), { line: 'x-missing' }, clip.letter(letter)],
     note: word,
     vary: (random) => ({ options: keys(pickSome(others, 5, random)) }),
   }
@@ -618,85 +712,112 @@ export const QUESTIONS: Question[] = [
 // ── Narration ─────────────────────────────────────────────────────────────
 // Arabic: Maryam Essa (Kuwaiti), the voice approved for «بصمة وأثر»; no diacritics.
 // English: Alice (British educator) — chosen by the family on 2026-10-13 because she
-// reads lone letters as letter names. Lines kept from the first test keep their recordings.
-export const ASK_CLIPS = {
-  'find-small': 'وين الحرف الصغير؟',
-  'find-big': 'وين الحرف الكبير؟',
-  'pic-for-letter': 'أي صورة تبدأ بهذا الحرف؟',
-  missing: 'شنو الحرف الناقص في أول هذي الكلمة؟',
-  'find-number': 'وين الصورة اللي فيها هذا الرقم؟',
-  'match-case': 'نوصل كل حرف كبير… بالحرف الصغير مثله.',
-  'match-pic': 'نوصل كل حرف… بالصورة اللي تبدأ فيه.',
-  'match-num': 'نوصل كل رقم… بالصورة اللي فيها نفس العدد.',
-  'circle-word': 'نختار الكلمة الصحيحة… حسب الصورة.',
-  trace: 'نكتب بإصبعنا فوق الكتابة الرمادية… على الأربع سطور.',
-} as const
+// reads lone letters as letter names. Every moment has several lines, written for this quiz
+// (5 November 2026) so it does not sound like the family's other quizzes; a round deals them
+// out in a shuffled order (src/domain/variety.ts). Clip ids are `<group>-<n>`.
 
-export type AskClip = keyof typeof ASK_CLIPS
+/** Maryam's lines for the moments around the questions. */
+export const AR_LINES = {
+  welcome: [
+    'أهلين! جاهزين للإنجليزي؟ نختار درس ونبدأ.',
+    'يا هلا! الحروف والكلمات تنتظرنا… من وين نبدأ؟',
+    'مرحبا! يلا نتدرب على الإنجليزي… نختار درس.',
+  ],
+  'test-intro': [
+    'اختبار تجريبي مثل ورقة الاختبار… نبدأ بالقراءة، وبعدها الكتابة. يلا!',
+    'جاهزين؟ عشر أسئلة مثل الاختبار بالضبط… أول شي القراءة.',
+  ],
+  /** In the mock test, before the first Writing question. */
+  'to-writing': ['خلصنا القراءة! الحين جزء الكتابة.', 'القراءة خلصت… الحين نكتب!'],
+  /** A board: a wrong pair was tried. */
+  'match-wrong': ['مو هذي… خلنا نجرب غيرها.', 'ما ضبطت… نطالع زين ونجرب.', 'قريب! بس مو هذي.'],
+  /** A board: the bottom row was tapped first. */
+  'top-first': ['نختار من فوق أول… وبعدين من تحت.'],
+  /** Copying: the first check did not pass. */
+  'trace-again': ['نكتب فوق الكتابة الرمادية بالضبط… ونحاول مرة ثانية.', 'باقي شوي! نمشي على الرمادي بالضبط.'],
+  /** A board or a copy that missed: before the answer is said. */
+  review: ['نشوفها مع بعض…', 'يلا نراجعها سوا…', 'نسمعها مرة ثانية…'],
+  /** A wrong choice: a kind word, then the explanation. */
+  retry: ['أوه! كانت قريبة.', 'ولا يهم!', 'عادي… نتعلم من الغلط.', 'هذي صعبة شوي.', 'ما عليه… نشوفها مع بعض.', 'المرة الجاية أسهل!', 'خطوة خطوة نتعلم.'],
+  // The explanation after a miss: each line leads into the letter, word or count that follows it.
+  'x-small': ['حرفه الصغير هو…'],
+  'x-big': ['حرفه الكبير هو…'],
+  'x-pic': ['الصورة اللي تبدأ فيه…', 'هالحرف يبدأ فيه اسم…'],
+  'x-count': ['نعدها مع بعض…', 'نعد على مهل…'],
+  'x-find': ['نعد الصورة الصح مع بعض…'],
+  'x-word': ['هذي الصورة اسمها…', 'اسمها بالإنجليزي…'],
+  'x-missing': ['تبدأ بحرف…', 'أول حرف فيها…'],
+  // Cheers: for any question, and for one kind of question.
+  cheer: ['صح مية بالمية!', 'ضربة معلم!', 'يا حلو هالجواب!', 'ولا غلطة!', 'جواب ذهب!', 'هذا هو بالضبط!', 'شغل نظيف!', 'تصفيقة كبيرة!'],
+  'cheer-match': ['كل الخطوط في مكانها!', 'توصيل مضبوط!'],
+  'cheer-trace': ['كتابة مرتبة… مثل الكتاب!', 'خط ولا أحلى!'],
+  'cheer-missing': ['رجع الحرف مكانه!', 'الكلمة صارت كاملة!'],
+  'cheer-word': ['قراءة ممتازة!'],
+  'cheer-count': ['عدينا صح!'],
+  /** Three, then five right answers running. */
+  streak: ['ثلاث صح ورا بعض!', 'خمس صح ورا بعض… ما في أحلى!'],
+  'done-great': ['جولة ولا أروع! النجوم كلها لنا.', 'جولة ذهبية… نجوم كاملة!'],
+  'done-good': ['زين! كل ما نتدرب… نصير أحسن.', 'حلو التدريب! نعيدها ونجمع نجوم أكثر.'],
+} as const satisfies Record<string, readonly string[]>
 
-export const AR_UI_CLIPS = {
-  welcome: 'هلا والله! يلا نتدرب على الإنجليزي… نختار درس، ونبدأ.',
-  'test-intro': 'هذا اختبار تجريبي… فيه أسئلة من كل الدروس. يلا نبدأ!',
-  'match-wrong': 'لا… نجرب مرة ثانية.',
-  'match-top-first': 'نختار من فوق أول… وبعدين من تحت.',
-  'trace-again': 'نكتب فوق الكتابة الرمادية بالضبط… ونحاول مرة ثانية.',
-  review: 'خلنا نتذكر مع بعض…',
-  // Arabic cheers, mixed in with the English ones.
-  'cheer-1': 'كفو!',
-  'cheer-2': 'ما شاء الله! صح.',
-  'cheer-3': 'واو! جواب صح!',
-  'cheer-4': 'برافو! جواب ممتاز.',
-  'cheer-5': 'الله! جواب حلو.',
-  'cheer-6': 'تمام التمام!',
-  // After a wrong answer: encourage, then give the right answer.
-  'retry-1': 'مو مشكلة… الجواب الصح…',
-  'retry-2': 'قربنا! الجواب الصح…',
-  'retry-3': 'خلنا نتعلمها مع بعض… الجواب الصح…',
-  'retry-4': 'محاولة حلوة! الجواب الصح…',
-  'retry-5': 'نشوف مع بعض… الجواب الصح…',
-} as const
+export type ArGroup = keyof typeof AR_LINES
 
-export type ArUiClip = keyof typeof AR_UI_CLIPS
+/** Alice's praise, mixed in with Maryam's. */
+export const EN_LINES = {
+  cheer: ['Spot on!', 'Nice one!', 'Way to go!', 'Hooray!', 'That’s it!', 'Top marks!', 'So clever!', 'Bingo!', 'Yay! Correct!', 'Keep it up!', 'High five!', 'Nailed it!'],
+  'cheer-match': ['All matched up!', 'Every line is right!'],
+  'cheer-trace': ['Lovely writing!', 'Neat and tidy!'],
+  'cheer-missing': ['The word is complete!', 'You found the missing letter!'],
+  'cheer-word': ['Great reading!', 'What a reader!'],
+  'cheer-count': ['Great counting!'],
+  streak: ['Three in a row!', 'Five in a row! Amazing!'],
+  'done-great': ['Amazing! You are a superstar!', 'Wow! What a round!'],
+  'done-good': ['Good job! Let’s practise again.', 'Nice work! Practice makes perfect.'],
+} as const satisfies Record<string, readonly string[]>
 
-export const EN_UI_CLIPS = {
-  'praise-1': 'Great job!',
-  'praise-2': 'Well done!',
-  'praise-3': 'Super!',
-  'praise-4': 'Excellent!',
-  'praise-5': 'Awesome!',
-  'praise-6': 'Fantastic!',
-  'praise-7': 'You got it!',
-  'praise-8': 'Brilliant!',
-  'praise-9': 'Wonderful!',
-  'praise-10': 'Perfect!',
-  'praise-11': 'Good thinking!',
-  'praise-12': 'Yes! That’s right!',
-  'done-great': 'Amazing! You are a superstar!',
-  'done-good': 'Good job! Let’s practise again.',
-} as const
+export type EnGroup = keyof typeof EN_LINES
 
-export type EnUiClip = keyof typeof EN_UI_CLIPS
-
-export interface Cheer {
+export interface Line {
   text: string
   clip: string
   lang: 'ar' | 'en'
 }
 
-/** Every cheer, English and Arabic; the quiz picks one at random, never a recent one. */
-export const CHEERS: Cheer[] = [
-  ...(Object.keys(EN_UI_CLIPS) as EnUiClip[])
-    .filter((id) => id.startsWith('praise-'))
-    .map((id) => ({ text: EN_UI_CLIPS[id], clip: clip.en(id), lang: 'en' as const })),
-  ...(Object.keys(AR_UI_CLIPS) as ArUiClip[])
-    .filter((id) => id.startsWith('cheer-'))
-    .map((id) => ({ text: AR_UI_CLIPS[id], clip: clip.ui(id), lang: 'ar' as const })),
-]
+export function arLines(group: ArGroup): Line[] {
+  return AR_LINES[group].map((text, n) => ({ text, clip: clip.ar(group, n), lang: 'ar' }))
+}
 
-/** Encouragement before the right answer is shown. */
-export const RETRIES = (Object.keys(AR_UI_CLIPS) as ArUiClip[])
-  .filter((id) => id.startsWith('retry-'))
-  .map((id) => ({ text: AR_UI_CLIPS[id].replace('الجواب الصح…', '').replace('…', '').trim(), clip: clip.ui(id) }))
+export function enLines(group: EnGroup): Line[] {
+  return EN_LINES[group].map((text, n) => ({ text, clip: clip.en(group, n), lang: 'en' }))
+}
+
+/** Both voices' lines for a moment they share. */
+export function bothLines(group: ArGroup & EnGroup): Line[] {
+  return [...arLines(group), ...enLines(group)]
+}
+
+/** Cheers for any question, English and Arabic. */
+export const CHEERS: Line[] = bothLines('cheer')
+
+/** Kind words after a wrong choice. */
+export const RETRIES: Line[] = arLines('retry')
+
+type CheerKind = 'match' | 'trace' | 'missing' | 'word' | 'count'
+
+/** Cheers that fit this question: its board, its writing, its word or its counting. */
+export function ownCheers(question: Pick<Question, 'kind' | 'format'>): Line[] {
+  const kinds: CheerKind[] = []
+  if (question.kind === 'match' || question.kind === 'trace' || question.kind === 'missing') kinds.push(question.kind)
+  if (question.format === 'word') kinds.push('word')
+  if (question.format === 'count' || question.format === 'find-number' || question.format === 'match-numbers') kinds.push('count')
+  return kinds.flatMap((kind) => bothLines(`cheer-${kind}`))
+}
+
+/** The streak cheers, by how many right answers ran. */
+export const STREAKS: Record<number, Line[]> = {
+  3: [arLines('streak')[0]!, enLines('streak')[0]!],
+  5: [arLines('streak')[1]!, enLines('streak')[1]!],
+}
 
 /** Letters whose bare name is misread ("H" came out as "haitch"). */
 const LETTER_NAMES: Record<string, string> = { h: 'Aitch.' }
@@ -722,43 +843,48 @@ export function spokenWords(): string[] {
   return [...words].sort()
 }
 
+function groupCues<G extends string>(lines: Record<G, readonly string[]>, id: (group: G, n: number) => string, lang: 'ar' | 'en'): AudioCue[] {
+  return (Object.keys(lines) as G[]).flatMap((group) => lines[group].map((text, n) => ({ id: id(group, n), text: lang === 'ar' ? bare(text) : text, lang })))
+}
+
 export function audioCues(): AudioCue[] {
   const en = (id: string, text: string): AudioCue => ({ id, text, lang: 'en' })
-  const ar = (id: string, text: string): AudioCue => ({ id, text: bare(text), lang: 'ar' })
   return [
     ...LETTERS.map((letter) => en(clip.letter(letter), LETTER_NAMES[letter] ?? `${letter.toUpperCase()}.`)),
     ...spokenWords().map((word) => en(clip.word(word), `${cap(word)}.`)),
     ...[1, 2, 3, 4, 5, 6].map((n) => en(clip.number(n), `${cap(NUMBER_WORDS[n]!)}.`)),
-    ...(Object.keys(EN_UI_CLIPS) as EnUiClip[]).map((id) => en(clip.en(id), EN_UI_CLIPS[id])),
-    ...(Object.keys(ASK_CLIPS) as AskClip[]).map((id) => ar(clip.ask(id), ASK_CLIPS[id])),
-    ...(Object.keys(COUNTABLES) as Countable[]).map((thing) => ar(clip.count(thing), COUNTABLES[thing].ar)),
-    ...(Object.keys(AR_UI_CLIPS) as ArUiClip[]).map((id) => ar(clip.ui(id), AR_UI_CLIPS[id])),
+    ...groupCues(EN_LINES, clip.en, 'en'),
+    ...groupCues(ASK_LINES, clip.line, 'ar'),
+    ...groupCues(AR_LINES, clip.ar, 'ar'),
   ]
 }
 
-/** Every clip a question can play in any of its draws. */
+/** Every clip of one of Maryam's line sets. */
+export function lineClips(group: LineGroup): string[] {
+  return ASK_LINES[group].map((_, n) => clip.line(group, n))
+}
+
+/** Every clip a question can play in any of its draws, with any of its lines. */
 function questionClips(question: Question): string[] {
   const clips = [...question.ask, ...question.reveal, ...question.pairs.flatMap((pair) => [pair.topClip, pair.clip])]
+  clips.push(...lineClips(question.lines))
+  for (const item of question.explain) clips.push(...(typeof item === 'string' ? [item] : arLines(item.line).map((line) => line.clip)))
   if (question.format === 'match-letters' || question.format === 'pic-for-letter') {
     clips.push(...Object.values(LETTER_WORDS).flat().map(clip.word), ...LETTERS.map(clip.letter))
   }
-  if (question.format === 'count') clips.push(...(Object.keys(COUNTABLES) as Countable[]).map(clip.count))
+  if (question.format === 'count') clips.push(...(Object.keys(COUNTABLES) as Countable[]).flatMap((thing) => lineClips(`count-${thing}`)), ...countTo(6))
   return clips
 }
 
 /** Every clip a round needs, so it can be loaded before the first question. */
 export function roundClips(questions: Question[]): string[] {
+  const moments: ArGroup[] = ['match-wrong', 'top-first', 'trace-again', 'review', 'retry', 'to-writing']
   return [
     ...new Set([
       ...questions.flatMap(questionClips),
-      clip.ui('match-wrong'),
-      clip.ui('match-top-first'),
-      clip.ui('trace-again'),
-      clip.ui('review'),
-      ...CHEERS.map((cheer) => cheer.clip),
-      ...RETRIES.map((retry) => retry.clip),
-      clip.en('done-great'),
-      clip.en('done-good'),
+      ...moments.flatMap((group) => arLines(group).map((line) => line.clip)),
+      ...[...CHEERS, ...questions.flatMap(ownCheers), ...Object.values(STREAKS).flat()].map((line) => line.clip),
+      ...[...bothLines('done-great'), ...bothLines('done-good')].map((line) => line.clip),
     ]),
   ]
 }
