@@ -4,7 +4,6 @@ import {
   RETRIES,
   STREAKS,
   arLines,
-  bothLines,
   clip,
   ownCheers,
   shown,
@@ -55,5 +54,5 @@ export function explainClips(question: Question, random: Random = Math.random): 
 /** The line at the end of a round. */
 export function doneLine(great: boolean, random: Random = Math.random): Line {
   const group = great ? 'done-great' : 'done-good'
-  return deck(group, bothLines(group)).next(random)
+  return deck(group, arLines(group)).next(random)
 }

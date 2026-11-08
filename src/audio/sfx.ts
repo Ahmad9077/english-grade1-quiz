@@ -11,7 +11,8 @@ export function setSfxEnabled(value: boolean): void {
 
 function play(tones: Tone[]): void {
   const context = audioContext()
-  if (!enabled || !context || context.state !== 'running') return
+  // A context still starting (the tap that woke it) plays the sound the moment it runs.
+  if (!enabled || !context || context.state === 'closed') return
   const now = context.currentTime
   for (const tone of tones) {
     const osc = context.createOscillator()

@@ -310,9 +310,7 @@ export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScree
             )}
             <div className="feedback-titles">
               {lastCorrect ? (
-                <p className={`feedback-title cheer-${said.line.lang}`} dir={said.line.lang === 'en' ? 'ltr' : 'rtl'}>
-                  {shown(said.line.text)}
-                </p>
+                <p className="feedback-title">{shown(said.line.text)}</p>
               ) : question.kind === 'match' || question.kind === 'trace' ? (
                 <p className="feedback-title">{shown(said.line.text)}:</p>
               ) : (

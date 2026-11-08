@@ -1,6 +1,6 @@
-import { audioContext } from './context'
+import { audioContext, onAudioReset } from './context'
 
-const AUDIO_REVISION = 'maryam-alice-v4-2026-10-14'
+const AUDIO_REVISION = 'maryam-alice-v5-2026-11-08'
 // A clip that fails to download (a weak connection) is tried again before it is skipped.
 const LOAD_ATTEMPTS = 3
 const OPTION_GAP_MS = 320
@@ -25,10 +25,15 @@ export class Narrator {
   private readonly queue: string[] = []
   private active = 0
   private source: AudioBufferSourceNode | null = null
+  /** Ends the clip being played now, so a stopped play() never waits for a clip that cannot end. */
+  private finish: (() => void) | null = null
   private token = 0
   private muted = false
 
-  constructor(private readonly baseUrl: string) {}
+  constructor(private readonly baseUrl: string) {
+    // Leaving the page, or a fresh start of the sound, ends what was being said.
+    onAudioReset(() => this.stop())
+  }
 
   url(clip: string): string {
     return `${this.baseUrl}audio/${clip}.mp3?v=${AUDIO_REVISION}`
@@ -111,14 +116,15 @@ export class Narrator {
   }
 
   private async fetchAndDecode(clip: string): Promise<AudioBuffer | null> {
-    const ctx = audioContext()
-    if (!ctx) return null
     for (let attempt = 1; attempt <= LOAD_ATTEMPTS; attempt += 1) {
       try {
         const response = await fetch(this.url(clip))
         if (!response.ok) throw new Error(`Missing clip ${clip}`)
         const data = await response.arrayBuffer()
-        return await ctx.decodeAudioData(data)
+        // The context of now: the sound may have started afresh while the clip downloaded.
+        const ctx = audioContext()
+        if (!ctx) return null
+        return await decode(ctx, data)
       } catch {
         if (attempt < LOAD_ATTEMPTS) await wait(300 * attempt)
       }
@@ -135,18 +141,26 @@ export class Narrator {
       const source = ctx.createBufferSource()
       source.buffer = buffer
       source.connect(ctx.destination)
-      source.onended = () => {
-        if (this.source === source) this.source = null
+      const done = () => {
+        if (this.source === source) {
+          this.source = null
+          this.finish = null
+        }
         resolve()
       }
+      source.onended = done
       this.source = source
+      this.finish = done
       source.start()
     })
   }
 
   private halt(): void {
     const source = this.source
+    const finish = this.finish
     this.source = null
+    this.finish = null
+    finish?.()
     if (source) {
       try {
         source.stop()
@@ -159,6 +173,23 @@ export class Narrator {
   private emit(speaking: boolean): void {
     this.listeners.forEach((listener) => listener(speaking))
   }
+}
+
+/**
+ * Decodes a clip, giving up if its context is closed meanwhile (a fresh start of the sound):
+ * browsers can leave that decode waiting for ever, and the clip would never play.
+ */
+function decode(ctx: AudioContext, data: ArrayBuffer): Promise<AudioBuffer> {
+  return new Promise((resolve, reject) => {
+    const closed = () => {
+      if (ctx.state === 'closed') reject(new Error('The sound started afresh.'))
+    }
+    ctx.addEventListener('statechange', closed)
+    ctx
+      .decodeAudioData(data)
+      .then(resolve, reject)
+      .finally(() => ctx.removeEventListener('statechange', closed))
+  })
 }
 
 function wait(ms: number): Promise<void> {

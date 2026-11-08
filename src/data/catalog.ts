@@ -208,7 +208,6 @@ export const clip = {
   /** Maryam's line `n` (from 0) for a question style. */
   line: (group: LineGroup, n = 0) => `ar/q/${group}-${n + 1}`,
   ar: (group: ArGroup, n = 0) => `ar/ui/${group}-${n + 1}`,
-  en: (group: EnGroup, n = 0) => `en/ui/${group}-${n + 1}`,
 }
 
 // ── Lessons and the test's instruction lines ──────────────────────────────
@@ -242,53 +241,53 @@ export const FORMATS: Record<Format, FormatInfo> = {
 // every child alike («we» and questions, never a girl- or boy-only word) and carry no diacritics.
 export const ASK_LINES = {
   'match-case': [
-    'الحروف الكبيرة فوق… تدور على أخوانها الصغار تحت!',
-    'كل حرف كبير له حرف صغير… نربطهم بخط.',
-    'نوصل الكبير بالصغير… وتحت حرف زيادة، ننتبه له!',
+    'الحروف الكبيرة فوق، تدور على أخوانها الصغار تحت!',
+    'كل حرف كبير له حرف صغير، نربطهم بخط.',
+    'نوصل الكبير بالصغير. وتحت حرف زيادة، ننتبه له!',
   ],
   // After the capital letter.
-  small: ['وين أخوه الصغير؟', 'نحوط نفس الحرف… بس صغير.', 'هذا الكبير… ندور على الصغير مثله!'],
+  small: ['وين أخوه الصغير؟', 'نحط دائرة على نفس الحرف، بس صغير.', 'ندور على الحرف الصغير اللي يشبهه!'],
   // After the small letter.
-  big: ['وين أخوه الكبير؟', 'نحوط نفس الحرف… بس كبير.', 'هذا الصغير… ندور على الكبير مثله!'],
+  big: ['وين أخوه الكبير؟', 'نحط دائرة على نفس الحرف، بس كبير.', 'ندور على الحرف الكبير اللي يشبهه!'],
   'match-letters': [
-    'كل حرف يدور على صورة تبدأ فيه… نوصلهم!',
-    'نقول اسم كل صورة… ونسمع أول حرف فيها.',
-    'حرف فوق… وصورته تحت. وفي صورة زيادة!',
+    'كل حرف يدور على صورة تبدأ فيه. نوصلهم!',
+    'نقول اسم كل صورة، ونسمع أول حرف فيها.',
+    'الحروف فوق، وصورها تحت. وفي صورة زيادة!',
   ],
   'match-numbers': [
-    'نعد الأشياء في كل صورة… ونوصلها برقمها.',
-    'كل رقم له صورة فيها نفس العدد… نلقاها!',
-    'نعد على أصابعنا… ونربط كل رقم بصورته.',
+    'نعد الأشياء في كل صورة، ونوصلها برقمها.',
+    'كل رقم له صورة فيها نفس العدد. نلقاها!',
+    'نعد على أصابعنا، ونربط كل رقم بصورته.',
   ],
   // After the letter.
-  'pic-for-letter': ['وحدة بس من الصور تبدأ بهالحرف… وينها؟', 'نقول أسماء الصور… ونسمع أي وحدة تبدأ فيه.', 'هالحرف يدور على صورته!'],
+  'pic-for-letter': ['وحدة بس من الصور تبدأ بهالحرف. وينها؟', 'نقول أسماء الصور، ونسمع أي وحدة تبدأ فيه.', 'هالحرف يدور على صورته!'],
   // After the number.
-  'find-number': ['نعد كل مجموعة… ونلقى اللي فيها هالعدد.', 'نعد قبل لا نحوط… أي مجموعة فيها هالعدد؟', 'هالرقم يدور على صورته… نعد ونلقاها!'],
+  'find-number': ['نعد كل مجموعة، ونلقى اللي فيها هالعدد.', 'نعد زين قبل لا نحط الدائرة. أي مجموعة فيها هالعدد؟', 'هالرقم يدور على صورته. نعد ونلقاها!'],
   'count-bears': ['كم دبدوب يبي يلعب معانا؟'],
-  'count-apples': ['نعد التفاح مع بعض… كم تفاحة؟'],
-  'count-flowers': ['نعد الورد على مهل… كم وردة؟'],
-  'count-frogs': ['نعد الضفادع… كم ضفدع هني؟'],
-  'count-cars': ['نعد السيارات بإصبعنا… كم سيارة؟'],
+  'count-apples': ['نعد التفاح مع بعض. كم تفاحة؟'],
+  'count-flowers': ['نعد الورد على مهل. كم وردة؟'],
+  'count-frogs': ['نعد الضفادع. كم ضفدع هني؟'],
+  'count-cars': ['نعد السيارات بإصبعنا. كم سيارة؟'],
   'count-cows': ['كم بقرة في المزرعة؟'],
   word: [
-    'نطالع الصورة… ونحوط اسمها.',
-    'ثلاث كلمات… وحدة بس اسم الصورة. وينها؟',
-    'نقرأ أول حرف من كل كلمة… يساعدنا نلقى الصح.',
+    'نطالع الصورة، ونحط دائرة على اسمها.',
+    'كلمة وحدة بس هي اسم الصورة. وينها؟',
+    'نقرأ أول حرف من كل كلمة، يساعدنا نلقى الصح.',
     'شنو اسم هالصورة بالإنجليزي؟ نلقاه بين الكلمات.',
-    'نقرأ الكلمات على مهل… أي وحدة تناسب الصورة؟',
-    'تحدي القراءة! نحوط الكلمة الصح.',
+    'نقرأ الكلمات على مهل. أي وحدة تناسب الصورة؟',
+    'تحدي القراءة! نحط دائرة على الكلمة الصح.',
   ],
-  'copy-pair': ['حرفين: كبير وصغير… نكتبهم فوق الرمادي.', 'نمشي بإصبعنا على الحرفين… على مهل.', 'نكتب الحرف الكبير… وبعده أخوه الصغير.'],
-  'copy-num': ['نكتب الأرقام بالترتيب… واحد واحد.', 'ثلاث أرقام… نمشي بإصبعنا فوقها.'],
-  'copy-word': ['نكتب الكلمة حرف حرف… من اليسار لليمين.', 'نمشي فوق الرمادي بالضبط… ولا نطلع برا.', 'نكتب الكلمة على مهل… مثل ما في الكتاب.'],
+  'copy-pair': ['حرفين، كبير وصغير. نكتبهم فوق الرمادي.', 'نمشي بإصبعنا على الحرفين، على مهل.', 'نكتب الحرف الكبير، وبعده أخوه الصغير.'],
+  'copy-num': ['نكتب الأرقام بالترتيب، واحد واحد.', 'ثلاثة أرقام، نمشي بإصبعنا فوقها.'],
+  'copy-word': ['نكتب الكلمة حرف حرف، من اليسار لليمين.', 'نمشي فوق الرمادي بالضبط، ولا نطلع برا.', 'نكتب الكلمة على مهل، مثل ما في الكتاب.'],
   // After the word.
   missing: [
-    'ناقصها أول حرف… أي حرف نحط؟',
-    'نسمع أول صوت في الكلمة… ونلقى حرفه.',
+    'ناقصها أول حرف. أي حرف نحط؟',
+    'نسمع أول صوت في الكلمة، ونلقى حرفه.',
     'حرف ضاع من أول الكلمة! نرجعه مكانه.',
-    'نقولها على مهل… شنو أول حرف فيها؟',
-    'الصورة تساعدنا… أي حرف يكمل الكلمة؟',
-    'أول خانة فاضية… نعبيها بالحرف الصح.',
+    'نقولها على مهل. شنو أول حرف فيها؟',
+    'الصورة تساعدنا. أي حرف يكمل الكلمة؟',
+    'أول خانة فاضية. نعبيها بالحرف الصح.',
   ],
 } as const satisfies Record<string, readonly string[]>
 
@@ -712,92 +711,93 @@ export const QUESTIONS: Question[] = [
 // ── Narration ─────────────────────────────────────────────────────────────
 // Arabic: Maryam Essa (Kuwaiti), the voice approved for «بصمة وأثر»; no diacritics.
 // English: Alice (British educator) — chosen by the family on 2026-10-13 because she
-// reads lone letters as letter names. Every moment has several lines, written for this quiz
-// (5 November 2026) so it does not sound like the family's other quizzes; a round deals them
-// out in a shuffled order (src/domain/variety.ts). Clip ids are `<group>-<n>`.
+// reads lone letters as letter names. Alice says only the English of the test (letters,
+// words, numbers); every cheer and kind word is Maryam's, in Kuwaiti (the family's wish,
+// 8 November 2026). Every moment has several lines, written for this quiz so it does not
+// sound like the family's other quizzes; a round deals them out in a shuffled order
+// (src/domain/variety.ts). Clip ids are `<group>-<n>`.
+//
+// How the lines are written (the family's notes of 8 November 2026):
+// - no «…» pause inside a line: the voice reads it as a sigh. Commas and full stops only.
+// - Kuwaiti words: «نحط دائرة على», never «نحوط»; a count said on its own is «ثلاثة»,
+//   «خمسة», never «ثلاث», «خمس».
 
 /** Maryam's lines for the moments around the questions. */
 export const AR_LINES = {
   welcome: [
     'أهلين! جاهزين للإنجليزي؟ نختار درس ونبدأ.',
-    'يا هلا! الحروف والكلمات تنتظرنا… من وين نبدأ؟',
-    'مرحبا! يلا نتدرب على الإنجليزي… نختار درس.',
+    'يا هلا! الحروف والكلمات تنطرنا. من وين نبدأ؟',
+    'مرحبا! يلا نتدرب على الإنجليزي، نختار درس.',
   ],
   'test-intro': [
-    'اختبار تجريبي مثل ورقة الاختبار… نبدأ بالقراءة، وبعدها الكتابة. يلا!',
-    'جاهزين؟ عشر أسئلة مثل الاختبار بالضبط… أول شي القراءة.',
+    'اختبار تجريبي مثل ورقة الاختبار. نبدأ بالقراءة، وبعدها الكتابة. يلا!',
+    'جاهزين؟ عشرة أسئلة مثل الاختبار بالضبط. أول شي القراءة.',
   ],
   /** In the mock test, before the first Writing question. */
-  'to-writing': ['خلصنا القراءة! الحين جزء الكتابة.', 'القراءة خلصت… الحين نكتب!'],
+  'to-writing': ['خلصنا القراءة! الحين جزء الكتابة.', 'القراءة خلصت، الحين نكتب!'],
   /** A board: a wrong pair was tried. */
-  'match-wrong': ['مو هذي… خلنا نجرب غيرها.', 'ما ضبطت… نطالع زين ونجرب.', 'قريب! بس مو هذي.'],
+  'match-wrong': ['خلنا نجرب وحدة ثانية!', 'ما ضبطت، نطالع زين ونجرب.', 'قريب! بس مو هذي.'],
   /** A board: the bottom row was tapped first. */
-  'top-first': ['نختار من فوق أول… وبعدين من تحت.'],
+  'top-first': ['نختار من فوق أول، وبعدين من تحت.'],
   /** Copying: the first check did not pass. */
-  'trace-again': ['نكتب فوق الكتابة الرمادية بالضبط… ونحاول مرة ثانية.', 'باقي شوي! نمشي على الرمادي بالضبط.'],
+  'trace-again': ['نكتب فوق الكتابة الرمادية بالضبط، ونحاول مرة ثانية.', 'باقي شوي! نمشي على الرمادي بالضبط.'],
   /** A board or a copy that missed: before the answer is said. */
-  review: ['نشوفها مع بعض…', 'يلا نراجعها سوا…', 'نسمعها مرة ثانية…'],
+  review: ['نشوفها مع بعض.', 'يلا نراجعها سوا.', 'نسمعها مرة ثانية.'],
   /** A wrong choice: a kind word, then the explanation. */
-  retry: ['أوه! كانت قريبة.', 'ولا يهم!', 'عادي… نتعلم من الغلط.', 'هذي صعبة شوي.', 'ما عليه… نشوفها مع بعض.', 'المرة الجاية أسهل!', 'خطوة خطوة نتعلم.'],
+  retry: ['كانت قريبة!', 'ولا يهم!', 'عادي، نتعلم من الغلط.', 'هذي صعبة شوي.', 'ما عليه، نشوفها مع بعض.', 'المرة الياية أسهل!', 'خطوة خطوة نتعلم.'],
   // The explanation after a miss: each line leads into the letter, word or count that follows it.
-  'x-small': ['حرفه الصغير هو…'],
-  'x-big': ['حرفه الكبير هو…'],
-  'x-pic': ['الصورة اللي تبدأ فيه…', 'هالحرف يبدأ فيه اسم…'],
-  'x-count': ['نعدها مع بعض…', 'نعد على مهل…'],
-  'x-find': ['نعد الصورة الصح مع بعض…'],
-  'x-word': ['هذي الصورة اسمها…', 'اسمها بالإنجليزي…'],
-  'x-missing': ['تبدأ بحرف…', 'أول حرف فيها…'],
+  'x-small': ['حرفه الصغير هو'],
+  'x-big': ['حرفه الكبير هو'],
+  'x-pic': ['الصورة اللي تبدأ فيه هي', 'هالحرف يبدأ فيه اسم'],
+  'x-count': ['نعدها مع بعض', 'نعد على مهل'],
+  'x-find': ['نعد الصورة الصح مع بعض'],
+  'x-word': ['هذي الصورة اسمها', 'اسمها بالإنجليزي'],
+  'x-missing': ['تبدأ بحرف', 'أول حرف فيها'],
   // Cheers: for any question, and for one kind of question.
-  cheer: ['صح مية بالمية!', 'ضربة معلم!', 'يا حلو هالجواب!', 'ولا غلطة!', 'جواب ذهب!', 'هذا هو بالضبط!', 'شغل نظيف!', 'تصفيقة كبيرة!'],
-  'cheer-match': ['كل الخطوط في مكانها!', 'توصيل مضبوط!'],
-  'cheer-trace': ['كتابة مرتبة… مثل الكتاب!', 'خط ولا أحلى!'],
-  'cheer-missing': ['رجع الحرف مكانه!', 'الكلمة صارت كاملة!'],
-  'cheer-word': ['قراءة ممتازة!'],
-  'cheer-count': ['عدينا صح!'],
+  cheer: [
+    'صح مية بالمية!',
+    'ضربة معلم!',
+    'يا حلو هالجواب!',
+    'ولا غلطة!',
+    'جواب ذهب!',
+    'هذا هو بالضبط!',
+    'شغل نظيف ومرتب!',
+    'تصفيقة كبيرة!',
+    'هذي هي الشطارة!',
+    'جواب يرفع الراس!',
+    'صح! والإنجليزي صار سهل.',
+    'ممتاز! نكمل جذي.',
+    'حلوة هذي!',
+    'صح، وبثقة!',
+    'هذا اللي نبيه!',
+    'جواب كشخة!',
+  ],
+  'cheer-match': ['كل الخطوط في مكانها!', 'توصيل مضبوط!', 'كل وحدة لقت مكانها!'],
+  'cheer-trace': ['كتابة مرتبة مثل الكتاب!', 'خط ولا أحلى!', 'يد ثابتة وخط حلو!'],
+  'cheer-missing': ['رجع الحرف مكانه!', 'الكلمة صارت كاملة!', 'لقينا الحرف الضايع!'],
+  'cheer-word': ['قراءة ممتازة!', 'قرينا الكلمة صح!', 'نقرا مثل الكبار!'],
+  'cheer-count': ['العد مضبوط!', 'عدينا صح وبالترتيب!', 'الأصابع ما تغلط!'],
   /** Three, then five right answers running. */
-  streak: ['ثلاث صح ورا بعض!', 'خمس صح ورا بعض… ما في أحلى!'],
-  'done-great': ['جولة ولا أروع! النجوم كلها لنا.', 'جولة ذهبية… نجوم كاملة!'],
-  'done-good': ['زين! كل ما نتدرب… نصير أحسن.', 'حلو التدريب! نعيدها ونجمع نجوم أكثر.'],
+  'streak-3': ['ثلاثة صح ورا بعض!', 'ثلاثة صح على طول!'],
+  'streak-5': ['خمسة صح ورا بعض! ما في أحلى!', 'خمسة على طول! شي يفرح.'],
+  'done-great': ['جولة ولا أروع! النجوم كلها لنا.', 'جولة ذهبية، نجوم كاملة!', 'جولة تفرح القلب!'],
+  'done-good': ['زين! كل ما نتدرب، نصير أحسن.', 'حلو التدريب! نعيدها ونجمع نجوم أكثر.', 'تعبنا وتعلمنا! نعيدها مرة ثانية؟'],
 } as const satisfies Record<string, readonly string[]>
 
 export type ArGroup = keyof typeof AR_LINES
 
-/** Alice's praise, mixed in with Maryam's. */
-export const EN_LINES = {
-  cheer: ['Spot on!', 'Nice one!', 'Way to go!', 'Hooray!', 'That’s it!', 'Top marks!', 'So clever!', 'Bingo!', 'Yay! Correct!', 'Keep it up!', 'High five!', 'Nailed it!'],
-  'cheer-match': ['All matched up!', 'Every line is right!'],
-  'cheer-trace': ['Lovely writing!', 'Neat and tidy!'],
-  'cheer-missing': ['The word is complete!', 'You found the missing letter!'],
-  'cheer-word': ['Great reading!', 'What a reader!'],
-  'cheer-count': ['Great counting!'],
-  streak: ['Three in a row!', 'Five in a row! Amazing!'],
-  'done-great': ['Amazing! You are a superstar!', 'Wow! What a round!'],
-  'done-good': ['Good job! Let’s practise again.', 'Nice work! Practice makes perfect.'],
-} as const satisfies Record<string, readonly string[]>
-
-export type EnGroup = keyof typeof EN_LINES
-
 export interface Line {
   text: string
   clip: string
-  lang: 'ar' | 'en'
+  lang: 'ar'
 }
 
 export function arLines(group: ArGroup): Line[] {
   return AR_LINES[group].map((text, n) => ({ text, clip: clip.ar(group, n), lang: 'ar' }))
 }
 
-export function enLines(group: EnGroup): Line[] {
-  return EN_LINES[group].map((text, n) => ({ text, clip: clip.en(group, n), lang: 'en' }))
-}
-
-/** Both voices' lines for a moment they share. */
-export function bothLines(group: ArGroup & EnGroup): Line[] {
-  return [...arLines(group), ...enLines(group)]
-}
-
-/** Cheers for any question, English and Arabic. */
-export const CHEERS: Line[] = bothLines('cheer')
+/** Cheers for any question. */
+export const CHEERS: Line[] = arLines('cheer')
 
 /** Kind words after a wrong choice. */
 export const RETRIES: Line[] = arLines('retry')
@@ -810,13 +810,13 @@ export function ownCheers(question: Pick<Question, 'kind' | 'format'>): Line[] {
   if (question.kind === 'match' || question.kind === 'trace' || question.kind === 'missing') kinds.push(question.kind)
   if (question.format === 'word') kinds.push('word')
   if (question.format === 'count' || question.format === 'find-number' || question.format === 'match-numbers') kinds.push('count')
-  return kinds.flatMap((kind) => bothLines(`cheer-${kind}`))
+  return kinds.flatMap((kind) => arLines(`cheer-${kind}`))
 }
 
 /** The streak cheers, by how many right answers ran. */
 export const STREAKS: Record<number, Line[]> = {
-  3: [arLines('streak')[0]!, enLines('streak')[0]!],
-  5: [arLines('streak')[1]!, enLines('streak')[1]!],
+  3: arLines('streak-3'),
+  5: arLines('streak-5'),
 }
 
 /** Letters whose bare name is misread ("H" came out as "haitch"). */
@@ -853,7 +853,6 @@ export function audioCues(): AudioCue[] {
     ...LETTERS.map((letter) => en(clip.letter(letter), LETTER_NAMES[letter] ?? `${letter.toUpperCase()}.`)),
     ...spokenWords().map((word) => en(clip.word(word), `${cap(word)}.`)),
     ...[1, 2, 3, 4, 5, 6].map((n) => en(clip.number(n), `${cap(NUMBER_WORDS[n]!)}.`)),
-    ...groupCues(EN_LINES, clip.en, 'en'),
     ...groupCues(ASK_LINES, clip.line, 'ar'),
     ...groupCues(AR_LINES, clip.ar, 'ar'),
   ]
@@ -884,7 +883,7 @@ export function roundClips(questions: Question[]): string[] {
       ...questions.flatMap(questionClips),
       ...moments.flatMap((group) => arLines(group).map((line) => line.clip)),
       ...[...CHEERS, ...questions.flatMap(ownCheers), ...Object.values(STREAKS).flat()].map((line) => line.clip),
-      ...[...bothLines('done-great'), ...bothLines('done-good')].map((line) => line.clip),
+      ...[...arLines('done-great'), ...arLines('done-good')].map((line) => line.clip),
     ]),
   ]
 }

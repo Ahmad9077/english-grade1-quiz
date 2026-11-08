@@ -26,17 +26,27 @@ Pictures in `public/pics/` are cut from the Student's Book; «train» is not pic
 drawn (`src/art/drawings.tsx`). The four-line writing uses the school font Edu NSW ACT Foundation, whose
 small letters sit between lines 2 and 3 as in the book.
 
-Audio: Arabic lines by Maryam (Kuwaiti), English letters, numbers, words and praise by Alice (British
-educator, chosen by the family on 2026-10-13). On the family's request (5 November 2026) the words are
+Audio: Arabic lines by Maryam (Kuwaiti), English letters, numbers and words by Alice (British
+educator, chosen by the family on 2026-10-13). Every cheer and kind word is Maryam's, in Kuwaiti. On the family's request (5 November 2026) the words are
 varied and written for this quiz, not shared with the other quizzes: every question style has three to
 six Arabic lines (a picture to imagine, a tip, a challenge or a question), and every moment has several
-lines: 20 general cheers, cheers for boards, writing, reading, counting and the missing letter, streak
+lines: 16 general cheers, cheers for boards, writing, reading, counting and the missing letter, streak
 cheers on 3 and 5 right answers running, seven kind words after a miss, and the start and end of a
 round. A round deals them in a shuffled order (`src/domain/variety.ts`), so the same words do not come
 twice running, and a new round carries on where the last one stopped. A miss is explained: the word is
-said with «تبدأ بحرف…» and its letter, a group is counted along (one, two, three …), a board says its
+said with «تبدأ بحرف» and its letter, a group is counted along (one, two, three …), a board says its
 pairs. 130 clips were recorded on 5 November 2026 (about 3,100 characters) and checked with Whisper.
 One copy for every child: the wording never speaks to a girl or a boy.
+
+The family's notes of 8 November 2026, now held by `tests/unit/catalog.test.ts`: no «…» inside a spoken
+line (the voice read it as a sigh); «نحط دائرة على», never «نحوط»; a count said on its own is «ثلاثة»,
+«خمسة»; no English cheers. 93 clips were recorded again that day (about 2,600 characters), checked with
+Whisper and for breaths, and Alice's English praise was removed.
+
+Sound after leaving the page: Safari on iPhone and iPad takes the sound away from a page that is left
+(another app, the home screen, a locked screen) and wakes it only inside a finished tap. Leaving the page
+stops what is being said, and the first tap after coming back starts a fresh sound context
+(`src/audio/context.ts`); `tests/e2e/sound.spec.ts` checks it, under that tap rule too.
 
 ## Status
 Published and connected on 5 November 2026 (approved: «اعتمد وانشر»): live at

@@ -6,7 +6,6 @@ import {
   ASK_LINES,
   CARD_WORDS,
   CHEERS,
-  EN_LINES,
   FORMATS,
   LETTERS,
   LETTER_WORDS,
@@ -200,7 +199,7 @@ describe('narration', () => {
       const said = cues.get(q.ask.at(-1)!)!
       expect(q.help, q.key).toBe(shown(said))
     }
-    expect(shown('نطالع الصورة… ونحوط اسمها.')).toBe('نطالع الصورة، ونحوط اسمها.')
+    expect(shown('نطالع الصورة… ونلقى اسمها.')).toBe('نطالع الصورة، ونلقى اسمها.')
   })
 
   it('asks every question style in at least three ways, each a complete sentence', () => {
@@ -217,7 +216,7 @@ describe('narration', () => {
   })
 
   it('is worded afresh: no line from the family’s other quizzes, and no line twice', () => {
-    const all = [...Object.values(ASK_LINES), ...Object.values(AR_LINES), ...Object.values(EN_LINES)].flat() as string[]
+    const all = [...Object.values(ASK_LINES), ...Object.values(AR_LINES)].flat() as string[]
     for (const line of all) expect(OLD_LINES, line).not.toContain(line)
     expect(new Set(all).size).toBe(all.length)
   })
@@ -257,13 +256,34 @@ describe('narration', () => {
     }
   })
 
-  it('has many cheers in English and Arabic, cheers for each kind of question, and kind words after a miss', () => {
-    expect(CHEERS.length).toBeGreaterThanOrEqual(18)
-    expect(CHEERS.filter((cheer) => cheer.lang === 'ar').length).toBeGreaterThanOrEqual(8)
+  it('has many Kuwaiti cheers, cheers for each kind of question, and kind words after a miss', () => {
+    expect(CHEERS.length).toBeGreaterThanOrEqual(16)
     expect(new Set(CHEERS.map((cheer) => cheer.text)).size).toBe(CHEERS.length)
     expect(RETRIES.length).toBeGreaterThanOrEqual(6)
     for (const kind of ['match', 'trace', 'missing', 'word', 'count'] as const) {
-      expect(AR_LINES[`cheer-${kind}`].length + EN_LINES[`cheer-${kind}`].length, kind).toBeGreaterThanOrEqual(2)
+      expect(AR_LINES[`cheer-${kind}`].length, kind).toBeGreaterThanOrEqual(3)
     }
+  })
+
+  // The family's notes of 8 November 2026.
+  it('cheers only in Kuwaiti: Alice says letters, words and numbers, nothing else', () => {
+    for (const cue of audioCues().filter((c) => c.lang === 'en')) expect(cue.id, cue.id).toMatch(/^en\/(letter|word|num)\//)
+    for (const cheer of [...CHEERS, ...RETRIES]) expect(cheer.lang).toBe('ar')
+  })
+
+  it('writes no sighs: no «…» pause and no sighing word inside a spoken line', () => {
+    for (const cue of audioCues().filter((c) => c.lang === 'ar')) {
+      expect(cue.text, cue.id).not.toMatch(/…|\.\.|أوه|آه|اوه|همم/)
+    }
+  })
+
+  it('uses Kuwaiti words: «نحط دائرة», and counts said as ثلاثة and خمسة', () => {
+    const shortCounts = /(?<![\u0600-\u06FF])(ثلاث|أربع|خمس|ست|سبع|ثمان|تسع|عشر)(?![\u0600-\u06FF])/
+    for (const cue of audioCues().filter((c) => c.lang === 'ar')) {
+      expect(cue.text, cue.id).not.toMatch(/حوط|نحوط/)
+      expect(cue.text, cue.id).not.toMatch(shortCounts)
+    }
+    expect(AR_LINES['streak-3'].every((line) => line.startsWith('ثلاثة'))).toBe(true)
+    expect(AR_LINES['streak-5'].every((line) => line.startsWith('خمسة'))).toBe(true)
   })
 })

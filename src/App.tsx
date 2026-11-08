@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { wakeAudio } from './audio/context'
+import { wakeAudio, watchAudio } from './audio/context'
 import { Narrator } from './audio/player'
 import { NarratorContext } from './audio/NarratorContext'
 import { setSfxEnabled } from './audio/sfx'
@@ -58,11 +58,8 @@ export default function App({ context, bridge }: { context: BootstrapContext; br
     window.scrollTo({ top: 0 })
   }, [screen])
 
-  // Any tap wakes audio that the browser paused (for example after switching apps).
-  useEffect(() => {
-    window.addEventListener('pointerdown', wakeAudio, { passive: true })
-    return () => window.removeEventListener('pointerdown', wakeAudio)
-  }, [])
+  // Any tap brings back sound the browser took away (for example after switching apps).
+  useEffect(() => watchAudio(), [])
 
   const start = useCallback(() => {
     wakeAudio()
